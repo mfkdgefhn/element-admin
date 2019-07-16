@@ -44,7 +44,7 @@ export default [
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: routes
       }
     }
@@ -57,7 +57,7 @@ export default [
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: roles
       }
     }
@@ -70,7 +70,7 @@ export default [
     url: '/role',
     type: 'post',
     response: {
-      code: 20000,
+      code: '20000',
       data: {
         key: Mock.mock('@integer(300, 5000)')
       }
@@ -84,7 +84,7 @@ export default [
     url: '/role/[A-Za-z0-9]',
     type: 'put',
     response: {
-      code: 20000,
+      code: '20000',
       data: {
         status: 'success'
       }
@@ -97,7 +97,7 @@ export default [
     url: '/role/[A-Za-z0-9]',
     type: 'delete',
     response: {
-      code: 20000,
+      code: '20000',
       data: {
         status: 'success'
       }
