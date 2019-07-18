@@ -100,51 +100,72 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- 序号 -->
-      <el-table-column
-        :label="$t('usertable.id')"
-        prop="id"
-        sortable="custom"
-        width="80px"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column type="index" width="50" align="center" />
 
-      <!-- 登陆名称 -->
-      <el-table-column :label="$t('usertable.loginName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 审核人 -->
-      <el-table-column v-if="isShow" :label="$t('usertable.loginName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 用户名称 -->
+      <!-- 登陆帐号-->
       <el-table-column :label="$t('usertable.userName')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.userName }}</span>
         </template>
       </el-table-column>
 
-      <!-- 部门 -->
-      <el-table-column :label="$t('usertable.post')" align="center">
+      <!-- 审核人 -->
+      <el-table-column v-if="isShow" :label="$t('usertable.userName')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.post }}部</span>
+          <span>{{ scope.row.userName }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 用户昵称 -->
+      <!-- <el-table-column :label="$t('usertable.userNick')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.userNick }}</span>
+        </template>
+      </el-table-column>-->
+
+      <el-table-column :label="$t('usertable.userNick')" align="center">
+        <template slot-scope="scope">
+          <el-popover trigger="focus" placement="top">
+            <p>用户名：{{ scope.row.userName }}</p>
+            <p>用户昵称：{{ scope.row.userNick }}</p>
+            <p>email：{{ scope.row.email }}</p>
+            <p>手机号码：{{ scope.row.phonenumber }}</p>
+            <p>性别：{{ scope.row.sex }}</p>
+            <p>最后登陆IP{{ scope.row.loginIp }}</p>
+            <p>最后登陆时间：{{ scope.row.loginDate }}</p>
+            <p>备注：{{ scope.row.remark }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.userNick }}</el-tag>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
+
+      <!-- 部门 -->
+      <el-table-column :label="$t('usertable.dept')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deptId }}部</span>
         </template>
       </el-table-column>
 
       <!-- 手机 -->
-      <el-table-column :label="$t('usertable.model')" align="center">
+      <el-table-column :label="$t('usertable.phonenumber')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.model }}</span>
+          <span>{{ scope.row.phonenumber }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 邮箱 -->
+      <el-table-column :label="$t('usertable.email')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.email }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 性别 -->
+      <el-table-column :label="$t('usertable.sex')" class-name="status-col">
+        <template slot-scope="{row}">
+          <el-tag>{{ row.sex === '0' ? '男' : row.sex=== '1' ? '女' : '未知' }}</el-tag>
         </template>
       </el-table-column>
 
@@ -155,10 +176,17 @@
         </template>
       </el-table-column>
 
+      <!-- 最后一次登陆IP -->
+      <el-table-column :label="$t('usertable.loginIp')" class-name="status-col">
+        <template slot-scope="{row}">
+          <span>{{ row.loginIp }}</span>
+        </template>
+      </el-table-column>
+
       <!-- 时间 -->
-      <el-table-column :label="$t('usertable.date')" align="center">
+      <el-table-column :label="$t('usertable.loginDate')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.loginDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
@@ -206,9 +234,9 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getUserList"
     />
 
+    <!-- @pagination="getUserList" -->
     <!-- 弹出层 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" show-close>
       <!-- visible.sync：的意思是如果子组件的属性有变化，父组件则同步过来 -->
@@ -222,22 +250,32 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 登陆帐号 -->
-        <el-form-item :label="$t('usertable.loginName')" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-
-        <!-- 用户名称 -->
         <el-form-item :label="$t('usertable.userName')" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
 
+        <!-- 用户名称 -->
+        <el-form-item :label="$t('usertable.userNick')" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+
         <!-- 部门 -->
-        <el-form-item :label="$t('usertable.post')" prop="type">
+        <el-form-item :label="$t('usertable.dept')" prop="type">
           <el-input v-model="temp.title" @focus="dialogPvVisible=true" />
         </el-form-item>
 
         <!-- 手机 -->
-        <el-form-item :label="$t('usertable.model')" prop="title">
+        <el-form-item :label="$t('usertable.phonenumber')" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+
+        <!-- 邮箱 -->
+        <el-form-item :label="$t('usertable.email')" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+
+        <!-- 性别 -->
+        <el-form-item :label="$t('usertable.sex')" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
 
@@ -246,8 +284,13 @@
           <el-input v-model="temp.title" />
         </el-form-item>
 
+        <!-- 最后一次登陆IP -->
+        <el-form-item :label="$t('usertable.loginIp')" prop="title">
+          <el-input v-model="temp.title" />
+        </el-form-item>
+
         <!-- 时间 -->
-        <el-form-item :label="$t('usertable.date')" prop="timestamp">
+        <el-form-item :label="$t('usertable.loginDate')" prop="timestamp">
           <el-date-picker
             v-model="temp.timestamp"
             type="datetime"
@@ -261,16 +304,6 @@
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-
-        <!-- 重要性
-        <el-form-item :label="$t('usertable.importance')">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;"
-          />
-        </el-form-item>-->
 
         <!-- 备注 -->
         <el-form-item :label="$t('usertable.remark')">
@@ -307,7 +340,7 @@
 </template>
 
 <script>
-import { /* fetchList, */ fetchUserList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { /* fetchList,  fetchUserList,*/ fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -387,42 +420,30 @@ export default {
       downloadLoading: false
     }
   },
+  computed: {
+    getUserList() {
+      return this.$store.state.user.userList
+    }
+  },
+  watch: {
+    getUserList(a, b) {
+      this.list = a
+      this.listLoading = false
+      console.log('gc p ')
+    }
+  },
   created() {
-    this.getUserList()
+    this.initUserInfo()
   },
   methods: {
-    // getList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.list = response.data.items
-    //     this.total = response.data.total
-
-    //     // Just to simulate the time of the request
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
-    // },
+    // 初始化用户信息
+    initUserInfo() {
+    },
     isShowclase() {
       this.isShow = !this.isShow
-      console.log(this.isShow)
-    },
-    getUserList() {
-      this.listLoading = true
-      fetchUserList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 0.1 * 1000)
-      })
     },
     handleFilter() {
       this.listQuery.page = 1
-      // this.getList()
-      this.getUserList()
     },
     handleModifyStatus(row, status) {
       this.$message({

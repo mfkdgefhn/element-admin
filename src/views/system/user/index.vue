@@ -1,24 +1,25 @@
 <template>
   <!-- 收缩 -->
   <div class="components-container">
-    <el-button
-      v-if="span===0"
-      class="biankuan"
-      type="primary"
-      icon="el-icon-arrow-right"
-      @click="editSpan"
-    />
-    <!-- 展开 -->
-    <el-button v-else class="biankuan" type="primary" icon="el-icon-arrow-left" @click="editSpan" />
-
-    <el-row :gutter="10">
-      <el-col :span="span">
+    <el-row type="flex" justify="space-between">
+      <el-col v-if="expand" :span="3" class="test">
         <!-- 左边树菜单 -->
         <left-tree class="split" />
       </el-col>
 
+      <!-- 中间折叠 -->
+      <!-- <div class="expand">
+        <i v-if="expand" class="el-icon-arrow-left" size="16" @click="changeExpand" />
+        <i v-else class="el-icon-arrow-right" size="16" @click="changeExpand" />
+      </div>-->
+
+      <!-- 中间折叠 -->
+      <div class="expand">
+        <i :class="expandIcon" size="16" @click="changeExpand" />
+      </div>
+
       <!-- 右边表格 -->
-      <el-col :span="24-span">
+      <el-col :span="span">
         <el-card shadow="hover">
           <complex-table />
         </el-card>
@@ -28,25 +29,45 @@
 </template>
 
 <script>
-// import splitPane from 'vue-splitpane'
 import leftTree from './left-tree'
 import complexTable from './complex-table'
 
-export default {
+// import { fetchTreeList } from '@/api/article'
 
-  name: 'SplitpaneDemo',
+export default {
   components: { /* splitPane , */ leftTree, complexTable },
   data() {
     return {
-      span: 4
+      expand: true,
+      expandIcon: 'el-icon-arrow-left',
+      span: 20
     }
   },
+  created() {
+    this.initUserInfo()
+  },
   methods: {
+    initUserInfo() {
+      this.$store.dispatch('user/getUserList')
+        .then(() => {
+          console.log('获取用户信息并存入vuex成功')
+        })
+        .catch(() => {
+          console.log('失败')
+        })
+    },
     resize() {
       console.log('resize')
     },
-    editSpan() {
-      this.span = this.span === 4 ? this.span = 0 : this.span = 4
+    changeExpand() {
+      this.expand = !this.expand
+      if (this.expand) {
+        this.expandIcon = 'el-icon-arrow-left'
+        this.span = 20
+      } else {
+        this.expandIcon = 'el-icon-arrow-right'
+        this.span = 23
+      }
     }
   }
 }
@@ -78,5 +99,14 @@ export default {
   left: 0px;
   top: 0px;
   z-index: 999;
+}
+.expand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.expand i:hover {
+  color: #1890ff !important;
 }
 </style>

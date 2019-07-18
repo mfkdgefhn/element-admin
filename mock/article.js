@@ -98,7 +98,7 @@ export default [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: 'success'
       }
     }
@@ -109,7 +109,7 @@ export default [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: 'success'
       }
     }

@@ -1,10 +1,35 @@
 import request from '@/utils/request'
 
+var url = 'http://localhost:8888'
+
 export function fetchRoleList(query) {
   return request({
     url: '/article/roleList',
     method: 'get',
     params: query
+  })
+}
+
+export function getDeptList(query) {
+  return request({
+    url: url + '/sys/dept/getDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
+export function getUserByDeptId(deptId) {
+  return request({
+    url: url + '/sys/user/getUserByDeptId',
+    method: 'get',
+    params: { deptId }
+  })
+}
+
+export function getUserList() {
+  return request({
+    url: url + '/sys/user/getUserList',
+    method: 'get'
   })
 }
 

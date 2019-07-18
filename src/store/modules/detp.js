@@ -1,5 +1,4 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getUserList } from '@/api/article'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -8,8 +7,7 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: [],
-  userList: []
+  roles: []
 }
 
 const mutations = {
@@ -27,25 +25,10 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
-  },
-  SET_USERLIST: (state, userList) => {
-    state.userList = userList
   }
 }
 
 const actions = {
-
-  getUserList({ commit }) {
-    return new Promise((resolve, reject) => {
-      getUserList().then(response => {
-        commit('SET_USERLIST', response.data)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
   // user login
   login({ commit }, userInfo) {
     const { userName, password } = userInfo
