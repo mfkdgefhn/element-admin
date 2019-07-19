@@ -2,7 +2,7 @@
   <!-- 收缩 -->
   <div class="components-container">
     <el-row type="flex" justify="space-between">
-      <el-col v-if="expand" :span="3" class="test">
+      <el-col v-if="expand" :span="4" class="test">
         <!-- 左边树菜单 -->
         <left-tree class="split" />
       </el-col>
@@ -40,7 +40,7 @@ export default {
     return {
       expand: true,
       expandIcon: 'el-icon-arrow-left',
-      span: 20
+      span: 19
     }
   },
   created() {
@@ -63,7 +63,7 @@ export default {
       this.expand = !this.expand
       if (this.expand) {
         this.expandIcon = 'el-icon-arrow-left'
-        this.span = 20
+        this.span = 19
       } else {
         this.expandIcon = 'el-icon-arrow-right'
         this.span = 23

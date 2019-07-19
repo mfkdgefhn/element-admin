@@ -35,6 +35,10 @@ const mutations = {
 
 const actions = {
 
+  SET_USERLIST({ commit }, data) {
+    commit('SET_USERLIST', data)
+  },
+
   getUserList({ commit }) {
     return new Promise((resolve, reject) => {
       getUserList().then(response => {

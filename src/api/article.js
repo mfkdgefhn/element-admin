@@ -26,6 +26,14 @@ export function getUserByDeptId(deptId) {
   })
 }
 
+export function getUserByDeptIds(deptIds) {
+  return request({
+    url: url + '/sys/user/getUserByDeptIds',
+    method: 'get',
+    params: { deptIds }
+  })
+}
+
 export function getUserList() {
   return request({
     url: url + '/sys/user/getUserList',

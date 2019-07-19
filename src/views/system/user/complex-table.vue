@@ -429,7 +429,6 @@ export default {
     getUserList(a, b) {
       this.list = a
       this.listLoading = false
-      console.log('gc p ')
     }
   },
   created() {
