@@ -179,7 +179,11 @@ export default {
     status: 'Estado',
     createDate: 'Tiempo de creación',
     loginIp: 'Último acceso',
-    edit: 'Editar'
+    edit: 'Editar',
+    discontinuation: 'Desactivación',
+    enabling: 'Activar',
+    remarks: 'Observaciones',
+    password: 'Contraseña'
   },
   roletable: {
     roleId: 'Número de papel',

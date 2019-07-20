@@ -2,14 +2,6 @@ import request from '@/utils/request'
 
 var url = 'http://localhost:8888'
 
-export function fetchRoleList(query) {
-  return request({
-    url: '/article/roleList',
-    method: 'get',
-    params: query
-  })
-}
-
 export function getDeptList(query) {
   return request({
     url: url + '/sys/dept/getDeptList',
@@ -38,6 +30,30 @@ export function getUserList() {
   return request({
     url: url + '/sys/user/getUserList',
     method: 'get'
+  })
+}
+
+export function updateUserParmeterByUserId(data) {
+  return request({
+    url: url + '/sys/user/updateUserParmeterByUserId',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteById(data) {
+  return request({
+    url: url + '/sys/user/deleteById',
+    method: 'post',
+    data
+  })
+}
+
+export function fetchRoleList(query) {
+  return request({
+    url: '/article/roleList',
+    method: 'get',
+    params: query
   })
 }
 

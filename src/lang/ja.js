@@ -179,7 +179,11 @@ export default {
     status: 'ステータス',
     createDate: '作成時間',
     loginIp: '最終ログインIP',
-    edit: '編集'
+    edit: '編集',
+    discontinuation: 'アクティブ',
+    enabling: '有効にする',
+    remarks: 'コメント',
+    password: 'パスワード'
   },
   roletable: {
     id: '番号付け',

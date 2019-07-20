@@ -1,8 +1,18 @@
 import request from '@/utils/request'
 
+var url = 'http://127.0.0.1:8888'
+
 export function login(data) {
   return request({
-    url: 'http://127.0.0.1:8888/login',
+    url: url + '/login',
+    method: 'post',
+    data
+  })
+}
+
+export function register(data) {
+  return request({
+    url: url + '/userInfo/register',
     method: 'post',
     data
   })

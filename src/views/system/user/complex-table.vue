@@ -2,56 +2,32 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 标题 -->
+      <!-- 用户名 -->
       <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('usertable.title')"
-        style="width: 200px;"
+        v-model="listQuery.userName"
+        :placeholder="$t('usertable.userName')"
+        style="width: 150px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 重要性 -->
-      <el-select
-        v-model="listQuery.importance"
-        :placeholder="$t('usertable.importance')"
-        clearable
-        style="width: 90px"
+      <!-- 用户名 -->
+      <el-input
+        v-model="listQuery.userNick"
+        :placeholder="$t('usertable.userNick')"
+        style="width: 150px;"
         class="filter-item"
-      >
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
+        @keyup.enter.native="handleFilter"
+      />
 
-      <!-- 类型 -->
-      <el-select
-        v-model="listQuery.type"
-        :placeholder="$t('usertable.type')"
-        clearable
+      <!-- 手机号 -->
+      <el-input
+        v-model="listQuery.phonenumber"
+        :placeholder="$t('usertable.phonenumber')"
+        style="width: 150px;"
         class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in calendarTypeOptions"
-          :key="item.key"
-          :label="item.display_name+'('+item.key+')'"
-          :value="item.key"
-        />
-      </el-select>
-
-      <!-- 排序 -->
-      <el-select
-        v-model="listQuery.sort"
-        style="width: 140px"
-        class="filter-item"
-        @change="handleFilter"
-      >
-        <el-option
-          v-for="item in sortOptions"
-          :key="item.key"
-          :label="item.label"
-          :value="item.key"
-        />
-      </el-select>
+        @keyup.enter.native="handleFilter"
+      />
 
       <!-- 搜索按钮 -->
       <el-button
@@ -81,12 +57,15 @@
         @click="handleDownload"
       >{{ $t('usertable.export') }}</el-button>
 
+      <!-- 刷新 -->
+      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+
       <!-- 审核人 -->
-      <el-checkbox
+      <!-- <el-checkbox
         v-model="isShow"
         class="filter-item"
         style="margin-left:15px;"
-      >{{ $t('usertable.reviewer') }}</el-checkbox>
+      >{{ $t('usertable.reviewer') }}</el-checkbox>-->
     </div>
 
     <!-- 表格 -->
@@ -100,7 +79,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column type="index" width="50" align="center" />
+      <el-table-column type="index" width="40" align="center" />
 
       <!-- 登陆帐号-->
       <el-table-column :label="$t('usertable.userName')" align="center">
@@ -108,20 +87,6 @@
           <span>{{ scope.row.userName }}</span>
         </template>
       </el-table-column>
-
-      <!-- 审核人 -->
-      <el-table-column v-if="isShow" :label="$t('usertable.userName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.userName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 用户昵称 -->
-      <!-- <el-table-column :label="$t('usertable.userNick')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.userNick }}</span>
-        </template>
-      </el-table-column>-->
 
       <el-table-column :label="$t('usertable.userNick')" align="center">
         <template slot-scope="scope">
@@ -133,7 +98,7 @@
             <p>性别：{{ scope.row.sex }}</p>
             <p>最后登陆IP{{ scope.row.loginIp }}</p>
             <p>最后登陆时间：{{ scope.row.loginDate }}</p>
-            <p>备注：{{ scope.row.remark }}</p>
+            <p>备注：{{ scope.row.remarks }}</p>
             <div slot="reference" class="name-wrapper">
               <el-tag size="medium">{{ scope.row.userNick }}</el-tag>
             </div>
@@ -144,7 +109,7 @@
       <!-- 部门 -->
       <el-table-column :label="$t('usertable.dept')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.deptId }}部</span>
+          <span>{{ scope.row.deptId }}</span>
         </template>
       </el-table-column>
 
@@ -163,16 +128,16 @@
       </el-table-column>
 
       <!-- 性别 -->
-      <el-table-column :label="$t('usertable.sex')" class-name="status-col">
+      <el-table-column :label="$t('usertable.sex')" class-name="status-col" width="70">
         <template slot-scope="{row}">
           <el-tag>{{ row.sex === '0' ? '男' : row.sex=== '1' ? '女' : '未知' }}</el-tag>
         </template>
       </el-table-column>
 
       <!-- 状态 -->
-      <el-table-column :label="$t('usertable.status')" class-name="status-col">
+      <el-table-column :label="$t('usertable.status')" class-name="status-col" width="90">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
+          <el-tag :type="row.status | statusFilter">{{ row.status==='0'?'正常':'停用' }}</el-tag>
         </template>
       </el-table-column>
 
@@ -204,26 +169,32 @@
             size="mini"
             @click="handleUpdate(row)"
           >{{ $t('usertable.edit') }}</el-button>
-          <!-- 发布 -->
+
+          <!-- 停用 -->
           <el-button
-            v-if="row.status!='published'"
+            v-if="row.status!=='1'"
+            size="mini"
+            type="warning"
+            @click="handleModifyStatus(row,'discontinuation')"
+          >{{ $t('usertable.discontinuation') }}</el-button>
+
+          <!-- 启用 -->
+          <el-button
+            v-if="row.status!=='0'"
             size="mini"
             type="success"
-            @click="handleModifyStatus(row,'published')"
-          >{{ $t('usertable.publish') }}</el-button>
-          <!-- 草稿 -->
-          <el-button
-            v-if="row.status!='draft'"
-            size="mini"
-            @click="handleModifyStatus(row,'draft')"
-          >{{ $t('usertable.draft') }}</el-button>
+            @click="handleModifyStatus(row,'enabling')"
+          >{{ $t('usertable.enabling') }}</el-button>
+
           <!-- 删除 -->
-          <el-button
-            v-if="row.status!='deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row,'deleted')"
-          >{{ $t('usertable.delete') }}</el-button>
+          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
+            <p>你确定要删除该用户吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
+            </div>
+            <el-button slot="reference" type="danger" size="mini">删除</el-button>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -238,7 +209,13 @@
 
     <!-- @pagination="getUserList" -->
     <!-- 弹出层 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" show-close>
+    <el-dialog
+      v-el-drag-dialog
+      :title="textMap[dialogStatus]"
+      :visible.sync="dialogFormVisible"
+      show-close
+    >
+      <!-- @dragDialog="handleDrag" -->
       <!-- visible.sync：的意思是如果子组件的属性有变化，父组件则同步过来 -->
       <!-- 表单 -->
       <el-form
@@ -250,68 +227,82 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 登陆帐号 -->
-        <el-form-item :label="$t('usertable.userName')" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item :label="$t('usertable.userName')" prop="userName">
+          <el-input v-model="temp.userName" />
+        </el-form-item>
+
+        <!-- 登陆密码 -->
+        <el-form-item
+          v-if="dialogStatus==='create'"
+          :label="$t('usertable.password')"
+          prop="userName"
+        >
+          <el-input v-model="temp.password" />
         </el-form-item>
 
         <!-- 用户名称 -->
-        <el-form-item :label="$t('usertable.userNick')" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item :label="$t('usertable.userNick')" prop="userNick">
+          <el-input v-model="temp.userNick" />
         </el-form-item>
 
         <!-- 部门 -->
-        <el-form-item :label="$t('usertable.dept')" prop="type">
-          <el-input v-model="temp.title" @focus="dialogPvVisible=true" />
+        <!-- <el-form-item :label="$t('usertable.dept')" prop="dept">
+          <el-input v-model="temp.deptId" @focus="dialogPvVisible=true" />
+        </el-form-item>-->
+
+        <!-- 部门 -->
+        <el-form-item :label="$t('usertable.dept')" prop="deptId">
+          <el-input v-model="temp.deptId" />
         </el-form-item>
 
         <!-- 手机 -->
-        <el-form-item :label="$t('usertable.phonenumber')" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item :label="$t('usertable.phonenumber')" prop="phonenumber">
+          <el-input v-model="temp.phonenumber" />
         </el-form-item>
 
         <!-- 邮箱 -->
-        <el-form-item :label="$t('usertable.email')" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item :label="$t('usertable.email')" prop="email">
+          <el-input v-model="temp.email" />
         </el-form-item>
 
         <!-- 性别 -->
-        <el-form-item :label="$t('usertable.sex')" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-
-        <!-- 状态 -->
-        <el-form-item :label="$t('usertable.status')" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item :label="$t('usertable.sex')" prop="sex">
+          <el-select v-model="temp.sex" placeholder="请输入性别">
+            <el-option label="男" value="0" />
+            <el-option label="女" value="1" />
+            <el-option label="未知" value="2" />
+          </el-select>
         </el-form-item>
 
         <!-- 最后一次登陆IP -->
-        <el-form-item :label="$t('usertable.loginIp')" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
+        <!-- <el-form-item :label="$t('usertable.loginIp')" prop="loginIp">
+          <el-input v-model="temp.loginIp" />
+        </el-form-item>-->
 
         <!-- 时间 -->
-        <el-form-item :label="$t('usertable.loginDate')" prop="timestamp">
+        <!-- <el-form-item :label="$t('usertable.loginDate')" prop="loginDate">
           <el-date-picker
-            v-model="temp.timestamp"
+            v-model="temp.loginDate"
             type="datetime"
             placeholder="Please pick a date"
           />
-        </el-form-item>
+        </el-form-item>-->
 
-        <!-- 用户状态 -->
+        <!-- 用户状态 （0正常 1停用）-->
         <el-form-item :label="$t('usertable.status')">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          <el-select v-model="temp.status" placeholder="请选择用户状态">
+            <el-option label="正常" value="0" />
+            <el-option label="停用" value="1" />
           </el-select>
         </el-form-item>
 
         <!-- 备注 -->
-        <el-form-item :label="$t('usertable.remark')">
+        <el-form-item :label="$t('usertable.remarks')">
           <el-input
-            v-model="temp.remark"
+            v-model="temp.remarks"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="Please input"
+            placeholder="您想说些什么。。。"
           />
         </el-form-item>
       </el-form>
@@ -327,6 +318,7 @@
       </div>
     </el-dialog>
 
+    <!-- 弹出层 -->
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -336,14 +328,20 @@
         <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
       </span>
     </el-dialog>
+
+    <remote-js src="http://pv.sohu.com/cityjson?ie=utf-8" />
   </div>
 </template>
 
 <script>
-import { /* fetchList,  fetchUserList,*/ fetchPv, createArticle, updateArticle } from '@/api/article'
+import { updateUserParmeterByUserId, deleteById, fetchPv, updateArticle } from '@/api/article'
+import { register } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+
+// 弹出层dialog拖拽工具
+import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -360,8 +358,18 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
-  directives: { waves },
+  components: {
+    Pagination,
+    'remote-js': {
+      render(createElement) {
+        return createElement('script', { attrs: { type: 'text/javascript', src: this.src }})
+      },
+      props: {
+        src: { type: String, required: true }
+      }
+    }
+  },
+  directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -377,6 +385,8 @@ export default {
   },
   data() {
     return {
+      refreshButton: 'el-icon-refresh',
+      visible: false,
       tableKey: 0,
       list: null,
       shenheren: true,
@@ -386,23 +396,27 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        importance: undefined,
-        title: undefined,
+        userName: undefined,
+        userNick: undefined,
+        phonenumber: undefined,
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        userName: '',
+        userNick: '',
+        deptId: '',
+        phonenumber: '',
+        email: '',
+        sex: '',
+        loginIp: '',
+        loginDate: '',
+        remarks: '',
+        status: '',
+        password: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -412,10 +426,21 @@ export default {
       },
       dialogPvVisible: false,
       pvData: [],
+      // 表单校验规则
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        userName: [{ required: true, message: '请输入用户名称', trigger: ['blur']
+        }, { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: ['blur'] }],
+        userNick: [{ required: true, message: '请输入用户昵称', trigger: ['blur']
+        }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: ['blur'] }],
+        deptId: [{ required: true, message: '请输入部门', trigger: ['blur'] }],
+        phonenumber: [{ required: true, message: '请输入手机号码', trigger: ['blur']
+        }, { min: 11, max: 11, message: '手机号码必须为11位', trigger: ['blur']
+        }, { pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
+        email: [{ required: true, message: '请输入邮箱地址', trigger: ['blur']
+        }, { type: 'email', message: '邮箱格式出错', trigger: ['blur'] }],
+        sex: [{ min: 1, max: 2, message: '字数范围不对', trigger: ['blur'] }],
+        loginDate: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }],
+        status: [{ min: 1, max: 2, message: '状态数字不对', trigger: ['blur'] }]
       },
       downloadLoading: false
     }
@@ -432,11 +457,35 @@ export default {
     }
   },
   created() {
-    this.initUserInfo()
+    // this.initUserInfo()
   },
   methods: {
+    // v-el-drag-dialog onDrag callback function
+    // handleDrag() {
+    //   this.$refs.select.blur()
+    // },
+    refreshUserList() {
+      this.refreshButton = 'el-icon-loading'
+      this.initUserInfo()
+      setTimeout(() => {
+        this.refreshButton = 'el-icon-refresh'
+        this.$message({
+          message: '刷新完成',
+          type: 'success'
+        })
+      }, 1.5 * 1000)
+    },
     // 初始化用户信息
     initUserInfo() {
+      this.$store.dispatch('user/getUserList')
+        .then(() => {
+          console.log('更新用户列表')
+          console.log(this.list.length)
+          this.total = this.list.length
+        })
+        .catch(() => {
+          console.log('失败')
+        })
     },
     isShowclase() {
       this.isShow = !this.isShow
@@ -445,11 +494,38 @@ export default {
       this.listQuery.page = 1
     },
     handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
+      if (status === 'discontinuation') {
+        // 停用
+        row.status = '1'
+        console.log(row)
+        updateUserParmeterByUserId(row).then(response => {
+          this.$message({
+            message: '停用',
+            type: 'success'
+          })
+        })
+      } else if (status === 'enabling') {
+        // 启用
+        row.status = '0'
+        updateUserParmeterByUserId(row).then(response => {
+          this.$message({
+            message: '启用',
+            type: 'success'
+          })
+        })
+      } else if (status === 'deleted') {
+        // 删除
+        row.visible = false
+        deleteById(row).then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          setTimeout(() => {
+            this.initUserInfo()
+          }, 3 * 1000)
+        })
+      }
     },
     sortChange(data) {
       const { prop, order } = data
@@ -469,12 +545,17 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        userName: '',
+        userNick: '',
+        deptId: '',
+        phonenumber: '',
+        email: '',
+        sex: '',
+        loginIp: '',
+        loginDate: '',
+        remarks: '',
+        status: '',
+        password: ''
       }
     },
     // 添加
@@ -489,30 +570,33 @@ export default {
 
     createData() {
       this.$refs['dataForm'].validate((valid) => {
+        // eslint-disable-next-line no-undef
+        var ip = returnCitySN['cip']
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
+          this.temp.loginIp = ip
+          // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+
+          register(this.temp).then(response => {
+            console.log(response)
+            // this.list.unshift(this.temp)  //静态加入页面中，但并没有加入到数据库
+            this.dialogFormVisible = false // 关闭弹出层
             this.$notify({
               title: '成功',
               message: '创建成功',
               type: 'success',
               duration: 2000
             })
+            setTimeout(() => {
+              this.initUserInfo()
+            }, 3 * 1000)
           })
         }
       })
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -554,11 +638,12 @@ export default {
         this.dialogPvVisible = true
       })
     },
+    // 导出excel
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['用户名', '昵称', '部门', '性别', '手机号码', '状态', 'email', '登陆Ip', '备注']
+        const filterVal = ['userName', 'userNick', 'deptId', 'sex', 'phonenumber', 'status', 'email', 'loginIp', 'remarks']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
@@ -580,3 +665,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-dialog {
+  min-width: 530px;
+}
+</style>

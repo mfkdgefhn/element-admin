@@ -179,7 +179,11 @@ export default {
     status: '用户状态',
     createDate: '创建时间',
     loginIp: '最后登录IP',
-    edit: '操作'
+    edit: '操作',
+    discontinuation: '停用',
+    enabling: '启用',
+    remarks: '备注',
+    password: '密码'
   },
   roletable: {
     id: '序号',

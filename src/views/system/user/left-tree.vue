@@ -2,7 +2,7 @@
   <div>
     <el-row class="left-tree">
       <el-col :span="span" class="tree-margin">
-        <el-input v-model="filterText" placeholder="过滤" class="tree-input" />
+        <el-input v-model="filterText" placeholder="过滤" class="tree-input" type="width:80%" />
         <el-tree
           ref="deptList"
           :check-strictly="checkStrictly"
@@ -26,7 +26,7 @@
 
 <script>
 
-import { fetchTreeList, getDeptList, getUserByDeptIds } from '@/api/article'
+import { getDeptList, getUserByDeptIds } from '@/api/article'
 // import { getDeptList } from '@/api/system'
 
 export default {
@@ -53,8 +53,6 @@ export default {
     }
   },
   created() {
-    // this.getList()
-    // this.getTreeList()
     this.initDeptList()
   },
   methods: {
@@ -62,19 +60,10 @@ export default {
     initDeptList() {
       this.listLoading = true
       getDeptList(this.listQuery).then(response => {
-        // console.log(response.data[0])
         this.routesData = response.data// [0].children
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
-      })
-    },
-    getTreeList() {
-      // this.listLoading = true
-      fetchTreeList(this.listQuery).then(response => {
-        console.log(response.data.items)
-        // this.routesData = response.data.items
-        // Just to simulate the time of the request
       })
     },
     // 点击树节点获取用户列表
@@ -135,7 +124,6 @@ export default {
       console.log(this.$refs.deptList.getCheckedKeys())
     },
     setCheckedNodes() {
-      // console.log('进来了')
       this.$refs.deptList.setCheckedNodes([{
         id: 5,
         label: '二级 2-1'
@@ -146,7 +134,6 @@ export default {
     },
     setCheckedKeys() {
       var test = this.$refs.deptList.getCheckedKeys()
-      // console.log(test)
       test.push(1)
     },
     resetChecked() {

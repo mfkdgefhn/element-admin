@@ -179,7 +179,11 @@ export default {
     status: 'Status',
     createDate: 'CreateDate',
     loginIp: 'loginIp',
-    edit: 'Edit'
+    edit: 'Edit',
+    discontinuation: 'Discontinuation',
+    enabling: 'Enabling',
+    remarks: 'Remarks',
+    password: 'Password'
   },
   roletable: {
     roleId: 'RoleId',

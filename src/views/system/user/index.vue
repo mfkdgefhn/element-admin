@@ -8,12 +8,6 @@
       </el-col>
 
       <!-- 中间折叠 -->
-      <!-- <div class="expand">
-        <i v-if="expand" class="el-icon-arrow-left" size="16" @click="changeExpand" />
-        <i v-else class="el-icon-arrow-right" size="16" @click="changeExpand" />
-      </div>-->
-
-      <!-- 中间折叠 -->
       <div class="expand">
         <i :class="expandIcon" size="16" @click="changeExpand" />
       </div>
@@ -31,8 +25,6 @@
 <script>
 import leftTree from './left-tree'
 import complexTable from './complex-table'
-
-// import { fetchTreeList } from '@/api/article'
 
 export default {
   components: { /* splitPane , */ leftTree, complexTable },
