@@ -205,6 +205,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
+      @pagination="getUserList"
     />
 
     <!-- @pagination="getUserList" -->
@@ -458,8 +459,23 @@ export default {
   },
   created() {
     // this.initUserInfo()
+
+    // this.getList()
   },
   methods: {
+
+    getList() {
+      this.listLoading = true
+      // fetchList(this.listQuery).then(response => {
+      //   this.list = response.data.items
+      //   this.total = response.data.total
+
+      //   // Just to simulate the time of the request
+      //   setTimeout(() => {
+      //     this.listLoading = false
+      //   }, 1.5 * 1000)
+      // })
+    },
     // v-el-drag-dialog onDrag callback function
     // handleDrag() {
     //   this.$refs.select.blur()

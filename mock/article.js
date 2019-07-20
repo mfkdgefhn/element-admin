@@ -32,7 +32,7 @@ export default [
     url: '/article/list',
     type: 'get',
     response: config => {
-      // console.log(config)
+      console.log(config)
       const { importance, type, title, page = 1, limit = 20, sort } = config.query
 
       let mockList = List.filter(item => {
