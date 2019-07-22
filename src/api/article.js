@@ -26,12 +26,42 @@ export function getUserByDeptIds(deptIds) {
   })
 }
 
-export function getUserList() {
+export function getUserList(data) {
   return request({
     url: url + '/sys/user/getUserList',
-    method: 'get'
+    method: 'get',
+    params: data
   })
+  // let params = ''
+  // if (data) {
+  //   params = '/sys/user/getUserList?page=' + data.page + '&limit=' + data.limit
+  // } else {
+  //   params = '/sys/user/getUserList'
+  // }
+  // console.log('page' + data)
+  // console.log(params)
+
+  // return request({
+  //   url: url + params,
+  //   method: 'get'
+  // })
 }
+
+// export function getUserList(data) {
+//   let params = ''
+//   if (data) {
+//     params = '/sys/user/getUserList?page=' + data.page + '&limit=' + data.limit
+//   } else {
+//     params = '/sys/user/getUserList'
+//   }
+//   console.log('page' + data)
+//   console.log(params)
+
+//   return request({
+//     url: url + params,
+//     method: 'get'
+//   })
+// }
 
 export function updateUserParmeterByUserId(data) {
   return request({

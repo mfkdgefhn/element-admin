@@ -11,7 +11,7 @@
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 用户名 -->
+      <!-- 昵称 -->
       <el-input
         v-model="listQuery.userNick"
         :placeholder="$t('usertable.userNick')"
@@ -88,7 +88,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('usertable.userNick')" align="center">
+      <el-table-column :label="$t('usertable.userNick')" align="center" width="100">
         <template slot-scope="scope">
           <el-popover trigger="focus" placement="top">
             <p>用户名：{{ scope.row.userName }}</p>
@@ -201,14 +201,13 @@
 
     <!-- 页码 -->
     <pagination
-      v-show="total>0"
-      :total="total"
+      v-show="getUserCount>0"
+      :total="getUserCount"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getUserList"
+      @pagination="initUserInfo()"
     />
 
-    <!-- @pagination="getUserList" -->
     <!-- 弹出层 -->
     <el-dialog
       v-el-drag-dialog
@@ -392,11 +391,10 @@ export default {
       list: null,
       shenheren: true,
       isShow: false,
-      total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
+        limit: 8,
         userName: undefined,
         userNick: undefined,
         phonenumber: undefined,
@@ -429,16 +427,11 @@ export default {
       pvData: [],
       // 表单校验规则
       rules: {
-        userName: [{ required: true, message: '请输入用户名称', trigger: ['blur']
-        }, { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: ['blur'] }],
-        userNick: [{ required: true, message: '请输入用户昵称', trigger: ['blur']
-        }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: ['blur'] }],
+        userName: [{ required: true, message: '请输入用户名称', trigger: ['blur'] }, { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: ['blur'] }],
+        userNick: [{ required: true, message: '请输入用户昵称', trigger: ['blur'] }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: ['blur'] }],
         deptId: [{ required: true, message: '请输入部门', trigger: ['blur'] }],
-        phonenumber: [{ required: true, message: '请输入手机号码', trigger: ['blur']
-        }, { min: 11, max: 11, message: '手机号码必须为11位', trigger: ['blur']
-        }, { pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
-        email: [{ required: true, message: '请输入邮箱地址', trigger: ['blur']
-        }, { type: 'email', message: '邮箱格式出错', trigger: ['blur'] }],
+        phonenumber: [{ required: true, message: '请输入手机号码', trigger: ['blur'] }, { min: 11, max: 11, message: '手机号码必须为11位', trigger: ['blur'] }, { pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
+        email: [{ required: true, message: '请输入邮箱地址', trigger: ['blur'] }, { type: 'email', message: '邮箱格式出错', trigger: ['blur'] }],
         sex: [{ min: 1, max: 2, message: '字数范围不对', trigger: ['blur'] }],
         loginDate: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }],
         status: [{ min: 1, max: 2, message: '状态数字不对', trigger: ['blur'] }]
@@ -449,6 +442,9 @@ export default {
   computed: {
     getUserList() {
       return this.$store.state.user.userList
+    },
+    getUserCount() {
+      return this.$store.state.user.total
     }
   },
   watch: {
@@ -458,9 +454,6 @@ export default {
     }
   },
   created() {
-    // this.initUserInfo()
-
-    // this.getList()
   },
   methods: {
 
@@ -469,7 +462,6 @@ export default {
       // fetchList(this.listQuery).then(response => {
       //   this.list = response.data.items
       //   this.total = response.data.total
-
       //   // Just to simulate the time of the request
       //   setTimeout(() => {
       //     this.listLoading = false
@@ -482,6 +474,11 @@ export default {
     // },
     refreshUserList() {
       this.refreshButton = 'el-icon-loading'
+      this.listQuery.page = 1
+      this.listQuery.limit = 8
+      this.listQuery.userName = ''
+      this.listQuery.userNick = ''
+      this.listQuery.phonenumber = ''
       this.initUserInfo()
       setTimeout(() => {
         this.refreshButton = 'el-icon-refresh'
@@ -493,11 +490,8 @@ export default {
     },
     // 初始化用户信息
     initUserInfo() {
-      this.$store.dispatch('user/getUserList')
+      this.$store.dispatch('user/getUserList', this.listQuery)
         .then(() => {
-          console.log('更新用户列表')
-          console.log(this.list.length)
-          this.total = this.list.length
         })
         .catch(() => {
           console.log('失败')
@@ -508,6 +502,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      this.initUserInfo()
     },
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
@@ -591,7 +586,6 @@ export default {
         if (valid) {
           this.temp.loginIp = ip
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-
           register(this.temp).then(response => {
             console.log(response)
             // this.list.unshift(this.temp)  //静态加入页面中，但并没有加入到数据库

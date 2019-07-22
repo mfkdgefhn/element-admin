@@ -9,7 +9,8 @@ const state = {
   avatar: '',
   introduction: '',
   roles: [],
-  userList: []
+  userList: [],
+  total: 0
 }
 
 const mutations = {
@@ -30,6 +31,9 @@ const mutations = {
   },
   SET_USERLIST: (state, userList) => {
     state.userList = userList
+  },
+  SET_USERCOUNT: (state, total) => {
+    state.total = total
   }
 }
 
@@ -39,10 +43,22 @@ const actions = {
     commit('SET_USERLIST', data)
   },
 
-  getUserList({ commit }) {
+  getUserList({ commit }, data) {
+    if (!data) {
+      data = {
+        page: 1,
+        limit: 8
+      }
+    }
+    // console.log(data)
     return new Promise((resolve, reject) => {
-      getUserList().then(response => {
-        commit('SET_USERLIST', response.data)
+      getUserList(data).then(response => {
+        if (!response.data.records) {
+          commit('SET_USERLIST', response.data)
+        } else {
+          commit('SET_USERLIST', response.data.records)
+          commit('SET_USERCOUNT', response.data.total)
+        }
         resolve()
       }).catch(error => {
         reject(error)
