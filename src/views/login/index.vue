@@ -92,6 +92,8 @@
       {{ $t('login.thirdpartyTips') }}
       <social-sign />
     </el-dialog>
+
+    <remote-js src="http://pv.sohu.com/cityjson?ie=utf-8" />
   </div>
 </template>
 
@@ -102,7 +104,18 @@ import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { LangSelect, SocialSign },
+  components: {
+    LangSelect,
+    SocialSign,
+    'remote-js': {
+      render(createElement) {
+        return createElement('script', { attrs: { type: 'text/javascript', src: this.src }})
+      },
+      props: {
+        src: { type: String, required: true }
+      }
+    }
+  },
   data() {
     // const validateUsername = (rule, value, callback) => {
     //   if (!validUsername(value)) {
@@ -121,7 +134,8 @@ export default {
     return {
       loginForm: {
         userName: 'admin',
-        password: '123456'
+        password: '123456',
+        loginIp: ''
       },
       loginRules: {
         userName: [{ required: true, trigger: 'blur', message: '请输入用户名' }], // validator: validateUsername
@@ -188,6 +202,8 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          // eslint-disable-next-line no-undef
+          this.loginForm.loginIp = returnCitySN['cip']
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
