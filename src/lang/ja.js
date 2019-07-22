@@ -91,7 +91,8 @@ export default {
     password: 'パスワード',
     any: 'password',
     thirdparty: '外部IDでログイン',
-    thirdpartyTips: 'ローカル環境ではログインできません。実装が必要です。'
+    thirdpartyTips: 'ローカル環境ではログインできません。実装が必要です。',
+    Successful_language_switching: '言語切り替え成功'
   },
   documentation: {
     documentation: 'ドキュメント',
