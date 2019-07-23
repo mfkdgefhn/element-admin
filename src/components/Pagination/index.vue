@@ -22,7 +22,8 @@ export default {
   props: {
     total: {
       required: true,
-      type: Number
+      type: Number,
+      default: 0
     },
     page: {
       type: Number,

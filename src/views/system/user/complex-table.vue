@@ -59,13 +59,6 @@
 
       <!-- 刷新 -->
       <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
-
-      <!-- 审核人 -->
-      <!-- <el-checkbox
-        v-model="isShow"
-        class="filter-item"
-        style="margin-left:15px;"
-      >{{ $t('usertable.reviewer') }}</el-checkbox>-->
     </div>
 
     <!-- 表格 -->
@@ -246,11 +239,6 @@
         </el-form-item>
 
         <!-- 部门 -->
-        <!-- <el-form-item :label="$t('usertable.dept')" prop="dept">
-          <el-input v-model="temp.deptId" @focus="dialogPvVisible=true" />
-        </el-form-item>-->
-
-        <!-- 部门 -->
         <el-form-item :label="$t('usertable.dept')" prop="deptId">
           <el-input v-model="temp.deptId" />
         </el-form-item>
@@ -273,20 +261,6 @@
             <el-option label="未知" value="2" />
           </el-select>
         </el-form-item>
-
-        <!-- 最后一次登陆IP -->
-        <!-- <el-form-item :label="$t('usertable.loginIp')" prop="loginIp">
-          <el-input v-model="temp.loginIp" />
-        </el-form-item>-->
-
-        <!-- 时间 -->
-        <!-- <el-form-item :label="$t('usertable.loginDate')" prop="loginDate">
-          <el-date-picker
-            v-model="temp.loginDate"
-            type="datetime"
-            placeholder="Please pick a date"
-          />
-        </el-form-item>-->
 
         <!-- 用户状态 （0正常 1停用）-->
         <el-form-item :label="$t('usertable.status')">
@@ -334,7 +308,7 @@
 </template>
 
 <script>
-import { updateUserParmeterByUserId, deleteById, fetchPv, updateArticle } from '@/api/article'
+import { updateUserByUserId, deleteUserById, fetchPv, updateArticle } from '@/api/article'
 import { register } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -459,19 +433,7 @@ export default {
 
     getList() {
       this.listLoading = true
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
     },
-    // v-el-drag-dialog onDrag callback function
-    // handleDrag() {
-    //   this.$refs.select.blur()
-    // },
     refreshUserList() {
       this.refreshButton = 'el-icon-loading'
       this.listQuery.page = 1
@@ -509,7 +471,7 @@ export default {
         // 停用
         row.status = '1'
         console.log(row)
-        updateUserParmeterByUserId(row).then(response => {
+        updateUserByUserId(row).then(response => {
           this.$message({
             message: '停用',
             type: 'success'
@@ -518,7 +480,7 @@ export default {
       } else if (status === 'enabling') {
         // 启用
         row.status = '0'
-        updateUserParmeterByUserId(row).then(response => {
+        updateUserByUserId(row).then(response => {
           this.$message({
             message: '启用',
             type: 'success'
@@ -527,7 +489,7 @@ export default {
       } else if (status === 'deleted') {
         // 删除
         row.visible = false
-        deleteById(row).then(response => {
+        deleteUserById(row).then(response => {
           this.$message({
             message: '删除成功',
             type: 'success'

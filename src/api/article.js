@@ -2,6 +2,7 @@ import request from '@/utils/request'
 
 var url = 'http://localhost:8888'
 
+// 获取部门列表
 export function getDeptList(query) {
   return request({
     url: url + '/sys/dept/getDeptList',
@@ -10,6 +11,7 @@ export function getDeptList(query) {
   })
 }
 
+// 根据部门获取用户列表
 export function getUserByDeptId(deptId) {
   return request({
     url: url + '/sys/user/getUserByDeptId',
@@ -18,6 +20,7 @@ export function getUserByDeptId(deptId) {
   })
 }
 
+// 根据多部门获取用户列表
 export function getUserByDeptIds(deptIds) {
   return request({
     url: url + '/sys/user/getUserByDeptIds',
@@ -26,64 +29,73 @@ export function getUserByDeptIds(deptIds) {
   })
 }
 
+// 获取用户列表
 export function getUserList(data) {
   return request({
     url: url + '/sys/user/getUserList',
     method: 'get',
     params: data
   })
-  // let params = ''
-  // if (data) {
-  //   params = '/sys/user/getUserList?page=' + data.page + '&limit=' + data.limit
-  // } else {
-  //   params = '/sys/user/getUserList'
-  // }
-  // console.log('page' + data)
-  // console.log(params)
-
-  // return request({
-  //   url: url + params,
-  //   method: 'get'
-  // })
 }
 
-// export function getUserList(data) {
-//   let params = ''
-//   if (data) {
-//     params = '/sys/user/getUserList?page=' + data.page + '&limit=' + data.limit
-//   } else {
-//     params = '/sys/user/getUserList'
-//   }
-//   console.log('page' + data)
-//   console.log(params)
-
-//   return request({
-//     url: url + params,
-//     method: 'get'
-//   })
-// }
-
-export function updateUserParmeterByUserId(data) {
+// 修改用户参数
+export function updateUserByUserId(data) {
   return request({
-    url: url + '/sys/user/updateUserParmeterByUserId',
+    url: url + '/sys/user/updateUserByUserId',
     method: 'post',
     data
   })
 }
 
-export function deleteById(data) {
+// 删除用户
+export function deleteUserById(data) {
   return request({
-    url: url + '/sys/user/deleteById',
+    url: url + '/sys/user/deleteUserById',
     method: 'post',
     data
   })
 }
 
+// 获取角色列表
 export function fetchRoleList(query) {
   return request({
-    url: '/article/roleList',
+    url: url + '/sys/role/getRoleList',
     method: 'get',
     params: query
+  })
+}
+
+// 修改角色参数
+export function updateRoleByRoleId(data) {
+  return request({
+    url: url + '/sys/role/updateRoleByRoleId',
+    method: 'post',
+    data
+  })
+}
+
+// 删除角色
+export function deleteByRoleId(data) {
+  return request({
+    url: url + '/sys/role/deleteByRoleId',
+    method: 'post',
+    data
+  })
+}
+
+export function createArticle(data) {
+  return request({
+    url: url + '/sys/role/addRole',
+    method: 'post',
+    data
+  })
+}
+
+export function updateArticle(data) {
+  return request({
+    url: url + '/sys/role/updateRoleByRoleId',
+    method: 'post',
+    data
   })
 }
 
@@ -127,18 +139,3 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
-  return request({
-    url: '/article/create',
-    method: 'post',
-    data
-  })
-}
-
-export function updateArticle(data) {
-  return request({
-    url: '/article/update',
-    method: 'post',
-    data
-  })
-}
