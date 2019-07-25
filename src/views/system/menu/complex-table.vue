@@ -2,19 +2,19 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 标题 -->
+      <!-- 菜单名称 -->
       <el-input
-        v-model="listQuery.roleName"
-        :placeholder="$t('roletable.roleName')"
+        v-model="listQuery.menuName"
+        :placeholder="$t('menutable.menuName')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 权限字符 -->
+      <!-- 菜单状态 -->
       <el-input
-        v-model="listQuery.roleKey"
-        :placeholder="$t('roletable.roleKey')"
+        v-model="listQuery.visible"
+        :placeholder="$t('menutable.visible')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -27,7 +27,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('roletable.search') }}</el-button>
+      >{{ $t('menutable.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -36,7 +36,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('roletable.add') }}</el-button>
+      >{{ $t('menutable.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -46,7 +46,7 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('roletable.export') }}</el-button>
+      >{{ $t('menutable.export') }}</el-button>
 
       <!-- 刷新 -->
       <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
@@ -66,56 +66,60 @@
       <!-- 序号 -->
       <el-table-column type="index" width="40" align="center" />
 
-      <!-- 显示顺序 -->
-      <!-- <el-table-column
-        :sortable="true"
-        :label="$t('roletable.roleSort')"
-        align="center"
-        :sort-method="sortByDate"
-      >
+      <!-- 角色名称 -->
+      <el-table-column :label="$t('menutable.menuName')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.roleSort }}</span>
+          <span>{{ scope.row.menuName }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 排序 -->
+      <el-table-column :label="$t('menutable.orderNum')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.orderNum }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 请求地址 -->
+      <el-table-column :label="$t('menutable.url')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.url }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 菜单类型 -->
+      <el-table-column :label="$t('menutable.menuType')" align="center">
+        <template slot-scope="{row}">
+          <el-tag
+            effect="dark"
+            :type="row.menuType | statusFilter"
+          >{{ row.menuType==='0' ?'正常': '停用' }}</el-tag>
+        </template>
+      </el-table-column>
+
+      <!-- 可见 -->
+      <el-table-column :label="$t('menutable.visible')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.visible }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 权限标识 -->
+      <el-table-column :label="$t('menutable.perms')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.perms }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- <el-table-column :label="$t('menutable.perms')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.perms | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>-->
 
-      <!-- 角色名称 -->
-      <el-table-column :label="$t('roletable.roleName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.roleName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 权限字符 -->
-      <el-table-column :label="$t('roletable.roleKey')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.roleKey }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 数据范围 -->
-      <el-table-column :label="$t('roletable.dataScope')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
-        </template>
-      </el-table-column>
-      <!-- {{ scope.row.dataScope }} -->
-      <!-- 角色状态 -->
-      <el-table-column :label="$t('roletable.status')" align="center">
-        <template slot-scope="{row}">
-          <el-tag effect="dark" :type="row.status | statusFilter">{{ row.status==='0' ?'正常': '停用' }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <!-- 创建时间 -->
-      <el-table-column :label="$t('roletable.createTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
       <!-- 操作 -->
       <el-table-column
-        :label="$t('roletable.actions')"
+        :label="$t('menutable.edit')"
         align="center"
         width="250"
         class-name="small-padding fixed-width"
@@ -124,23 +128,8 @@
           <!-- 操作/编辑 -->
           <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
 
-          <!-- 数据权限/分配用户 -->
-          <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
-            <svg-icon icon-class="adduser" />
-          </el-button>
-
-          <!-- 停用 -->
+          <!-- 新增 -->
           <el-button
-            v-if="row.status!=='1'"
-            circle
-            type="warning"
-            icon="el-icon-star-off"
-            @click="handleModifyStatus(row,'discontinuation')"
-          />
-
-          <!-- 启用 -->
-          <el-button
-            v-if="row.status!=='0'"
             circle
             type="danger"
             icon="el-icon-star-off"
@@ -166,7 +155,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getRoleList"
+      @pagination="getMenuList"
     />
 
     <!-- 弹出层 -->
@@ -182,70 +171,69 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 角色ID -->
-        <el-form-item :label="$t('roletable.roleId')">
-          <el-input v-model="temp.roleId" disabled placeholder="系统默认生成" />
+        <el-form-item :label="$t('menutable.menuId')">
+          <el-input v-model="temp.menuId" disabled placeholder="系统默认生成" />
         </el-form-item>
 
         <!-- 角色名称 -->
-        <el-form-item :label="$t('roletable.roleName')" prop="roleName">
-          <el-input v-model="temp.roleName" />
+        <el-form-item :label="$t('menutable.menuName')" prop="roleName">
+          <el-input v-model="temp.menuName" />
         </el-form-item>
 
         <!-- 角色权限字符串 -->
-        <el-form-item :label="$t('roletable.roleKey')" prop="roleKey">
+        <!-- <el-form-item :label="$t('menutable.roleKey')" prop="roleKey">
           <el-input v-model="temp.roleKey" />
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 显示顺序 -->
-        <el-form-item :label="$t('roletable.roleSort')" prop="roleSort">
+        <!-- <el-form-item :label="$t('menutable.roleSort')" prop="roleSort">
           <el-input v-model.number="temp.roleSort" />
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 数据范围 -->
-        <el-form-item :label="$t('roletable.dataScope')" prop="dataScope">
+        <!-- <el-form-item :label="$t('menutable.dataScope')" prop="dataScope">
           <el-select v-model="temp.dataScope" placeholder="请选择数据范围">
             <el-option v-for="i in scopeAuthority" :key="i.key" :label="i.value" :value="i.key" />
           </el-select>
-          <!-- <el-input v-model="temp.dataScope" /> -->
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 状态 -->
-        <el-form-item :label="$t('roletable.status')">
+        <!-- <el-form-item :label="$t('menutable.status')">
           <el-select v-model="temp.status" placeholder="请选择用户状态">
             <el-option label="正常" value="0" />
             <el-option label="停用" value="1" />
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 创建时间 -->
-        <el-form-item :label="$t('roletable.createTime')" prop="date">
+        <!-- <el-form-item :label="$t('menutable.createTime')" prop="date">
           <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 修改时间 -->
-        <el-form-item :label="$t('roletable.updateTime')" prop="date">
+        <!-- <el-form-item :label="$t('menutable.updateTime')" prop="date">
           <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 角色说明 -->
-        <el-form-item :label="$t('roletable.remark')">
+        <!-- <el-form-item :label="$t('menutable.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
             placeholder="该角色很懒，未写备注信息..."
           />
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
         <!-- 确定 -->
-        <el-button
+        <!-- <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('roletable.confirm') }}</el-button>
+        >{{ $t('menutable.confirm') }}</el-button>-->
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('roletable.cancel') }}</el-button>
+        <!-- <el-button @click="dialogFormVisible = false">{{ $t('menutable.cancel') }}</el-button> -->
       </div>
     </el-dialog>
 
@@ -253,7 +241,7 @@
     <el-dialog
       v-el-drag-dialog
       :visible.sync="dialogPvVisible"
-      :title="$t('roletable.editRole')"
+      :title="$t('menutable.editMenu')"
       center
       width="80%"
       append-to-body
@@ -266,7 +254,7 @@
 </template>
 
 <script>
-import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, updateRoleByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -327,21 +315,33 @@ export default {
         title: undefined,
         type: undefined,
         sort: '+id',
-        roleName: undefined,
-        roleKey: undefined
+        menuName: undefined,
+        parentId: undefined,
+        menuId: undefined,
+        orderNum: undefined,
+        url: undefined,
+        target: undefined,
+        visible: undefined,
+        menuType: undefined,
+        perms: undefined,
+        icon: undefined,
+        remark: undefined
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       temp: {
         id: undefined,
-        roleId: '',
-        remark: '',
-        roleName: '',
-        roleKey: '',
-        roleSort: '',
-        dataScope: '',
-        status: '0'
+        menuId: '',
+        menuName: '',
+        menuType: '',
+        parentId: '',
+        orderNum: '',
+        url: '',
+        target: '',
+        visible: '',
+        perms: '',
+        icon: '',
+        remark: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -360,17 +360,9 @@ export default {
     }
   },
   created() {
-    // this.getList()
-    // this.getUserList()
-    this.getRoleList()
+    this.getMenuList()
   },
   methods: {
-    // 排序方法
-    // sortByDate(obj1, obj2) {
-    //   const val1 = obj1.deadline
-    //   const val2 = obj2.deadline
-    //   return val1 - val2
-    // },
     // 刷新按钮
     async refreshRoleList() {
       this.refreshButton = 'el-icon-loading'
@@ -378,7 +370,7 @@ export default {
       this.listQuery.limit = 8
       this.listQuery.roleName = ''
       this.listQuery.roleKey = ''
-      await this.getRoleList()
+      await this.getMenuList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
         message: '刷新完成',
@@ -386,9 +378,9 @@ export default {
       })
     },
     // 获取角色列表
-    getRoleList() {
+    getMenuList() {
       this.listLoading = true
-      fetchRoleList(this.listQuery).then(response => {
+      fetchMenuList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         // Just to simulate the time of the request
@@ -400,7 +392,7 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       // this.getList()
-      this.getRoleList()
+      this.getMenuList()
     },
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
@@ -434,7 +426,7 @@ export default {
             type: 'success'
           })
           setTimeout(() => {
-            this.getRoleList()
+            this.getMenuList()
           }, 3 * 1000)
         })
       }
@@ -483,7 +475,7 @@ export default {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
-            this.getRoleList()
+            this.getMenuList()
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -509,7 +501,7 @@ export default {
           tempData.updateTime = new Date()
           updateArticle(tempData).then(() => {
             this.dialogFormVisible = false
-            this.getRoleList()
+            this.getMenuList()
             this.$notify({
               title: '成功',
               message: '更新成功',

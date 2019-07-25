@@ -83,6 +83,15 @@ export function deleteByRoleId(data) {
   })
 }
 
+// 获取菜单列表
+export function fetchMenuList(query) {
+  return request({
+    url: url + '/sys/menu/getMenuList',
+    method: 'get',
+    params: query
+  })
+}
+
 export function createArticle(data) {
   return request({
     url: url + '/sys/role/addRole',
