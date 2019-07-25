@@ -11,7 +11,7 @@
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 权限 -->
+      <!-- 权限字符 -->
       <el-input
         v-model="listQuery.roleKey"
         :placeholder="$t('roletable.roleKey')"
@@ -66,10 +66,15 @@
       <!-- 序号 -->
       <el-table-column type="index" width="40" align="center" />
 
-      <!-- 角色编号 -->
-      <!-- <el-table-column :label="$t('roletable.roleId')" align="center">
+      <!-- 显示顺序 -->
+      <!-- <el-table-column
+        :sortable="true"
+        :label="$t('roletable.roleSort')"
+        align="center"
+        :sort-method="sortByDate"
+      >
         <template slot-scope="scope">
-          <span>{{ scope.row.roleId }}</span>
+          <span>{{ scope.row.roleSort }}</span>
         </template>
       </el-table-column>-->
 
@@ -97,7 +102,7 @@
       <!-- 角色状态 -->
       <el-table-column :label="$t('roletable.status')" align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">{{ row.status==='0' ?'正常': '停用' }}</el-tag>
+          <el-tag effect="dark" :type="row.status | statusFilter">{{ row.status==='0' ?'正常': '停用' }}</el-tag>
         </template>
       </el-table-column>
 
@@ -178,7 +183,7 @@
       >
         <!-- 角色ID -->
         <el-form-item :label="$t('roletable.roleId')">
-          <el-input v-model="temp.roleId" disabled />
+          <el-input v-model="temp.roleId" disabled placeholder="系统默认生成" />
         </el-form-item>
 
         <!-- 角色名称 -->
@@ -193,7 +198,7 @@
 
         <!-- 显示顺序 -->
         <el-form-item :label="$t('roletable.roleSort')" prop="roleSort">
-          <el-input v-model="temp.roleSort" />
+          <el-input v-model.number="temp.roleSort" />
         </el-form-item>
 
         <!-- 数据范围 -->
@@ -214,22 +219,12 @@
 
         <!-- 创建时间 -->
         <el-form-item :label="$t('roletable.createTime')" prop="date">
-          <el-date-picker
-            v-model="temp.createTime"
-            disabled
-            type="datetime"
-            placeholder="Please pick a date"
-          />
+          <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
 
         <!-- 修改时间 -->
         <el-form-item :label="$t('roletable.updateTime')" prop="date">
-          <el-date-picker
-            v-model="temp.updateTime"
-            disabled
-            type="datetime"
-            placeholder="Please pick a date"
-          />
+          <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
 
         <!-- 角色说明 -->
@@ -238,7 +233,7 @@
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="Please input"
+            placeholder="该角色很懒，未写备注信息..."
           />
         </el-form-item>
       </el-form>
@@ -260,28 +255,12 @@
       :visible.sync="dialogPvVisible"
       :title="$t('roletable.editRole')"
       center
+      width="80%"
       append-to-body
       custom-class="dialog-dietRole"
       :close-on-click-modal="closeOnClickModal"
     >
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-card />
-        </el-col>
-        <el-col :span="8">
-          <el-card />
-        </el-col>
-        <el-col :span="8">
-          <el-card />
-        </el-col>
-      </el-row>
-
-      <div slot="footer" class="dialog-footer">
-        <!-- 确定 -->
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('roletable.confirm') }}</el-button>
-        <!-- 取消 -->
-        <el-button @click="dialogPvVisible = false">{{ $t('roletable.cancel') }}</el-button>
-      </div>
+      <role-to-permission :temp="temp" />
     </el-dialog>
   </div>
 </template>
@@ -291,6 +270,8 @@ import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createArtic
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { checkMaxVal } from '@/utils/validator'
+import RoleToPermission from './roleToPermission'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -310,14 +291,14 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, RoleToPermission },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        0: 'success',
+        1: 'info',
+        2: 'danger'
       }
       return statusMap[status]
     },
@@ -373,7 +354,8 @@ export default {
       rules: {
         roleName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
         roleKey: [{ required: true, message: '请输入权限字符', trigger: ['blur'] }],
-        date: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }]
+        date: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }],
+        roleSort: [{ validator: checkMaxVal, trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -384,21 +366,25 @@ export default {
     this.getRoleList()
   },
   methods: {
+    // 排序方法
+    // sortByDate(obj1, obj2) {
+    //   const val1 = obj1.deadline
+    //   const val2 = obj2.deadline
+    //   return val1 - val2
+    // },
     // 刷新按钮
-    refreshRoleList() {
+    async refreshRoleList() {
       this.refreshButton = 'el-icon-loading'
       this.listQuery.page = 1
       this.listQuery.limit = 8
       this.listQuery.roleName = ''
       this.listQuery.roleKey = ''
-      this.getRoleList()
-      setTimeout(() => {
-        this.refreshButton = 'el-icon-refresh'
-        this.$message({
-          message: '刷新完成',
-          type: 'success'
-        })
-      }, 1.5 * 1000)
+      await this.getRoleList()
+      this.refreshButton = 'el-icon-refresh'
+      this.$message({
+        message: '刷新完成',
+        type: 'success'
+      })
     },
     // 获取角色列表
     getRoleList() {
@@ -406,7 +392,6 @@ export default {
       fetchRoleList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
-
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -419,7 +404,6 @@ export default {
       this.getRoleList()
     },
     handleModifyStatus(row, status) {
-      console.log(row)
       if (status === 'discontinuation') {
         // 停用
         row.status = '1'
@@ -428,6 +412,10 @@ export default {
             message: '停用',
             type: 'success'
           })
+          // 抛出错误，将停用的状态更改回来
+          // eslint-disable-next-line handle-callback-err
+        }).catch(err => {
+          row.status = '0'
         })
       } else if (status === 'enabling') {
         // 启用
@@ -488,7 +476,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log(this.temp)
           this.temp.dataScope = '1'
           this.temp.status = '0'
           this.temp.createTime = new Date()
@@ -509,8 +496,6 @@ export default {
       })
     },
     handleUpdate(row) {
-      console.log(row)
-      console.log(this.temp)
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -549,6 +534,7 @@ export default {
 
     // 弹出权限分配窗口
     handleFetchPv(row) {
+      this.temp = Object.assign({}, row) // copy obj
       fetchPv(row).then(response => {
         this.dialogPvVisible = true
       })
@@ -556,8 +542,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'status']
+        const tHeader = ['角色名', '权限字符', '显示顺序', '状态', '创建时间', '修改时间', '数据范围', '备注']
+        const filterVal = ['roleName', 'roleKey', 'roleSort', 'status', 'createTime', 'updateTime', 'dataScope', 'remark']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
@@ -569,7 +555,7 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'createTime') {
           return parseTime(v[j])
         } else {
           return v[j]

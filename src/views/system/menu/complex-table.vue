@@ -4,54 +4,21 @@
     <div class="filter-container">
       <!-- 标题 -->
       <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('usertable.title')"
+        v-model="listQuery.roleName"
+        :placeholder="$t('roletable.roleName')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 重要性 -->
-      <el-select
-        v-model="listQuery.importance"
-        :placeholder="$t('usertable.importance')"
-        clearable
-        style="width: 90px"
+      <!-- 权限字符 -->
+      <el-input
+        v-model="listQuery.roleKey"
+        :placeholder="$t('roletable.roleKey')"
+        style="width: 200px;"
         class="filter-item"
-      >
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-
-      <!-- 类型 -->
-      <el-select
-        v-model="listQuery.type"
-        :placeholder="$t('usertable.type')"
-        clearable
-        class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in calendarTypeOptions"
-          :key="item.key"
-          :label="item.display_name+'('+item.key+')'"
-          :value="item.key"
-        />
-      </el-select>
-
-      <!-- 排序 -->
-      <el-select
-        v-model="listQuery.sort"
-        style="width: 140px"
-        class="filter-item"
-        @change="handleFilter"
-      >
-        <el-option
-          v-for="item in sortOptions"
-          :key="item.key"
-          :label="item.label"
-          :value="item.key"
-        />
-      </el-select>
+        @keyup.enter.native="handleFilter"
+      />
 
       <!-- 搜索按钮 -->
       <el-button
@@ -60,7 +27,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('usertable.search') }}</el-button>
+      >{{ $t('roletable.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -69,7 +36,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('usertable.add') }}</el-button>
+      >{{ $t('roletable.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -79,14 +46,10 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('usertable.export') }}</el-button>
+      >{{ $t('roletable.export') }}</el-button>
 
-      <!-- 审核人 -->
-      <el-checkbox
-        v-model="isShow"
-        class="filter-item"
-        style="margin-left:15px;"
-      >{{ $t('usertable.reviewer') }}</el-checkbox>
+      <!-- 刷新 -->
+      <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
     </div>
 
     <!-- 表格 -->
@@ -101,101 +64,98 @@
       @sort-change="sortChange"
     >
       <!-- 序号 -->
-      <el-table-column
-        :label="$t('usertable.id')"
-        prop="id"
-        sortable="custom"
-        width="80px"
+      <el-table-column type="index" width="40" align="center" />
+
+      <!-- 显示顺序 -->
+      <!-- <el-table-column
+        :sortable="true"
+        :label="$t('roletable.roleSort')"
         align="center"
+        :sort-method="sortByDate"
       >
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.roleSort }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
 
-      <!-- 登陆名称 -->
-      <el-table-column :label="$t('usertable.loginName')" align="center">
+      <!-- 角色名称 -->
+      <el-table-column :label="$t('roletable.roleName')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
+          <span>{{ scope.row.roleName }}</span>
         </template>
       </el-table-column>
 
-      <!-- 审核人 -->
-      <el-table-column v-if="isShow" :label="$t('usertable.loginName')" align="center">
+      <!-- 权限字符 -->
+      <el-table-column :label="$t('roletable.roleKey')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
+          <span>{{ scope.row.roleKey }}</span>
         </template>
       </el-table-column>
 
-      <!-- 用户名称 -->
-      <el-table-column :label="$t('usertable.userName')" align="center">
+      <!-- 数据范围 -->
+      <el-table-column :label="$t('roletable.dataScope')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.userName }}</span>
+          <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
         </template>
       </el-table-column>
-
-      <!-- 部门 -->
-      <el-table-column :label="$t('usertable.post')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.post }}部</span>
-        </template>
-      </el-table-column>
-
-      <!-- 手机 -->
-      <el-table-column :label="$t('usertable.model')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.model }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 状态 -->
-      <el-table-column :label="$t('usertable.status')" class-name="status-col">
+      <!-- {{ scope.row.dataScope }} -->
+      <!-- 角色状态 -->
+      <el-table-column :label="$t('roletable.status')" align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
+          <el-tag effect="dark" :type="row.status | statusFilter">{{ row.status==='0' ?'正常': '停用' }}</el-tag>
         </template>
       </el-table-column>
 
-      <!-- 时间 -->
-      <el-table-column :label="$t('usertable.date')" align="center">
+      <!-- 创建时间 -->
+      <el-table-column :label="$t('roletable.createTime')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
       <!-- 操作 -->
       <el-table-column
-        :label="$t('usertable.actions')"
+        :label="$t('roletable.actions')"
         align="center"
-        width="230"
+        width="250"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
-          <!-- 操作 -->
+          <!-- 操作/编辑 -->
+          <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+
+          <!-- 数据权限/分配用户 -->
+          <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
+            <svg-icon icon-class="adduser" />
+          </el-button>
+
+          <!-- 停用 -->
           <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(row)"
-          >{{ $t('usertable.edit') }}</el-button>
-          <!-- 发布 -->
+            v-if="row.status!=='1'"
+            circle
+            type="warning"
+            icon="el-icon-star-off"
+            @click="handleModifyStatus(row,'discontinuation')"
+          />
+
+          <!-- 启用 -->
           <el-button
-            v-if="row.status!='published'"
-            size="mini"
-            type="success"
-            @click="handleModifyStatus(row,'published')"
-          >{{ $t('usertable.publish') }}</el-button>
-          <!-- 草稿 -->
-          <el-button
-            v-if="row.status!='draft'"
-            size="mini"
-            @click="handleModifyStatus(row,'draft')"
-          >{{ $t('usertable.draft') }}</el-button>
-          <!-- 删除 -->
-          <el-button
-            v-if="row.status!='deleted'"
-            size="mini"
+            v-if="row.status!=='0'"
+            circle
             type="danger"
-            @click="handleModifyStatus(row,'deleted')"
-          >{{ $t('usertable.delete') }}</el-button>
+            icon="el-icon-star-off"
+            @click="handleModifyStatus(row,'enabling')"
+          />
+
+          <!-- 删除 -->
+          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
+            <p>你确定要删除该用户吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
+            </div>
+            <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -206,11 +166,11 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getUserList"
+      @pagination="getRoleList"
     />
 
     <!-- 弹出层 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <!-- visible.sync：的意思是如果子组件的属性有变化，父组件则同步过来 -->
       <!-- 表单 -->
       <el-form
@@ -218,54 +178,62 @@
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <!-- 类型 -->
-        <el-form-item :label="$t('usertable.type')" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option
-              v-for="item in calendarTypeOptions"
-              :key="item.key"
-              :label="item.display_name"
-              :value="item.key"
-            />
+        <!-- 角色ID -->
+        <el-form-item :label="$t('roletable.roleId')">
+          <el-input v-model="temp.roleId" disabled placeholder="系统默认生成" />
+        </el-form-item>
+
+        <!-- 角色名称 -->
+        <el-form-item :label="$t('roletable.roleName')" prop="roleName">
+          <el-input v-model="temp.roleName" />
+        </el-form-item>
+
+        <!-- 角色权限字符串 -->
+        <el-form-item :label="$t('roletable.roleKey')" prop="roleKey">
+          <el-input v-model="temp.roleKey" />
+        </el-form-item>
+
+        <!-- 显示顺序 -->
+        <el-form-item :label="$t('roletable.roleSort')" prop="roleSort">
+          <el-input v-model.number="temp.roleSort" />
+        </el-form-item>
+
+        <!-- 数据范围 -->
+        <el-form-item :label="$t('roletable.dataScope')" prop="dataScope">
+          <el-select v-model="temp.dataScope" placeholder="请选择数据范围">
+            <el-option v-for="i in scopeAuthority" :key="i.key" :label="i.value" :value="i.key" />
           </el-select>
+          <!-- <el-input v-model="temp.dataScope" /> -->
         </el-form-item>
-        <!-- 时间 -->
-        <el-form-item :label="$t('usertable.date')" prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date"
-          />
-        </el-form-item>
-        <!-- 标题 -->
-        <el-form-item :label="$t('usertable.title')" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
+
         <!-- 状态 -->
-        <el-form-item :label="$t('usertable.status')">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+        <el-form-item :label="$t('roletable.status')">
+          <el-select v-model="temp.status" placeholder="请选择用户状态">
+            <el-option label="正常" value="0" />
+            <el-option label="停用" value="1" />
           </el-select>
         </el-form-item>
-        <!-- 重要性 -->
-        <el-form-item :label="$t('usertable.importance')">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;"
-          />
+
+        <!-- 创建时间 -->
+        <el-form-item :label="$t('roletable.createTime')" prop="date">
+          <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
-        <!-- 点评 -->
-        <el-form-item :label="$t('usertable.remark')">
+
+        <!-- 修改时间 -->
+        <el-form-item :label="$t('roletable.updateTime')" prop="date">
+          <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
+        </el-form-item>
+
+        <!-- 角色说明 -->
+        <el-form-item :label="$t('roletable.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="Please input"
+            placeholder="该角色很懒，未写备注信息..."
           />
         </el-form-item>
       </el-form>
@@ -275,29 +243,37 @@
         <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('usertable.confirm') }}</el-button>
+        >{{ $t('roletable.confirm') }}</el-button>
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('usertable.cancel') }}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('roletable.cancel') }}</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
-      </span>
+    <!-- 权限分配窗口 -->
+    <el-dialog
+      v-el-drag-dialog
+      :visible.sync="dialogPvVisible"
+      :title="$t('roletable.editRole')"
+      center
+      width="80%"
+      append-to-body
+      custom-class="dialog-dietRole"
+      :close-on-click-modal="closeOnClickModal"
+    >
+      <role-to-permission :temp="temp" />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { /* fetchList, */ fetchUserList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { checkMaxVal } from '@/utils/validator'
+
+// 弹出层dialog拖拽工具
+import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -315,13 +291,13 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 export default {
   name: 'ComplexTable',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        0: 'success',
+        1: 'info',
+        2: 'danger'
       }
       return statusMap[status]
     },
@@ -331,32 +307,41 @@ export default {
   },
   data() {
     return {
+      closeOnClickModal: false,
+      scopeAuthority: [
+        { key: '1', value: '全部数据权限' },
+        { key: '2', value: '自定数据权限' },
+        { key: '3', value: '本部门数据权限' },
+        { key: '4', value: '本部门及以下数据权限' }
+      ],
+      refreshButton: 'el-icon-refresh',
       tableKey: 0,
       list: null,
+      visible: false,
       shenheren: true,
-      isShow: false,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 8,
-        importance: undefined,
         title: undefined,
         type: undefined,
-        sort: '+id'
+        sort: '+id',
+        roleName: undefined,
+        roleKey: undefined
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
+      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       temp: {
         id: undefined,
-        importance: 1,
+        roleId: '',
         remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        roleName: '',
+        roleKey: '',
+        roleSort: '',
+        dataScope: '',
+        status: '0'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -365,42 +350,47 @@ export default {
         create: '创建'
       },
       dialogPvVisible: false,
-      pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        roleName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
+        roleKey: [{ required: true, message: '请输入权限字符', trigger: ['blur'] }],
+        date: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }],
+        roleSort: [{ validator: checkMaxVal, trigger: 'blur' }]
       },
       downloadLoading: false
     }
   },
   created() {
     // this.getList()
-    this.getUserList()
+    // this.getUserList()
+    this.getRoleList()
   },
   methods: {
-    // getList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.list = response.data.items
-    //     this.total = response.data.total
-
-    //     // Just to simulate the time of the request
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
+    // 排序方法
+    // sortByDate(obj1, obj2) {
+    //   const val1 = obj1.deadline
+    //   const val2 = obj2.deadline
+    //   return val1 - val2
     // },
-    isShowclase() {
-      this.isShow = !this.isShow
-      console.log(this.isShow)
+    // 刷新按钮
+    async refreshRoleList() {
+      this.refreshButton = 'el-icon-loading'
+      this.listQuery.page = 1
+      this.listQuery.limit = 8
+      this.listQuery.roleName = ''
+      this.listQuery.roleKey = ''
+      await this.getRoleList()
+      this.refreshButton = 'el-icon-refresh'
+      this.$message({
+        message: '刷新完成',
+        type: 'success'
+      })
     },
-    getUserList() {
+    // 获取角色列表
+    getRoleList() {
       this.listLoading = true
-      fetchUserList(this.listQuery).then(response => {
-        this.list = response.data.items
+      fetchRoleList(this.listQuery).then(response => {
+        this.list = response.data.records
         this.total = response.data.total
-
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -410,14 +400,44 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       // this.getList()
-      this.getUserList()
+      this.getRoleList()
     },
     handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
+      if (status === 'discontinuation') {
+        // 停用
+        row.status = '1'
+        updateRoleByRoleId(row).then(response => {
+          this.$message({
+            message: '停用',
+            type: 'success'
+          })
+          // 抛出错误，将停用的状态更改回来
+          // eslint-disable-next-line handle-callback-err
+        }).catch(err => {
+          row.status = '0'
+        })
+      } else if (status === 'enabling') {
+        // 启用
+        row.status = '0'
+        updateRoleByRoleId(row).then(response => {
+          this.$message({
+            message: '启用',
+            type: 'success'
+          })
+        })
+      } else if (status === 'deleted') {
+        // 删除
+        row.visible = false
+        deleteByRoleId(row).then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          setTimeout(() => {
+            this.getRoleList()
+          }, 3 * 1000)
+        })
+      }
     },
     sortChange(data) {
       const { prop, order } = data
@@ -436,12 +456,12 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
         remark: '',
-        timestamp: new Date(),
         title: '',
-        status: 'published',
-        type: ''
+        status: '0',
+        type: '',
+        roleName: '',
+        roleKey: ''
       }
     },
     handleCreate() {
@@ -455,11 +475,15 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
+          this.temp.dataScope = '1'
+          this.temp.status = '0'
+          this.temp.createTime = new Date()
+          this.temp.updateTime = new Date()
           createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            // 这条是本地新增一行
+            // this.list.unshift(this.temp)
             this.dialogFormVisible = false
+            this.getRoleList()
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -472,7 +496,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -483,16 +506,10 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          tempData.updateTime = new Date()
           updateArticle(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
             this.dialogFormVisible = false
+            this.getRoleList()
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -513,17 +530,19 @@ export default {
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
+
+    // 弹出权限分配窗口
+    handleFetchPv(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      fetchPv(row).then(response => {
         this.dialogPvVisible = true
       })
     },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['角色名', '权限字符', '显示顺序', '状态', '创建时间', '修改时间', '数据范围', '备注']
+        const filterVal = ['roleName', 'roleKey', 'roleSort', 'status', 'createTime', 'updateTime', 'dataScope', 'remark']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
@@ -535,7 +554,7 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'createTime') {
           return parseTime(v[j])
         } else {
           return v[j]
@@ -545,3 +564,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-dialog {
+  min-width: 530px;
+}
+.dialog-dietRole {
+  min-width: 1000px;
+}
+</style>
