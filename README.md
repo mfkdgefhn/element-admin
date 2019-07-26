@@ -1,68 +1,67 @@
 ## Features
 
 ```
-- Login / Logout
+- 登录 / 注销
 
-- Permission Authentication
-  - Page permission
-  - Directive permission
-  - Permission configuration page
-  - Two-step login
+- 权限验证
+  - 页面权限
+  - 指令权限
+  - 权限配置
+  - 二步登录
 
-- Multi-environment build
+- 多环境发布
   - dev sit stage prod
 
-- Global Features
-  - I18n
-  - Multiple dynamic themes
-  - Dynamic sidebar (supports multi-level routing)
-  - Dynamic breadcrumb
-  - Tags-view (Tab page Support right-click operation)
-  - Svg Sprite
-  - Mock data
-  - Screenfull
-  - Responsive Sidebar
+- 全局功能
+  - 国际化多语言
+  - 多种动态换肤
+  - 动态侧边栏（支持多级路由嵌套）
+  - 动态面包屑
+  - 快捷导航(标签页)
+  - Svg Sprite 图标
+  - 本地/后端 mock 数据
+  - Screenfull全屏
+  - 自适应收缩侧边栏
 
-- Editor
-  - Rich Text Editor
-  - Markdown Editor
-  - JSON Editor
+- 编辑器
+  - 富文本
+  - Markdown
+  - JSON 等多格式
 
 - Excel
-  - Export Excel
-  - Upload Excel
-  - Visualization Excel
-  - Export zip
+  - 导出excel
+  - 导入excel
+  - 前端可视化excel
+  - 导出zip
 
-- Table
-  - Dynamic Table
-  - Drag And Drop Table
-  - Inline Edit Table
+- 表格
+  - 动态表格
+  - 拖拽表格
+  - 内联编辑
 
-- Error Page
+- 错误页面
   - 401
   - 404
 
-- Components
-  - Avatar Upload
-  - Back To Top
-  - Drag Dialog
-  - Drag Select
-  - Drag Kanban
-  - Drag List
+- 組件
+  - 头像上传
+  - 返回顶部
+  - 拖拽Dialog
+  - 拖拽Select
+  - 拖拽看板
+  - 列表拖拽
   - SplitPane
   - Dropzone
   - Sticky
   - CountTo
 
-- Advanced Example
-- Error Log
+- 综合实例
+- 错误日志
 - Dashboard
-- Guide Page
-- ECharts
-- Clipboard
-- Markdown to html
-```
+- 引导页
+- ECharts 图表
+- Clipboard(剪贴复制)
+- Markdown2html
 
 ## Getting started
 
