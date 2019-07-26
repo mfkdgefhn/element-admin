@@ -107,16 +107,6 @@ npm run lint
 npm run lint -- --fix
 ```
 
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
-
-## Changelog
-
-Detailed changes for each release are documented in the [release notes](https://github.com/PanJiaChen/vue-element-admin/releases).
-
-## Online Demo
-
-[Preview](https://panjiachen.github.io/vue-element-admin)
-
 ## Browsers support
 
 Modern browsers and Internet Explorer 10+.
