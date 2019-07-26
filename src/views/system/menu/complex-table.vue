@@ -56,6 +56,7 @@
     <el-table
       :key="tableKey"
       v-loading="listLoading"
+      row-key="menuId"
       :data="list"
       border
       fit
@@ -64,17 +65,17 @@
       @sort-change="sortChange"
     >
       <!-- 序号 -->
-      <el-table-column type="index" width="40" align="center" />
+      <!-- <el-table-column type="index" width="40" align="center" /> -->
 
       <!-- 角色名称 -->
-      <el-table-column :label="$t('menutable.menuName')" align="center">
+      <el-table-column :label="$t('menutable.menuName')" align="left" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.menuName }}</span>
         </template>
       </el-table-column>
 
-      <!-- 排序 -->
-      <el-table-column :label="$t('menutable.orderNum')" align="center">
+      <!-- 显示顺序 -->
+      <el-table-column :label="$t('menutable.orderNum')" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.orderNum }}</span>
         </template>
@@ -88,19 +89,22 @@
       </el-table-column>
 
       <!-- 菜单类型 -->
-      <el-table-column :label="$t('menutable.menuType')" align="center">
-        <template slot-scope="{row}">
+      <el-table-column :label="$t('menutable.menuType')" align="center" width="80">
+        <template slot-scope="scope">
           <el-tag
             effect="dark"
-            :type="row.menuType | statusFilter"
-          >{{ row.menuType==='0' ?'正常': '停用' }}</el-tag>
+            :type="scope.row.menuType | menuTypeFilter"
+          >{{ typeAuthority[scope.row.menuType] }}</el-tag>
         </template>
       </el-table-column>
 
-      <!-- 可见 -->
-      <el-table-column :label="$t('menutable.visible')" align="center">
+      <!-- 菜单状态 -->
+      <el-table-column :label="$t('menutable.visible')" align="center" width="80">
         <template slot-scope="scope">
-          <span>{{ scope.row.visible }}</span>
+          <el-tag
+            effect="Plain"
+            :type="scope.row.visible | visibleFilter"
+          >{{ visibleAuthority[scope.row.visible] }}</el-tag>
         </template>
       </el-table-column>
 
@@ -121,7 +125,7 @@
       <el-table-column
         :label="$t('menutable.edit')"
         align="center"
-        width="250"
+        width="190"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
@@ -137,10 +141,10 @@
           />
 
           <!-- 删除 -->
-          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
+          <el-popover v-model="row.show" placement="top" width="160" style="margin-left:10px;">
             <p>你确定要删除该用户吗？</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+              <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
               <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
             </div>
             <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
@@ -170,75 +174,106 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <!-- 角色ID -->
-        <el-form-item :label="$t('menutable.menuId')">
-          <el-input v-model="temp.menuId" disabled placeholder="系统默认生成" />
+        <!-- 上级菜单 -->
+        <el-form-item :label="$t('menutable.parentId')" prop="roleKey">
+          <!-- <el-input v-model="temp.parentId " /> -->
+          <el-input v-model="temp.parentId" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" />
+          </el-input>
         </el-form-item>
 
-        <!-- 角色名称 -->
+        <!-- 菜单类型 -->
+        <el-form-item :label="$t('menutable.menuType')" prop="menu-type">
+          <el-radio-group v-model="temp.menuType" @change="selectRadio(temp)">
+            <el-radio
+              v-for="type in menuTypeAuthority"
+              :key="type.key"
+              :label="type.key"
+            >{{ type.value }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <!-- 菜单名称 -->
         <el-form-item :label="$t('menutable.menuName')" prop="roleName">
           <el-input v-model="temp.menuName" />
         </el-form-item>
 
-        <!-- 角色权限字符串 -->
-        <!-- <el-form-item :label="$t('menutable.roleKey')" prop="roleKey">
-          <el-input v-model="temp.roleKey" />
-        </el-form-item>-->
+        <!-- 请求地址 -->
+        <el-form-item v-if="temp.menuType==='C'" :label="$t('menutable.url')" prop="roleSort">
+          <el-input v-model="temp.url" />
+        </el-form-item>
 
-        <!-- 显示顺序 -->
-        <!-- <el-form-item :label="$t('menutable.roleSort')" prop="roleSort">
-          <el-input v-model.number="temp.roleSort" />
-        </el-form-item>-->
-
-        <!-- 数据范围 -->
-        <!-- <el-form-item :label="$t('menutable.dataScope')" prop="dataScope">
-          <el-select v-model="temp.dataScope" placeholder="请选择数据范围">
-            <el-option v-for="i in scopeAuthority" :key="i.key" :label="i.value" :value="i.key" />
+        <!-- 打开方式target（menuItem页签 menuBlank新窗口）targetAuthority -->
+        <el-form-item v-if="temp.menuType==='C'" :label="$t('menutable.target')" prop="target">
+          <el-select v-model="temp.region" placeholder="请选择打开方式">
+            <el-option
+              v-for="region in targetAuthority"
+              :key="region.key"
+              :label="region"
+              :value="region"
+            />
           </el-select>
-        </el-form-item>-->
+        </el-form-item>
 
-        <!-- 状态 -->
-        <!-- <el-form-item :label="$t('menutable.status')">
-          <el-select v-model="temp.status" placeholder="请选择用户状态">
-            <el-option label="正常" value="0" />
-            <el-option label="停用" value="1" />
-          </el-select>
-        </el-form-item>-->
+        <!-- 权限标识 -->
+        <el-form-item
+          v-if="temp.menuType==='C' || temp.menuType==='F' "
+          :label="$t('menutable.perms')"
+          prop="roleSort"
+        >
+          <el-input v-model="temp.perms" />
+        </el-form-item>
+
+        <!-- 显示排序 -->
+        <el-form-item :label="$t('menutable.orderNum')" prop="roleSort">
+          <el-input v-model.number="temp.orderNum" />
+        </el-form-item>
+
+        <!-- 图标 -->
+        <el-form-item v-if="temp.menuType==='M'" :label="$t('menutable.icon')" prop="roleSort">
+          <el-input v-model="temp.icon" />
+        </el-form-item>
+
+        <!-- 菜单状态 -->
+        <el-form-item :label="$t('menutable.visible')" prop="roleSort">
+          <!-- <el-input v-model="temp.visible" /> -->
+          <el-switch v-model="temp.visible" active-text="显示" inactive-text="隐藏" />
+        </el-form-item>
+
+        <!-- 创建者 -->
+        <el-form-item v-if="1===2" :label="$t('menutable.createBy')" prop="roleSort">
+          <el-input v-model="temp.createBy" />
+        </el-form-item>
 
         <!-- 创建时间 -->
-        <!-- <el-form-item :label="$t('menutable.createTime')" prop="date">
-          <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
-        </el-form-item>-->
-
-        <!-- 修改时间 -->
-        <!-- <el-form-item :label="$t('menutable.updateTime')" prop="date">
-          <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
-        </el-form-item>-->
+        <el-form-item v-if="1===2" :label="$t('menutable.createTime')" prop="roleSort">
+          <el-input v-model="temp.createTime" />
+        </el-form-item>
 
         <!-- 角色说明 -->
-        <!-- <el-form-item :label="$t('menutable.remark')">
+        <el-form-item v-if="1===2" :label="$t('menutable.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
-            placeholder="该角色很懒，未写备注信息..."
+            placeholder="菜单备注信息..."
           />
-        </el-form-item>-->
+        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
         <!-- 确定 -->
-        <!-- <el-button
+        <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('menutable.confirm') }}</el-button>-->
+        >{{ $t('menutable.confirm') }}</el-button>
         <!-- 取消 -->
-        <!-- <el-button @click="dialogFormVisible = false">{{ $t('menutable.cancel') }}</el-button> -->
+        <el-button @click="dialogFormVisible = false">{{ $t('menutable.cancel') }}</el-button>
       </div>
     </el-dialog>
 
     <!-- 权限分配窗口 -->
-    <el-dialog
+    <!-- <el-dialog
       v-el-drag-dialog
       :visible.sync="dialogPvVisible"
       :title="$t('menutable.editMenu')"
@@ -249,7 +284,7 @@
       :close-on-click-modal="closeOnClickModal"
     >
       <role-to-permission :temp="temp" />
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 
@@ -281,13 +316,20 @@ export default {
   components: { Pagination },
   directives: { waves, elDragDialog },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        0: 'success',
-        1: 'info',
-        2: 'danger'
+    menuTypeFilter(status) {
+      const typeMap = {
+        'M': '',
+        'C': 'success',
+        'F': 'info'
       }
-      return statusMap[status]
+      return typeMap[status]
+    },
+    visibleFilter(status) {
+      const visibleMap = {
+        '0': '',
+        '1': 'danger'
+      }
+      return visibleMap[status]
     },
     typeFilter(type) {
       return calendarTypeKeyValue[type]
@@ -296,11 +338,23 @@ export default {
   data() {
     return {
       closeOnClickModal: false,
-      scopeAuthority: [
-        { key: '1', value: '全部数据权限' },
-        { key: '2', value: '自定数据权限' },
-        { key: '3', value: '本部门数据权限' },
-        { key: '4', value: '本部门及以下数据权限' }
+      typeAuthority: {
+        'M': '目录',
+        'C': '菜单',
+        'F': '按钮'
+      },
+      visibleAuthority: {
+        '0': '显示',
+        '1': '隐藏'
+      },
+      targetAuthority: {
+        'menuItem': '页签',
+        'menuBlank': '新窗口'
+      },
+      menuTypeAuthority: [
+        { key: 'M', value: '目录' },
+        { key: 'C', value: '菜单' },
+        { key: 'F', value: '按钮' }
       ],
       refreshButton: 'el-icon-refresh',
       tableKey: 0,
@@ -316,12 +370,12 @@ export default {
         type: undefined,
         sort: '+id',
         menuName: undefined,
-        parentId: undefined,
+        parentId: 0,
         menuId: undefined,
         orderNum: undefined,
         url: undefined,
         target: undefined,
-        visible: undefined,
+        show: undefined,
         menuType: undefined,
         perms: undefined,
         icon: undefined,
@@ -338,7 +392,7 @@ export default {
         orderNum: '',
         url: '',
         target: '',
-        visible: '',
+        show: '',
         perms: '',
         icon: '',
         remark: ''
@@ -363,6 +417,9 @@ export default {
     this.getMenuList()
   },
   methods: {
+    selectRadio(value) {
+      console.log(value)
+    },
     // 刷新按钮
     async refreshRoleList() {
       this.refreshButton = 'el-icon-loading'
@@ -419,7 +476,7 @@ export default {
         })
       } else if (status === 'deleted') {
         // 删除
-        row.visible = false
+        row.show = false
         deleteByRoleId(row).then(response => {
           this.$message({
             message: '删除成功',
@@ -460,9 +517,9 @@ export default {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {

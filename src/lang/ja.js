@@ -238,6 +238,8 @@ export default {
     search: '検索',
     add: '追加',
     export: 'エクスポート',
+    confirm: '確認',
+    cancel: '取り消し',
     editMenu: '編集メニュー'
   },
   depttable: {

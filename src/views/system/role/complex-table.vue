@@ -329,7 +329,8 @@ export default {
         type: undefined,
         sort: '+id',
         roleName: undefined,
-        roleKey: undefined
+        roleKey: undefined,
+        visible: undefined
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
@@ -342,7 +343,8 @@ export default {
         roleKey: '',
         roleSort: '',
         dataScope: '',
-        status: '0'
+        status: '0',
+        visible: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',

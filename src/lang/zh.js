@@ -218,7 +218,7 @@ export default {
     id: '序号',
     menuId: '菜单ID',
     menuName: '菜单名称',
-    parentId: '父菜单ID',
+    parentId: '上级菜单',
     orderNum: '显示顺序',
     url: '请求地址',
     target: '打开方式',
@@ -238,6 +238,8 @@ export default {
     search: '搜索',
     add: '添加',
     export: '导出',
+    confirm: '确 定',
+    cancel: '取 消',
     editMenu: '编辑菜单'
   },
   depttable: {

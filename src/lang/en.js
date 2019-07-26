@@ -237,6 +237,8 @@ export default {
     search: 'Search',
     add: 'Add',
     export: 'Export',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
     editMenu: 'editMenu'
   },
   depttable: {
