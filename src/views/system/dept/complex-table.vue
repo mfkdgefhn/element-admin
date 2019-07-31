@@ -1,57 +1,24 @@
 <template>
   <div class="app-container">
-    <!-- 菜单栏 -->
+    <!-- 部门栏 -->
     <div class="filter-container">
-      <!-- 标题 -->
+      <!-- 部门名称 -->
       <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('usertable.title')"
+        v-model="listQuery.deptName"
+        :placeholder="$t('depttable.deptName')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 重要性 -->
-      <el-select
-        v-model="listQuery.importance"
-        :placeholder="$t('usertable.importance')"
-        clearable
-        style="width: 90px"
+      <!-- 部门状态 -->
+      <el-input
+        v-model="listQuery.status"
+        :placeholder="$t('depttable.status')"
+        style="width: 200px;"
         class="filter-item"
-      >
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-
-      <!-- 类型 -->
-      <el-select
-        v-model="listQuery.type"
-        :placeholder="$t('usertable.type')"
-        clearable
-        class="filter-item"
-        style="width: 130px"
-      >
-        <el-option
-          v-for="item in calendarTypeOptions"
-          :key="item.key"
-          :label="item.display_name+'('+item.key+')'"
-          :value="item.key"
-        />
-      </el-select>
-
-      <!-- 排序 -->
-      <el-select
-        v-model="listQuery.sort"
-        style="width: 140px"
-        class="filter-item"
-        @change="handleFilter"
-      >
-        <el-option
-          v-for="item in sortOptions"
-          :key="item.key"
-          :label="item.label"
-          :value="item.key"
-        />
-      </el-select>
+        @keyup.enter.native="handleFilter"
+      />
 
       <!-- 搜索按钮 -->
       <el-button
@@ -60,7 +27,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('usertable.search') }}</el-button>
+      >{{ $t('depttable.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -69,7 +36,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('usertable.add') }}</el-button>
+      >{{ $t('depttable.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -79,14 +46,10 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('usertable.export') }}</el-button>
+      >{{ $t('depttable.export') }}</el-button>
 
-      <!-- 审核人 -->
-      <el-checkbox
-        v-model="isShow"
-        class="filter-item"
-        style="margin-left:15px;"
-      >{{ $t('usertable.reviewer') }}</el-checkbox>
+      <!-- 刷新 -->
+      <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
     </div>
 
     <!-- 表格 -->
@@ -94,108 +57,75 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      row-key="id"
       border
       fit
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
     >
+      <!-- row-key="deptId" -->
       <!-- 序号 -->
-      <el-table-column
-        :label="$t('usertable.id')"
-        prop="id"
-        sortable="custom"
-        width="80px"
-        align="center"
-      >
+      <!-- <el-table-column type="index" width="40" align="center" /> -->
+
+      <!-- 部门名称 -->
+      <el-table-column :label="$t('depttable.deptName')" header-align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.deptName }}</span>
         </template>
       </el-table-column>
 
-      <!-- 登陆名称 -->
-      <el-table-column :label="$t('usertable.loginName')" align="center">
+      <!-- 排序 -->
+      <el-table-column :label="$t('depttable.orderNum')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
+          <span>{{ scope.row.orderNum }}</span>
         </template>
       </el-table-column>
 
-      <!-- 审核人 -->
-      <el-table-column v-if="isShow" :label="$t('usertable.loginName')" align="center">
+      <!-- 部门状态 -->
+      <el-table-column :label="$t('depttable.status')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
+          <el-tag
+            effect="Plain"
+            :type="scope.row.status | statusFilter"
+          >{{ statusAuthority[scope.row.status] }}</el-tag>
         </template>
       </el-table-column>
 
-      <!-- 用户名称 -->
-      <el-table-column :label="$t('usertable.userName')" align="center">
+      <!-- 创建时间 -->
+      <el-table-column :label="$t('depttable.createTime')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.userName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 部门 -->
-      <el-table-column :label="$t('usertable.post')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.post }}部</span>
-        </template>
-      </el-table-column>
-
-      <!-- 手机 -->
-      <el-table-column :label="$t('usertable.model')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.model }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 状态 -->
-      <el-table-column :label="$t('usertable.status')" class-name="status-col">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <!-- 时间 -->
-      <el-table-column :label="$t('usertable.date')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
 
       <!-- 操作 -->
       <el-table-column
-        :label="$t('usertable.actions')"
+        :label="$t('depttable.edit')"
         align="center"
-        width="230"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
-          <!-- 操作 -->
+          <!-- 操作/编辑 -->
+          <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+
+          <!-- 新增 -->
           <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(row)"
-          >{{ $t('usertable.edit') }}</el-button>
-          <!-- 发布 -->
-          <el-button
-            v-if="row.status!='published'"
-            size="mini"
-            type="success"
-            @click="handleModifyStatus(row,'published')"
-          >{{ $t('usertable.publish') }}</el-button>
-          <!-- 草稿 -->
-          <el-button
-            v-if="row.status!='draft'"
-            size="mini"
-            @click="handleModifyStatus(row,'draft')"
-          >{{ $t('usertable.draft') }}</el-button>
+            circle
+            type="warning"
+            icon="el-icon-star-off"
+            @click="handleCreateDept(row,'insert')"
+          />
+
           <!-- 删除 -->
-          <el-button
-            v-if="row.status!='deleted'"
-            size="mini"
-            type="danger"
-            @click="handleModifyStatus(row,'deleted')"
-          >{{ $t('usertable.delete') }}</el-button>
+          <el-popover v-model="row.show" placement="top" width="160" style="margin-left:10px;">
+            <p>你确定要删除该用户吗？</p>
+            <div style="text-align: right; margin: 0">
+              <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
+              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
+            </div>
+            <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -206,66 +136,64 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getUserList"
+      @pagination="getDeptList"
     />
 
     <!-- 弹出层 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <!-- visible.sync：的意思是如果子组件的属性有变化，父组件则同步过来 -->
-      <!-- 表单 -->
+      <!-- 部门 -->
       <el-form
         ref="dataForm"
         :rules="rules"
         :model="temp"
         label-position="left"
-        label-width="70px"
+        label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <!-- 类型 -->
-        <el-form-item :label="$t('usertable.type')" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option
-              v-for="item in calendarTypeOptions"
-              :key="item.key"
-              :label="item.display_name"
-              :value="item.key"
-            />
-          </el-select>
+        <!-- 上级部门 -->
+        <el-form-item :label="$t('depttable.parentId')">
+          <!-- <el-input v-model="temp.parentId " /> -->
+          <el-input v-model="temp.parentId" class="input-with-select">
+            <el-button slot="append" icon="el-icon-search" />
+          </el-input>
         </el-form-item>
-        <!-- 时间 -->
-        <el-form-item :label="$t('usertable.date')" prop="timestamp">
-          <el-date-picker
-            v-model="temp.timestamp"
-            type="datetime"
-            placeholder="Please pick a date"
-          />
+
+        <!-- 部门名称 -->
+        <el-form-item :label="$t('depttable.deptName')" prop="deptName">
+          <el-input v-model="temp.deptName" />
         </el-form-item>
-        <!-- 标题 -->
-        <el-form-item :label="$t('usertable.title')" prop="title">
-          <el-input v-model="temp.title" />
+
+        <!-- 显示排序 -->
+        <el-form-item :label="$t('depttable.orderNum')" prop="orderNum">
+          <el-input v-model.number="temp.orderNum" />
         </el-form-item>
-        <!-- 状态 -->
-        <el-form-item :label="$t('usertable.status')">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
+
+        <!--  负责人 -->
+        <el-form-item :label="$t('depttable.leader')" prop="leader">
+          <el-input v-model="temp.leader" />
         </el-form-item>
-        <!-- 重要性 -->
-        <el-form-item :label="$t('usertable.importance')">
-          <el-rate
-            v-model="temp.importance"
-            :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-            :max="3"
-            style="margin-top:8px;"
-          />
+
+        <!-- 联系电话 -->
+        <el-form-item :label="$t('depttable.phone')" prop="phone">
+          <el-input v-model.number="temp.phone" />
         </el-form-item>
-        <!-- 点评 -->
-        <el-form-item :label="$t('usertable.remark')">
-          <el-input
-            v-model="temp.remark"
-            :autosize="{ minRows: 2, maxRows: 4}"
-            type="textarea"
-            placeholder="Please input"
+
+        <!-- email -->
+        <el-form-item :label="$t('depttable.email')" prop="email">
+          <el-input v-model="temp.email" />
+        </el-form-item>
+
+        <!-- 部门状态 -->
+        <el-form-item :label="$t('depttable.status')" prop="deptStatus">
+          <el-switch
+            v-model="temp.status"
+            active-text="停用"
+            active-value="1"
+            active-color="#ff4949"
+            inactive-text="正常"
+            inactive-value="0"
+            inactive-color="#13ce66"
           />
         </el-form-item>
       </el-form>
@@ -275,29 +203,25 @@
         <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('usertable.confirm') }}</el-button>
+        >{{ $t('depttable.confirm') }}</el-button>
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('usertable.cancel') }}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('depttable.cancel') }}</el-button>
       </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { /* fetchList, */ fetchUserList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByDeptId, fetchDeptList, fetchPv, createDeptArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { checkMaxVal } from '@/utils/validator'
+
+// updateRoleByRoleId ,
+
+// 弹出层dialog拖拽工具
+import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -315,13 +239,20 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 export default {
   name: 'ComplexTable',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, elDragDialog },
   filters: {
+    menuTypeFilter(status) {
+      const typeMap = {
+        'M': '',
+        'C': 'success',
+        'F': 'info'
+      }
+      return typeMap[status]
+    },
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        '0': '',
+        '1': 'danger'
       }
       return statusMap[status]
     },
@@ -331,32 +262,60 @@ export default {
   },
   data() {
     return {
+      closeOnClickModal: false,
+      typeAuthority: {
+        'M': '目录',
+        'C': '菜单',
+        'F': '按钮'
+      },
+      statusAuthority: {
+        '0': '正常',
+        '1': '停用'
+      },
+      targetAuthority: {
+        'menuItem': '页签',
+        'menuBlank': '新窗口'
+      },
+      menuTypeAuthority: [
+        { key: 'M', value: '目录' },
+        { key: 'C', value: '菜单' },
+        { key: 'F', value: '按钮' }
+      ],
+      refreshButton: 'el-icon-refresh',
       tableKey: 0,
       list: null,
+      visible: false,
       shenheren: true,
-      isShow: false,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 8,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        sort: '+id',
+        deptName: undefined,
+        status: undefined,
+        parentId: 0,
+        ancestors: undefined,
+        deptId: undefined,
+        orderNum: undefined,
+        leader: undefined,
+        phone: undefined,
+        email: undefined,
+        del_flag: undefined
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        deptId: '',
+        deptName: '',
+        ancestors: '',
+        parentId: '',
+        orderNum: '',
+        leader: undefined,
+        phone: undefined,
+        email: undefined,
+        del_flag: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -365,42 +324,43 @@ export default {
         create: '创建'
       },
       dialogPvVisible: false,
-      pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        deptName: [{ required: true, message: '请输入部门名称', trigger: ['blur'] }],
+        phone: [{ pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
+        email: [{ type: 'email', message: '邮箱格式出错', trigger: ['blur'] }],
+        orderNum: [{ validator: checkMaxVal, trigger: 'blur' }]
       },
       downloadLoading: false
     }
   },
   created() {
-    // this.getList()
-    this.getUserList()
+    this.getDeptList()
   },
   methods: {
-    // getList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.list = response.data.items
-    //     this.total = response.data.total
-
-    //     // Just to simulate the time of the request
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
-    // },
-    isShowclase() {
-      this.isShow = !this.isShow
-      console.log(this.isShow)
+    selectRadio(value) {
+      console.log(value.menuType)
     },
-    getUserList() {
+    // 刷新按钮
+    async refreshRoleList() {
+      this.refreshButton = 'el-icon-loading'
+      this.listQuery.page = 1
+      this.listQuery.limit = 8
+      this.listQuery.deptName = ''
+      this.listQuery.parentId = 0
+      this.listQuery.status = ''
+      await this.getDeptList()
+      this.refreshButton = 'el-icon-refresh'
+      this.$message({
+        message: '刷新完成',
+        type: 'success'
+      })
+    },
+    // 获取角色列表
+    getDeptList() {
       this.listLoading = true
-      fetchUserList(this.listQuery).then(response => {
-        this.list = response.data.items
+      fetchDeptList(this.listQuery).then(response => {
+        this.list = response.data.records
         this.total = response.data.total
-
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -409,15 +369,35 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      // this.getList()
-      this.getUserList()
+      this.getDeptList()
     },
     handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
+      if (status === 'insert') {
+        // 新增
+        console.log(row)
+        // updateRoleByRoleId(row).then(response => {
+        //   this.$message({
+        //     message: '停用',
+        //     type: 'success'
+        //   })
+        //   // 抛出错误，将停用的状态更改回来
+        //   // eslint-disable-next-line handle-callback-err
+        // }).catch(err => {
+        //   row.status = '0'
+        // })
+      } else if (status === 'deleted') {
+        // 删除
+        row.show = false
+        deleteByDeptId(row).then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          setTimeout(() => {
+            this.getDeptList()
+          }, 1 * 1000)
+        })
+      }
     },
     sortChange(data) {
       const { prop, order } = data
@@ -436,30 +416,44 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        deptId: '',
+        deptName: '',
+        status: '',
+        parentId: '',
+        orderNum: '',
+        ancestors: '',
+        leader: '',
+        phone: '',
+        del_flag: '',
+        email: ''
       }
     },
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
+    },
+    handleCreateDept(row, status) {
+      if (status === 'insert') {
+        this.resetTemp()
+        this.temp.parentId = row.deptId
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+      }
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          this.temp.createTime = new Date()
+          this.temp.updateTime = new Date()
+          createDeptArticle(this.temp).then(() => {
+            // 这条是本地新增一行
+            // this.list.unshift(this.temp)
             this.dialogFormVisible = false
+            this.getDeptList()
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -472,7 +466,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -483,16 +476,10 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          tempData.updateTime = new Date()
           updateArticle(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
             this.dialogFormVisible = false
+            this.getDeptList()
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -513,17 +500,19 @@ export default {
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
+
+    // 弹出权限分配窗口
+    handleFetchPv(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      fetchPv(row).then(response => {
         this.dialogPvVisible = true
       })
     },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['部门ID', '父部门', '祖级列表', '部门名称', '显示顺序', '负责人', '联系电话', '邮箱', '部门状态', '删除标志', '创建者', '创建时间', '更新者', '更新时间']
+        const filterVal = ['deptId', 'parentId', 'ancestors', 'deptName', 'orderNum', 'leader', 'phone', 'email', 'status', 'delFlag', 'createBy', 'createTime', 'updateBy', 'updateTime']
         const data = this.formatJson(filterVal, this.list)
         excel.export_json_to_excel({
           header: tHeader,
@@ -535,7 +524,7 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'createTime') {
           return parseTime(v[j])
         } else {
           return v[j]
@@ -545,3 +534,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.el-dialog {
+  min-width: 530px;
+}
+.dialog-dietRole {
+  min-width: 1000px;
+}
+</style>

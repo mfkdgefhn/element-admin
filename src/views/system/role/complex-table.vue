@@ -266,7 +266,7 @@
 </template>
 
 <script>
-import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createRoleArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -438,7 +438,7 @@ export default {
           })
           setTimeout(() => {
             this.getRoleList()
-          }, 3 * 1000)
+          }, 1 * 1000)
         })
       }
     },
@@ -482,7 +482,7 @@ export default {
           this.temp.status = '0'
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
-          createArticle(this.temp).then(() => {
+          createRoleArticle(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false

@@ -135,9 +135,9 @@
           <!-- 新增 -->
           <el-button
             circle
-            type="danger"
+            type="warning"
             icon="el-icon-star-off"
-            @click="handleModifyStatus(row,'enabling')"
+            @click="handleCreateMenu(row,'insert')"
           />
 
           <!-- 删除 -->
@@ -175,7 +175,7 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 上级菜单 -->
-        <el-form-item :label="$t('menutable.parentId')" prop="roleKey">
+        <el-form-item :label="$t('menutable.parentId')">
           <!-- <el-input v-model="temp.parentId " /> -->
           <el-input v-model="temp.parentId" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" />
@@ -183,7 +183,7 @@
         </el-form-item>
 
         <!-- 菜单类型 -->
-        <el-form-item :label="$t('menutable.menuType')" prop="menu-type">
+        <el-form-item :label="$t('menutable.menuType')" prop="menuType">
           <el-radio-group v-model="temp.menuType" @change="selectRadio(temp)">
             <el-radio
               v-for="type in menuTypeAuthority"
@@ -194,17 +194,17 @@
         </el-form-item>
 
         <!-- 菜单名称 -->
-        <el-form-item :label="$t('menutable.menuName')" prop="roleName">
+        <el-form-item :label="$t('menutable.menuName')" prop="menuName">
           <el-input v-model="temp.menuName" />
         </el-form-item>
 
         <!-- 请求地址 -->
-        <el-form-item v-if="temp.menuType==='C'" :label="$t('menutable.url')" prop="roleSort">
+        <el-form-item v-show="temp.menuType==='C'" :label="$t('menutable.url')" prop="url">
           <el-input v-model="temp.url" />
         </el-form-item>
 
         <!-- 打开方式target（menuItem页签 menuBlank新窗口）targetAuthority -->
-        <el-form-item v-if="temp.menuType==='C'" :label="$t('menutable.target')" prop="target">
+        <el-form-item v-show="temp.menuType==='C'" :label="$t('menutable.target')" prop="target">
           <el-select v-model="temp.region" placeholder="请选择打开方式">
             <el-option
               v-for="region in targetAuthority"
@@ -217,7 +217,7 @@
 
         <!-- 权限标识 -->
         <el-form-item
-          v-if="temp.menuType==='C' || temp.menuType==='F' "
+          v-show="temp.menuType==='C' || temp.menuType==='F' "
           :label="$t('menutable.perms')"
           prop="roleSort"
         >
@@ -230,7 +230,7 @@
         </el-form-item>
 
         <!-- 图标 -->
-        <el-form-item v-if="temp.menuType==='M'" :label="$t('menutable.icon')" prop="roleSort">
+        <el-form-item v-show="temp.menuType==='M'" :label="$t('menutable.icon')" prop="roleSort">
           <el-input v-model="temp.icon" />
         </el-form-item>
 
@@ -241,17 +241,17 @@
         </el-form-item>
 
         <!-- 创建者 -->
-        <el-form-item v-if="1===2" :label="$t('menutable.createBy')" prop="roleSort">
+        <el-form-item v-show="1===2" :label="$t('menutable.createBy')" prop="roleSort">
           <el-input v-model="temp.createBy" />
         </el-form-item>
 
         <!-- 创建时间 -->
-        <el-form-item v-if="1===2" :label="$t('menutable.createTime')" prop="roleSort">
+        <el-form-item v-show="1===2" :label="$t('menutable.createTime')" prop="roleSort">
           <el-input v-model="temp.createTime" />
         </el-form-item>
 
         <!-- 角色说明 -->
-        <el-form-item v-if="1===2" :label="$t('menutable.remark')">
+        <el-form-item v-show="1===2" :label="$t('menutable.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -289,11 +289,13 @@
 </template>
 
 <script>
-import { deleteByRoleId, updateRoleByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { checkMaxVal } from '@/utils/validator'
+// import { checkMaxVal } from '@/utils/validator'
+
+// updateRoleByRoleId ,
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -405,10 +407,8 @@ export default {
       },
       dialogPvVisible: false,
       rules: {
-        roleName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
-        roleKey: [{ required: true, message: '请输入权限字符', trigger: ['blur'] }],
-        date: [{ type: 'date', message: '日期格式不对', trigger: ['blur'] }],
-        roleSort: [{ validator: checkMaxVal, trigger: 'blur' }]
+        menuName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
+        menuType: [{ required: true, message: '请选择菜单类型', trigger: ['blur'] }]
       },
       downloadLoading: false
     }
@@ -418,7 +418,7 @@ export default {
   },
   methods: {
     selectRadio(value) {
-      console.log(value)
+      console.log(value.menuType)
     },
     // 刷新按钮
     async refreshRoleList() {
@@ -452,28 +452,19 @@ export default {
       this.getMenuList()
     },
     handleModifyStatus(row, status) {
-      if (status === 'discontinuation') {
-        // 停用
-        row.status = '1'
-        updateRoleByRoleId(row).then(response => {
-          this.$message({
-            message: '停用',
-            type: 'success'
-          })
-          // 抛出错误，将停用的状态更改回来
-          // eslint-disable-next-line handle-callback-err
-        }).catch(err => {
-          row.status = '0'
-        })
-      } else if (status === 'enabling') {
-        // 启用
-        row.status = '0'
-        updateRoleByRoleId(row).then(response => {
-          this.$message({
-            message: '启用',
-            type: 'success'
-          })
-        })
+      if (status === 'insert') {
+        // 新增
+        console.log(row)
+        // updateRoleByRoleId(row).then(response => {
+        //   this.$message({
+        //     message: '停用',
+        //     type: 'success'
+        //   })
+        //   // 抛出错误，将停用的状态更改回来
+        //   // eslint-disable-next-line handle-callback-err
+        // }).catch(err => {
+        //   row.status = '0'
+        // })
       } else if (status === 'deleted') {
         // 删除
         row.show = false
@@ -505,12 +496,17 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        remark: '',
-        title: '',
-        status: '0',
-        type: '',
-        roleName: '',
-        roleKey: ''
+        menuId: '',
+        menuName: '',
+        menuType: '',
+        parentId: '',
+        orderNum: '',
+        url: '',
+        target: '',
+        show: '',
+        perms: '',
+        icon: '',
+        remark: ''
       }
     },
     handleCreate() {
@@ -520,6 +516,18 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
       // })
+    },
+    handleCreateMenu(row, status) {
+      if (status === 'insert') {
+        this.resetTemp()
+        this.temp.parentId = row.menuId
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        console.log(this.temp)
+        // this.$nextTick(() => {
+        //   this.$refs['dataForm'].clearValidate()
+        // })
+      }
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {

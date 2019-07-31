@@ -5,7 +5,7 @@
       <!-- 标题 -->
       <el-input
         v-model="listQuery.title"
-        :placeholder="$t('usertable.title')"
+        :placeholder="$t('dicttype.title')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -14,7 +14,7 @@
       <!-- 重要性 -->
       <el-select
         v-model="listQuery.importance"
-        :placeholder="$t('usertable.importance')"
+        :placeholder="$t('dicttype.importance')"
         clearable
         style="width: 90px"
         class="filter-item"
@@ -25,7 +25,7 @@
       <!-- 类型 -->
       <el-select
         v-model="listQuery.type"
-        :placeholder="$t('usertable.type')"
+        :placeholder="$t('dicttype.type')"
         clearable
         class="filter-item"
         style="width: 130px"
@@ -60,7 +60,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('usertable.search') }}</el-button>
+      >{{ $t('dicttype.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -69,7 +69,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('usertable.add') }}</el-button>
+      >{{ $t('dicttype.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -79,14 +79,14 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('usertable.export') }}</el-button>
+      >{{ $t('dicttype.export') }}</el-button>
 
       <!-- 审核人 -->
       <el-checkbox
         v-model="isShow"
         class="filter-item"
         style="margin-left:15px;"
-      >{{ $t('usertable.reviewer') }}</el-checkbox>
+      >{{ $t('dicttype.reviewer') }}</el-checkbox>
     </div>
 
     <!-- 表格 -->
@@ -102,7 +102,7 @@
     >
       <!-- 序号 -->
       <el-table-column
-        :label="$t('usertable.id')"
+        :label="$t('dicttype.id')"
         prop="id"
         sortable="custom"
         width="80px"
@@ -114,49 +114,49 @@
       </el-table-column>
 
       <!-- 登陆名称 -->
-      <el-table-column :label="$t('usertable.loginName')" align="center">
+      <el-table-column :label="$t('dicttype.loginName')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.loginName }}</span>
         </template>
       </el-table-column>
 
       <!-- 审核人 -->
-      <el-table-column v-if="isShow" :label="$t('usertable.loginName')" align="center">
+      <el-table-column v-if="isShow" :label="$t('dicttype.loginName')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.loginName }}</span>
         </template>
       </el-table-column>
 
       <!-- 用户名称 -->
-      <el-table-column :label="$t('usertable.userName')" align="center">
+      <el-table-column :label="$t('dicttype.userName')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.userName }}</span>
         </template>
       </el-table-column>
 
       <!-- 部门 -->
-      <el-table-column :label="$t('usertable.post')" align="center">
+      <el-table-column :label="$t('dicttype.post')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.post }}部</span>
         </template>
       </el-table-column>
 
       <!-- 手机 -->
-      <el-table-column :label="$t('usertable.model')" align="center">
+      <el-table-column :label="$t('dicttype.model')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.model }}</span>
         </template>
       </el-table-column>
 
       <!-- 状态 -->
-      <el-table-column :label="$t('usertable.status')" class-name="status-col">
+      <el-table-column :label="$t('dicttype.status')" class-name="status-col">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">{{ row.status }}</el-tag>
         </template>
       </el-table-column>
 
       <!-- 时间 -->
-      <el-table-column :label="$t('usertable.date')" align="center">
+      <el-table-column :label="$t('dicttype.date')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -164,38 +164,34 @@
 
       <!-- 操作 -->
       <el-table-column
-        :label="$t('usertable.actions')"
+        :label="$t('dicttype.actions')"
         align="center"
         width="230"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
           <!-- 操作 -->
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(row)"
-          >{{ $t('usertable.edit') }}</el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">{{ $t('dicttype.edit') }}</el-button>
           <!-- 发布 -->
           <el-button
             v-if="row.status!='published'"
             size="mini"
             type="success"
             @click="handleModifyStatus(row,'published')"
-          >{{ $t('usertable.publish') }}</el-button>
+          >{{ $t('dicttype.publish') }}</el-button>
           <!-- 草稿 -->
           <el-button
             v-if="row.status!='draft'"
             size="mini"
             @click="handleModifyStatus(row,'draft')"
-          >{{ $t('usertable.draft') }}</el-button>
+          >{{ $t('dicttype.draft') }}</el-button>
           <!-- 删除 -->
           <el-button
             v-if="row.status!='deleted'"
             size="mini"
             type="danger"
             @click="handleModifyStatus(row,'deleted')"
-          >{{ $t('usertable.delete') }}</el-button>
+          >{{ $t('dicttype.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -222,7 +218,7 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 类型 -->
-        <el-form-item :label="$t('usertable.type')" prop="type">
+        <el-form-item :label="$t('dicttype.type')" prop="type">
           <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
             <el-option
               v-for="item in calendarTypeOptions"
@@ -233,7 +229,7 @@
           </el-select>
         </el-form-item>
         <!-- 时间 -->
-        <el-form-item :label="$t('usertable.date')" prop="timestamp">
+        <el-form-item :label="$t('dicttype.date')" prop="timestamp">
           <el-date-picker
             v-model="temp.timestamp"
             type="datetime"
@@ -241,17 +237,17 @@
           />
         </el-form-item>
         <!-- 标题 -->
-        <el-form-item :label="$t('usertable.title')" prop="title">
+        <el-form-item :label="$t('dicttype.title')" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
         <!-- 状态 -->
-        <el-form-item :label="$t('usertable.status')">
+        <el-form-item :label="$t('dicttype.status')">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
         <!-- 重要性 -->
-        <el-form-item :label="$t('usertable.importance')">
+        <el-form-item :label="$t('dicttype.importance')">
           <el-rate
             v-model="temp.importance"
             :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
@@ -260,7 +256,7 @@
           />
         </el-form-item>
         <!-- 点评 -->
-        <el-form-item :label="$t('usertable.remark')">
+        <el-form-item :label="$t('dicttype.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -275,9 +271,9 @@
         <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('usertable.confirm') }}</el-button>
+        >{{ $t('dicttype.confirm') }}</el-button>
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('usertable.cancel') }}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('dicttype.cancel') }}</el-button>
       </div>
     </el-dialog>
 
@@ -287,7 +283,7 @@
         <el-table-column prop="pv" label="Pv" />
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
+        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('dicttype.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>

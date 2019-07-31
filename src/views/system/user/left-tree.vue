@@ -44,6 +44,10 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
+      },
+      listQuery: {
+        page: 1,
+        limit: 8
       }
     }
   },

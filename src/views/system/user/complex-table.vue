@@ -496,7 +496,7 @@ export default {
           })
           setTimeout(() => {
             this.initUserInfo()
-          }, 3 * 1000)
+          }, 1 * 1000)
         })
       }
     },

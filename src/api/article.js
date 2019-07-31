@@ -92,7 +92,8 @@ export function fetchMenuList(query) {
   })
 }
 
-export function createArticle(data) {
+// 新增角色
+export function createRoleArticle(data) {
   return request({
     url: url + '/sys/role/addRole',
     method: 'post',
@@ -100,6 +101,7 @@ export function createArticle(data) {
   })
 }
 
+// 修改角色
 export function updateArticle(data) {
   return request({
     url: url + '/sys/role/updateRoleByRoleId',
@@ -108,6 +110,84 @@ export function updateArticle(data) {
   })
 }
 
+// 获取部门列表
+export function fetchDeptList(query) {
+  return request({
+    url: url + '/sys/dept/getDeptList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 删除部门
+export function deleteByDeptId(data) {
+  return request({
+    url: url + '/sys/dept/deleteByDeptId',
+    method: 'post',
+    data
+  })
+}
+
+// 新增部门
+export function createDeptArticle(data) {
+  return request({
+    url: url + '/sys/dept/addDept',
+    method: 'post',
+    data
+  })
+}
+
+// 获取岗倍列表
+export function fetchPostList(query) {
+  return request({
+    url: url + '/sys/post/getPostList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 删除岗倍
+export function deleteByPostId(data) {
+  return request({
+    url: url + '/sys/post/deleteByPostId',
+    method: 'post',
+    data
+  })
+}
+
+// 新增岗位
+export function createPostArticle(data) {
+  return request({
+    url: url + '/sys/post/addPost',
+    method: 'post',
+    data
+  })
+}
+
+// 修改角色
+export function updatePostArticle(data) {
+  return request({
+    url: url + '/sys/post/updatePostByRoleId',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ *
+ * @param {} query
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 export function fetchUserList(query) {
   return request({
     url: '/article/userList',
