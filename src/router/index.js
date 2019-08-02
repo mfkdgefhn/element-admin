@@ -205,6 +205,14 @@ export const asyncRoutes = [
         }
       },
       {
+        path: '/system/dictdata',
+        component: () => import('@/views/system/dictdata'),
+        name: 'dictdata',
+        meta: {
+          title: 'dictdata', icon: 'dictdata'
+        }
+      },
+      {
         path: '/system/parameter',
         component: () => import('@/views/system/parameter'),
         name: 'parameter',

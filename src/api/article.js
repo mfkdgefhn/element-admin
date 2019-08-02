@@ -164,15 +164,86 @@ export function createPostArticle(data) {
   })
 }
 
-// 修改角色
+// 修改岗位
 export function updatePostArticle(data) {
   return request({
-    url: url + '/sys/post/updatePostByRoleId',
+    url: url + '/sys/post/updatePostByDictId',
     method: 'post',
     data
   })
 }
 
+// 获取字典管理列表
+export function fetchDictTypeList(query) {
+  return request({
+    url: url + '/sys/dict-type/getDictTypeList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 新增字典管理
+export function createDictTypeArticle(data) {
+  return request({
+    url: url + '/sys/dict-type/addDictType',
+    method: 'post',
+    data
+  })
+}
+
+// 修改字典管理
+export function updateDictTypeArticle(data) {
+  return request({
+    url: url + '/sys/dict-type/updateDictTypeByDictId',
+    method: 'post',
+    data
+  })
+}
+
+// 删除字典管理
+export function deleteByDictId(data) {
+  return request({
+    url: url + '/sys/dict-type/deleteByDictId',
+    method: 'post',
+    data
+  })
+}
+
+// 获取字典数据列表
+export function fetchDictDataList(query) {
+  return request({
+    url: url + '/sys/dict-data/getDictDataList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 新增字典数据
+export function createDictDataArticle(data) {
+  return request({
+    url: url + '/sys/dict-data/addDictData',
+    method: 'post',
+    data
+  })
+}
+
+// 删除字典数据
+export function deleteByDictCode(data) {
+  return request({
+    url: url + '/sys/dict-type/deleteByDictCode',
+    method: 'post',
+    data
+  })
+}
+
+// 修改字典数据
+export function updateDictDataArticle(data) {
+  return request({
+    url: url + '/sys/dict-type/updateDictDataByDictCode',
+    method: 'post',
+    data
+  })
+}
 /**
  *
  * @param {} query

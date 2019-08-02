@@ -2,43 +2,33 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 字典名称 -->
+      <!-- 字典编码 -->
       <el-input
-        v-model="listQuery.dictName"
-        :placeholder="$t('dicttypetable.dictName')"
+        v-model="listQuery.dictCode"
+        :placeholder="$t('dictdatatable.dictCode')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 字典类型 -->
+      <!-- 字典标签 -->
       <el-input
-        v-model="listQuery.dictType"
-        :placeholder="$t('dicttypetable.dictType')"
+        v-model="listQuery.dictLabel"
+        :placeholder="$t('dictdatatable.dictLabel')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 岗位状态 -->
+      <!-- 数据状态 -->
       <el-input
         v-model="listQuery.status"
-        :placeholder="$t('dicttypetable.status')"
+        :placeholder="$t('dictdatatable.status')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 创建时间 -->
-      <el-date-picker
-        v-model="value1"
-        type="daterange"
-        range-separator="-"
-        :start-placeholder="$t('dicttypetable.startDate')"
-        :end-placeholder="$t('dicttypetable.endDate')"
-        style="width:250px;padding:0px 10px;"
-        value-format="yyyyMMdd"
-      />
       <!-- 搜索按钮 -->
       <el-button
         v-waves
@@ -46,7 +36,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('dicttypetable.search') }}</el-button>
+      >{{ $t('dictdatatable.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -55,7 +45,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('dicttypetable.add') }}</el-button>
+      >{{ $t('dictdatatable.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -65,7 +55,7 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('dicttypetable.export') }}</el-button>
+      >{{ $t('dictdatatable.export') }}</el-button>
 
       <!-- 刷新 -->
       <el-button type="primary" :icon="refreshButton" circle @click="refreshPostList()" />
@@ -82,25 +72,37 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- 字典主键 -->
-      <el-table-column type="index" width="40" align="center" />
+      <!-- 字典编码 -->
+      <el-table-column
+        type="index"
+        width="40"
+        align="center"
+        :label="$t('dictdatatable.dictCode')"
+      />
 
-      <!-- 字典名称 -->
-      <el-table-column :label="$t('dicttypetable.dictName')" align="center">
+      <!-- 字典标签 -->
+      <el-table-column :label="$t('dictdatatable.dictLabel')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.dictName }}</span>
+          <span>{{ scope.row.dictLabel }}</span>
         </template>
       </el-table-column>
 
-      <!-- 字典类型 -->
-      <el-table-column :label="$t('dicttypetable.dictType')" align="center">
+      <!-- 字典键值 -->
+      <el-table-column :label="$t('dictdatatable.dictValue')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.dictType }}</span>
+          <span>{{ scope.row.dictValue }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 字典排序 -->
+      <el-table-column :label="$t('dictdatatable.dictSort')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.dictSort }}</span>
         </template>
       </el-table-column>
 
       <!-- 状态 -->
-      <el-table-column :label="$t('dicttypetable.status')" align="center">
+      <el-table-column :label="$t('dictdatatable.status')" align="center">
         <template slot-scope="scope">
           <el-tag
             effect="Plain"
@@ -110,14 +112,14 @@
       </el-table-column>
 
       <!-- 备注 -->
-      <el-table-column :label="$t('dicttypetable.remark')" align="center">
+      <el-table-column :label="$t('dictdatatable.remark')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
 
       <!-- 创建时间 -->
-      <el-table-column width="150" :label="$t('dicttypetable.createTime')" align="center">
+      <el-table-column width="150" :label="$t('dictdatatable.createTime')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -125,7 +127,7 @@
 
       <!-- 操作 -->
       <el-table-column
-        :label="$t('dicttypetable.actions')"
+        :label="$t('dictdatatable.actions')"
         align="center"
         width="230"
         class-name="small-padding fixed-width"
@@ -139,15 +141,6 @@
             round
             @click="handleUpdate(row)"
           >编辑</el-button>
-
-          <!-- 列表 -->
-          <el-button
-            type="success"
-            icon="el-icon-edit"
-            size="mini"
-            round
-            @click="handleFetchPv(row)"
-          >列表</el-button>
 
           <!-- 删除 -->
           <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
@@ -168,7 +161,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getDictTypeList"
+      @pagination="getDictDataList"
     />
 
     <!-- 弹出层 -->
@@ -183,18 +176,43 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <!-- 字典名称 -->
-        <el-form-item :label="$t('dicttypetable.dictName')" prop="dictName">
-          <el-input v-model="temp.dictName" />
+        <!-- 字典标签 -->
+        <el-form-item :label="$t('dictdatatable.dictLabel')" prop="dictLabel">
+          <el-input v-model="temp.dictLabel" />
+        </el-form-item>
+
+        <!-- 字典键值 -->
+        <el-form-item :label="$t('dictdatatable.dictValue')" prop="dictValue">
+          <el-input v-model="temp.dictValue" />
         </el-form-item>
 
         <!-- 字典类型 -->
-        <el-form-item :label="$t('dicttypetable.dictType')" prop="dictType">
+        <el-form-item :label="$t('dictdatatable.dictType')" prop="dictType">
           <el-input v-model="temp.dictType" />
         </el-form-item>
 
+        <!-- 样式属性 -->
+        <el-form-item :label="$t('dictdatatable.cssClass')" prop="cssClass">
+          <el-input v-model="temp.cssClass" />
+        </el-form-item>
+
+        <!-- 字典排序 -->
+        <el-form-item :label="$t('dictdatatable.dictSort')" prop="dictSort">
+          <el-input v-model="temp.dictSort" />
+        </el-form-item>
+
+        <!-- 回显样式 -->
+        <el-form-item :label="$t('dictdatatable.listClass')" prop="listClass">
+          <el-input v-model="temp.listClass" />
+        </el-form-item>
+
+        <!-- 系统默认 -->
+        <el-form-item :label="$t('dictdatatable.isDefault')" prop="isDefault">
+          <el-input v-model="temp.isDefault" />
+        </el-form-item>
+
         <!-- 状态 -->
-        <el-form-item :label="$t('dicttypetable.status')">
+        <el-form-item :label="$t('dictdatatable.status')">
           <el-select v-model="temp.status" placeholder="请选择用户状态">
             <el-option label="正常" value="0" />
             <el-option label="停用" value="1" />
@@ -202,7 +220,7 @@
         </el-form-item>
 
         <!-- 备注 -->
-        <el-form-item :label="$t('dicttypetable.remark')">
+        <el-form-item :label="$t('dictdatatable.remark')">
           <el-input
             v-model="temp.remark"
             :autosize="{ minRows: 2, maxRows: 4}"
@@ -217,27 +235,16 @@
         <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('dicttypetable.confirm') }}</el-button>
+        >{{ $t('dictdatatable.confirm') }}</el-button>
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('dicttypetable.cancel') }}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('dictdatatable.cancel') }}</el-button>
       </div>
-    </el-dialog>
-
-    <!-- 弹出层 -->
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { deleteByDictId, updateRoleByRoleId, fetchDictTypeList, fetchPv, createDictTypeArticle, updateDictTypeArticle } from '@/api/article'
+import { deleteByDictCode, updateRoleByRoleId, fetchDictDataList, fetchPv, createDictDataArticle, updateDictDataArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -329,7 +336,7 @@ export default {
     }
   },
   created() {
-    this.getDictTypeList()
+    this.getDictDataList()
   },
   methods: {
     // 刷新按钮
@@ -344,7 +351,7 @@ export default {
       this.listQuery.status = ''
       this.listQuery.startDate = ''
       this.listQuery.endDate = ''
-      await this.getDictTypeList()
+      await this.getDictDataList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
         message: '刷新完成',
@@ -352,9 +359,9 @@ export default {
       })
     },
     // 获取角色列表
-    getDictTypeList() {
+    getDictDataList() {
       this.listLoading = true
-      fetchDictTypeList(this.listQuery).then(response => {
+      fetchDictDataList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         // Just to simulate the time of the request
@@ -366,7 +373,7 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       // this.getList()
-      this.getDictTypeList()
+      this.getDictDataList()
     },
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
@@ -394,13 +401,13 @@ export default {
       } else if (status === 'deleted') {
         // 删除
         row.visible = false
-        deleteByDictId(row).then(response => {
+        deleteByDictCode(row).then(response => {
           this.$message({
             message: '删除成功',
             type: 'success'
           })
           setTimeout(() => {
-            this.getDictTypeList()
+            this.getDictDataList()
           }, 1 * 1000)
         })
       }
@@ -444,11 +451,11 @@ export default {
         if (valid) {
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
-          createDictTypeArticle(this.temp).then(() => {
+          createDictDataArticle(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
-            this.getDictTypeList()
+            this.getDictDataList()
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -472,9 +479,9 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.updateTime = new Date()
-          updateDictTypeArticle(tempData).then(() => {
+          updateDictDataArticle(tempData).then(() => {
             this.dialogFormVisible = false
-            this.getDictTypeList()
+            this.getDictDataList()
             this.$notify({
               title: '成功',
               message: '更新成功',
