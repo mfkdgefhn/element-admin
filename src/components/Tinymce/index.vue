@@ -1,6 +1,8 @@
 <template>
   <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
+    <!-- 富文本组件 -->
     <textarea :id="tinymceId" class="tinymce-textarea" />
+    <!-- 上传组件 -->
     <div class="editor-custom-btn-container">
       <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
     </div>
@@ -8,16 +10,12 @@
 </template>
 
 <script>
-/**
- * docs:
- * https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html#tinymce
- */
-import editorImage from './components/EditorImage'
-import plugins from './plugins'
-import toolbar from './toolbar'
+
+import editorImage from './components/EditorImage' // 上传组件
+import plugins from './plugins' // 插件
+import toolbar from './toolbar' // 插件
 import load from './dynamicLoadScript'
 
-// why use this cdn, detail see https://github.com/PanJiaChen/tinymce-all-in-one
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js'
 
 export default {
@@ -110,7 +108,7 @@ export default {
   },
   methods: {
     init() {
-      // dynamic load tinymce from cdn
+      // dynamic load tinymce from cdn 从cdn动态加载tinymce 检测是否已经加载JS文件
       load(tinymceCDN, (err) => {
         if (err) {
           this.$message.error(err.message)
@@ -221,7 +219,7 @@ export default {
   position: relative;
   line-height: normal;
 }
-.tinymce-container>>>.mce-fullscreen {
+.tinymce-container >>> .mce-fullscreen {
   z-index: 10000;
 }
 .tinymce-textarea {

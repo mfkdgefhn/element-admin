@@ -2,14 +2,15 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 字典编码 -->
-      <el-input
-        v-model="listQuery.dictCode"
-        :placeholder="$t('dictdatatable.dictCode')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
+      <!-- 字典名称 -->
+      <el-select v-model="listQuery.dictType" placeholder="请选择字典类型">
+        <el-option
+          v-for="item in dictType"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
 
       <!-- 字典标签 -->
       <el-input
@@ -58,7 +59,7 @@
       >{{ $t('dictdatatable.export') }}</el-button>
 
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshPostList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
     </div>
 
     <!-- 表格 -->
@@ -72,13 +73,12 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- 字典编码 -->
-      <el-table-column
-        type="index"
-        width="40"
-        align="center"
-        :label="$t('dictdatatable.dictCode')"
-      />
+      <!-- 字典标签 -->
+      <el-table-column :label="$t('dictdatatable.dictCode')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.dictCode }}</span>
+        </template>
+      </el-table-column>
 
       <!-- 字典标签 -->
       <el-table-column :label="$t('dictdatatable.dictLabel')" align="center">
@@ -129,7 +129,7 @@
       <el-table-column
         :label="$t('dictdatatable.actions')"
         align="center"
-        width="230"
+        width="180"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{row}">
@@ -192,22 +192,22 @@
         </el-form-item>
 
         <!-- 样式属性 -->
-        <el-form-item :label="$t('dictdatatable.cssClass')" prop="cssClass">
+        <el-form-item :label="$t('dictdatatable.cssClass')">
           <el-input v-model="temp.cssClass" />
         </el-form-item>
 
         <!-- 字典排序 -->
-        <el-form-item :label="$t('dictdatatable.dictSort')" prop="dictSort">
+        <el-form-item :label="$t('dictdatatable.dictSort')">
           <el-input v-model="temp.dictSort" />
         </el-form-item>
 
         <!-- 回显样式 -->
-        <el-form-item :label="$t('dictdatatable.listClass')" prop="listClass">
+        <el-form-item :label="$t('dictdatatable.listClass')">
           <el-input v-model="temp.listClass" />
         </el-form-item>
 
         <!-- 系统默认 -->
-        <el-form-item :label="$t('dictdatatable.isDefault')" prop="isDefault">
+        <el-form-item :label="$t('dictdatatable.isDefault')">
           <el-input v-model="temp.isDefault" />
         </el-form-item>
 
@@ -244,7 +244,7 @@
 </template>
 
 <script>
-import { deleteByDictCode, updateRoleByRoleId, fetchDictDataList, fetchPv, createDictDataArticle, updateDictDataArticle } from '@/api/article'
+import { deleteByDictCode, updateRoleByRoleId, fetchDictTypeList, fetchDictDataList, fetchPv, createDictDataArticle, updateDictDataArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -281,7 +281,6 @@ export default {
         '0': '正常',
         '1': '停用'
       },
-      value1: '',
       pvData: [],
       refreshButton: 'el-icon-refresh',
       tableKey: 0,
@@ -290,6 +289,7 @@ export default {
       shenheren: true,
       total: 0,
       listLoading: true,
+      dictType: [],
       listQuery: {
         page: 1,
         limit: 8,
@@ -300,19 +300,23 @@ export default {
         status: undefined,
         remark: undefined,
         startDate: undefined,
-        endDate: undefined
+        endDate: undefined,
+        dictLabel: undefined
       },
       importanceOptions: [1, 2, 3],
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       temp: {
         id: undefined,
         dictId: '',
-        remark: '',
-        dictName: '',
         dictType: '',
         status: '0',
-        startDate: '',
-        endDate: ''
+        dictLabel: '',
+        dictValue: '',
+        cssClass: '',
+        dictSort: '',
+        listClass: '',
+        isDefault: '',
+        remark: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -329,18 +333,13 @@ export default {
       downloadLoading: false
     }
   },
-  watch: {
-    value1(data) {
-      this.listQuery.startDate = data[0]
-      this.listQuery.endDate = data[1]
-    }
-  },
   created() {
     this.getDictDataList()
+    this.getDictTypeList()
   },
   methods: {
     // 刷新按钮
-    async refreshPostList() {
+    async refreshList() {
       this.refreshButton = 'el-icon-loading'
       this.listQuery.page = 1
       this.listQuery.limit = 8
@@ -349,8 +348,7 @@ export default {
       this.listQuery.dictId = ''
       this.listQuery.remark = ''
       this.listQuery.status = ''
-      this.listQuery.startDate = ''
-      this.listQuery.endDate = ''
+      this.listQuery.dictLabel = ''
       await this.getDictDataList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
@@ -370,9 +368,21 @@ export default {
         }, 0.1 * 1000)
       })
     },
+    // 获取操作类型
+    getDictTypeList() {
+      fetchDictTypeList(this.listQuery).then(response => {
+        const arr = []
+        response.data.records.forEach(element => {
+          arr.push({ 'label': element.dictName, 'value': element.dictType })
+        })
+        this.dictType = arr
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.1 * 1000)
+      })
+    },
     handleFilter() {
       this.listQuery.page = 1
-      // this.getList()
       this.getDictDataList()
     },
     handleModifyStatus(row, status) {

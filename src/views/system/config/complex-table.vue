@@ -2,31 +2,42 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 公告标题 -->
+      <!-- 参数名称 -->
       <el-input
-        v-model="listQuery.noticeTitle"
-        :placeholder="$t('noticetable.noticeTitle')"
+        v-model="listQuery.configName"
+        :placeholder="$t('configtable.configName')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 操作人员 -->
+      <!-- 参数键名 -->
       <el-input
-        v-model="listQuery.createBy"
-        :placeholder="$t('noticetable.createBy')"
+        v-model="listQuery.configKey"
+        :placeholder="$t('configtable.configKey')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
 
-      <!-- 公告类型 -->
+      <!-- 系统内置 -->
       <el-input
-        v-model="listQuery.noticeType"
-        :placeholder="$t('noticetable.noticeType')"
+        v-model="listQuery.configType"
+        :placeholder="$t('configtable.configType')"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
+      />
+
+      <!-- 创建时间 -->
+      <el-date-picker
+        v-model="value1"
+        type="daterange"
+        range-separator="-"
+        :start-placeholder="$t('dicttypetable.startDate')"
+        :end-placeholder="$t('dicttypetable.endDate')"
+        style="width:250px;padding:0px 10px;"
+        value-format="yyyyMMdd"
       />
 
       <!-- 搜索按钮 -->
@@ -36,7 +47,7 @@
         type="primary"
         icon="el-icon-search"
         @click="handleFilter"
-      >{{ $t('noticetable.search') }}</el-button>
+      >{{ $t('configtable.search') }}</el-button>
 
       <!-- 添加 -->
       <el-button
@@ -45,7 +56,7 @@
         type="primary"
         icon="el-icon-edit"
         @click="handleCreate"
-      >{{ $t('noticetable.add') }}</el-button>
+      >{{ $t('configtable.add') }}</el-button>
 
       <!-- 导出 -->
       <el-button
@@ -55,7 +66,7 @@
         type="primary"
         icon="el-icon-download"
         @click="handleDownload"
-      >{{ $t('noticetable.export') }}</el-button>
+      >{{ $t('configtable.export') }}</el-button>
 
       <!-- 刷新 -->
       <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
@@ -72,39 +83,50 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <!-- 序号 -->
-      <el-table-column type="index" width="50" align="center" label="序号" />
-
-      <!-- 公告标题 -->
-      <el-table-column :label="$t('noticetable.noticeTitle')" align="center">
+      <!-- 参数主键 -->
+      <el-table-column :label="$t('configtable.configId')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.noticeTitle }}</span>
+          <span>{{ scope.row.configId }}</span>
         </template>
       </el-table-column>
 
-      <!-- 公告类型 -->
-      <el-table-column :label="$t('noticetable.noticeType')" align="center">
+      <!-- 参数名称 -->
+      <el-table-column :label="$t('configtable.configName')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.noticeType }}</span>
+          <span>{{ scope.row.configName }}</span>
         </template>
       </el-table-column>
 
-      <!-- 状态 -->
-      <el-table-column :label="$t('noticetable.status')" align="center">
+      <!-- 参数键名 -->
+      <el-table-column :label="$t('configtable.configKey')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
+          <span>{{ scope.row.configKey }}</span>
         </template>
       </el-table-column>
 
-      <!-- 创建者 -->
-      <el-table-column :label="$t('noticetable.createBy')" align="center">
+      <!-- 参数键值 -->
+      <el-table-column :label="$t('configtable.configValue')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.createBy }}</span>
+          <span>{{ scope.row.configValue }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 系统内置 -->
+      <el-table-column :label="$t('configtable.configType')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.configType }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- 备注 -->
+      <el-table-column width="200" :label="$t('configtable.remark')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
 
       <!-- 创建时间 -->
-      <el-table-column width="150" :label="$t('noticetable.createTime')" align="center">
+      <el-table-column width="150" :label="$t('configtable.createTime')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
@@ -112,7 +134,7 @@
 
       <!-- 操作 -->
       <el-table-column
-        :label="$t('noticetable.actions')"
+        :label="$t('configtable.actions')"
         align="center"
         width="180"
         class-name="small-padding fixed-width"
@@ -125,7 +147,7 @@
             size="mini"
             round
             @click="handleUpdate(row)"
-          >{{ $t('noticetable.edit') }}</el-button>
+          >{{ $t('configtable.edit') }}</el-button>
 
           <!-- 删除 -->
           <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
@@ -140,7 +162,7 @@
               round
               type="danger"
               icon="el-icon-delete"
-            >{{ $t('noticetable.delete') }}</el-button>
+            >{{ $t('configtable.delete') }}</el-button>
           </el-popover>
         </template>
       </el-table-column>
@@ -152,7 +174,7 @@
       :total="total"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination="getNoticeList"
+      @pagination="getConfigList"
     />
 
     <!-- 弹出层 -->
@@ -167,29 +189,34 @@
         label-width="100px"
         style="width: 400px; margin-left:50px;"
       >
-        <!-- 公告标题 -->
-        <el-form-item :label="$t('noticetable.noticeTitle')" prop="configName">
-          <el-input v-model="temp.noticeTitle" />
+        <!-- 参数名称 -->
+        <el-form-item :label="$t('configtable.configName')" prop="configName">
+          <el-input v-model="temp.configName" />
         </el-form-item>
 
-        <!-- 公告类型 -->
-        <el-form-item :label="$t('noticetable.noticeType')" prop="configKey">
-          <el-input v-model="temp.noticeType" />
+        <!-- 参数键名 -->
+        <el-form-item :label="$t('configtable.configKey')" prop="configKey">
+          <el-input v-model="temp.configKey" />
         </el-form-item>
 
-        <!-- 公告内容 -->
-        <el-form-item :label="$t('noticetable.noticeContent')" prop="configValue">
-          <!-- 富文本组件 -->
-          <textarea :id="tinymceId" class="tinymce-textarea" />
-          <!-- 上传组件 -->
-          <div class="editor-custom-btn-container">
-            <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
-          </div>
+        <!-- 参数键值 -->
+        <el-form-item :label="$t('configtable.configValue')" prop="configValue">
+          <el-input v-model="temp.configValue" />
         </el-form-item>
 
-        <!-- 公告状态 -->
-        <el-form-item :label="$t('noticetable.status')" prop="configType">
-          <el-input v-model="temp.status" />
+        <!-- 系统内置 -->
+        <el-form-item :label="$t('configtable.configType')" prop="configType">
+          <el-input v-model="temp.configType" />
+        </el-form-item>
+
+        <!-- 备注 -->
+        <el-form-item :label="$t('configtable.remark')">
+          <el-input
+            v-model="temp.remark"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="该角色很懒，未写备注信息..."
+          />
         </el-form-item>
       </el-form>
 
@@ -198,17 +225,16 @@
         <el-button
           type="primary"
           @click="dialogStatus==='create'?createData():updateData()"
-        >{{ $t('noticetable.confirm') }}</el-button>
+        >{{ $t('configtable.confirm') }}</el-button>
         <!-- 取消 -->
-        <el-button @click="dialogFormVisible = false">{{ $t('noticetable.cancel') }}</el-button>
+        <el-button @click="dialogFormVisible = false">{{ $t('configtable.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-
-import { deleteByNoticeId, updateRoleByRoleId, fetchNoticeList, fetchPv, createNoticeArticle, updateNoticeArticle } from '@/api/article'
+import { deleteByConfigId, updateRoleByRoleId, fetchConfigList, fetchPv, createConfigArticle, updateConfigArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -217,16 +243,10 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
-import editorImage from './components/EditorImage'
-import load from './dynamicLoadScript'
-import plugins from './plugins'
-import toolbar from './toolbar'
-
-const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js'
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, editorImage },
+  components: { Pagination },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -238,51 +258,8 @@ export default {
       return statusMap[status]
     }
   },
-  props: {
-    id: {
-      type: String,
-      default: function() {
-        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
-      }
-    },
-    value: {
-      type: String,
-      default: ''
-    },
-    toolbar: {
-      type: Array,
-      required: false,
-      default() {
-        return []
-      }
-    },
-    menubar: {
-      type: String,
-      default: 'file edit insert view format table'
-    },
-    height: {
-      type: [Number, String],
-      required: false,
-      default: 360
-    },
-    width: {
-      type: [Number, String],
-      required: false,
-      default: 'auto'
-    }
-  },
   data() {
     return {
-      hasChange: false,
-      hasInit: false,
-      tinymceId: this.id,
-      fullscreen: false,
-      languageTypeList: {
-        'en': 'en',
-        'zh': 'zh_CN',
-        'es': 'es_MX',
-        'ja': 'ja'
-      },
       closeOnClickModal: false,
       scopeAuthority: [
         { key: '1', value: '全部数据权限' },
@@ -310,9 +287,11 @@ export default {
         sort: '+id',
         status: undefined,
         remark: undefined,
-        noticeTitle: undefined,
-        createBy: undefined,
-        noticeType: undefined
+        startDate: undefined,
+        endDate: undefined,
+        configName: undefined,
+        configKey: undefined,
+        configType: undefined
       },
       importanceOptions: [1, 2, 3],
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -320,9 +299,10 @@ export default {
         id: undefined,
         status: '0',
         remark: '',
-        noticeTitle: '',
-        noticeType: '',
-        noticeContent: ''
+        configType: '',
+        configValue: '',
+        configKey: '',
+        configName: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -339,151 +319,16 @@ export default {
       downloadLoading: false
     }
   },
-  computed: {
-    language() {
-      return this.languageTypeList[this.$store.getters.language]
-    },
-    containerWidth() {
-      const width = this.width
-      if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
-        return `${width}px`
-      }
-      return width
-    }
-  },
   watch: {
-    value(val) {
-      if (!this.hasChange && this.hasInit) {
-        this.$nextTick(() =>
-          window.tinymce.get(this.tinymceId).setContent(val || ''))
-      }
-    },
-    language() {
-      this.destroyTinymce()
-      this.$nextTick(() => this.initTinymce())
+    value1(data) {
+      this.listQuery.startDate = data[0]
+      this.listQuery.endDate = data[1]
     }
-  },
-  mounted() {
-    this.init()
-  },
-  activated() {
-    if (window.tinymce) {
-      this.initTinymce()
-    }
-  },
-  deactivated() {
-    this.destroyTinymce()
-  },
-  destroyed() {
-    this.destroyTinymce()
   },
   created() {
-    this.getNoticeList()
+    this.getConfigList()
   },
   methods: {
-    init() {
-      // dynamic load tinymce from cdn
-      load(tinymceCDN, (err) => {
-        if (err) {
-          this.$message.error(err.message)
-          return
-        }
-        this.initTinymce()
-      })
-    },
-    initTinymce() {
-      const _this = this
-      window.tinymce.init({
-        language: this.language,
-        selector: 'textarea',
-        height: this.height,
-        body_class: 'panel-body ',
-        object_resizing: false,
-        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
-        menubar: this.menubar,
-        plugins: plugins,
-        end_container_on_empty_block: true,
-        powerpaste_word_import: 'clean',
-        code_dialog_height: 450,
-        code_dialog_width: 1000,
-        advlist_bullet_styles: 'square',
-        advlist_number_styles: 'default',
-        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
-        default_link_target: '_blank',
-        link_title: false,
-        nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
-        init_instance_callback: editor => {
-          if (_this.value) {
-            editor.setContent(_this.value)
-          }
-          _this.hasInit = true
-          editor.on('NodeChange Change KeyUp SetContent', () => {
-            this.hasChange = true
-            this.$emit('input', editor.getContent())
-          })
-        },
-        setup(editor) {
-          editor.on('FullscreenStateChanged', (e) => {
-            _this.fullscreen = e.state
-          })
-        }
-        // 整合七牛上传
-        // images_dataimg_filter(img) {
-        //   setTimeout(() => {
-        //     const $image = $(img);
-        //     $image.removeAttr('width');
-        //     $image.removeAttr('height');
-        //     if ($image[0].height && $image[0].width) {
-        //       $image.attr('data-wscntype', 'image');
-        //       $image.attr('data-wscnh', $image[0].height);
-        //       $image.attr('data-wscnw', $image[0].width);
-        //       $image.addClass('wscnph');
-        //     }
-        //   }, 0);
-        //   return img
-        // },
-        // images_upload_handler(blobInfo, success, failure, progress) {
-        //   progress(0);
-        //   const token = _this.$store.getters.token;
-        //   getToken(token).then(response => {
-        //     const url = response.data.qiniu_url;
-        //     const formData = new FormData();
-        //     formData.append('token', response.data.qiniu_token);
-        //     formData.append('key', response.data.qiniu_key);
-        //     formData.append('file', blobInfo.blob(), url);
-        //     upload(formData).then(() => {
-        //       success(url);
-        //       progress(100);
-        //     })
-        //   }).catch(err => {
-        //     failure('出现未知问题，刷新页面，或者联系程序员')
-        //     console.log(err);
-        //   });
-        // },
-      })
-    },
-    destroyTinymce() {
-      const tinymce = window.tinymce.get(this.tinymceId)
-      if (this.fullscreen) {
-        tinymce.execCommand('mceFullScreen')
-      }
-
-      if (tinymce) {
-        tinymce.destroy()
-      }
-    },
-    setContent(value) {
-      window.tinymce.get(this.tinymceId).setContent(value)
-    },
-    getContent() {
-      window.tinymce.get(this.tinymceId).getContent()
-    },
-    imageSuccessCBK(arr) {
-      const _this = this
-      arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
-      })
-    },
     // 刷新按钮
     async refreshList() {
       this.refreshButton = 'el-icon-loading'
@@ -491,10 +336,12 @@ export default {
       this.listQuery.limit = 8
       this.listQuery.remark = ''
       this.listQuery.status = ''
-      this.listQuery.noticeTitle = ''
-      this.listQuery.createBy = ''
-      this.listQuery.noticeType = ''
-      await this.getNoticeList()
+      this.listQuery.startDate = ''
+      this.listQuery.endDate = ''
+      this.listQuery.configName = ''
+      this.listQuery.configKey = ''
+      this.listQuery.configType = ''
+      await this.getConfigList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
         message: '刷新完成',
@@ -502,9 +349,9 @@ export default {
       })
     },
     // 获取系统参数列表
-    getNoticeList() {
+    getConfigList() {
       this.listLoading = true
-      fetchNoticeList(this.listQuery).then(response => {
+      fetchConfigList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         // Just to simulate the time of the request
@@ -515,7 +362,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      this.getNoticeList()
+      this.getConfigList()
     },
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
@@ -543,13 +390,13 @@ export default {
       } else if (status === 'deleted') {
         // 删除
         row.visible = false
-        deleteByNoticeId(row).then(response => {
+        deleteByConfigId(row).then(response => {
           this.$message({
             message: '删除成功',
             type: 'success'
           })
           setTimeout(() => {
-            this.getNoticeList()
+            this.getConfigList()
           }, 1 * 1000)
         })
       }
@@ -574,10 +421,10 @@ export default {
         remark: '',
         title: '',
         status: '0',
-        notice_id: '',
-        noticeTitle: '',
-        noticeType: '',
-        noticeContent: ''
+        type: '',
+        dictName: '',
+        dictType: '',
+        dictId: ''
       }
     },
     handleCreate() {
@@ -593,11 +440,11 @@ export default {
         if (valid) {
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
-          createNoticeArticle(this.temp).then(() => {
+          createConfigArticle(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
-            this.getNoticeList()
+            this.getConfigList()
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -621,9 +468,9 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.updateTime = new Date()
-          updateNoticeArticle(tempData).then(() => {
+          updateConfigArticle(tempData).then(() => {
             this.dialogFormVisible = false
-            this.getNoticeList()
+            this.getConfigList()
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -679,33 +526,6 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.tinymce-container {
-  position: relative;
-  line-height: normal;
-}
-.tinymce-container >>> .mce-fullscreen {
-  z-index: 10000;
-}
-.tinymce-textarea {
-  visibility: hidden;
-  z-index: -1;
-}
-.editor-custom-btn-container {
-  position: absolute;
-  right: 4px;
-  top: 4px;
-  /*z-index: 2005;*/
-}
-.fullscreen .editor-custom-btn-container {
-  z-index: 10000;
-  position: fixed;
-}
-.editor-upload-btn {
-  display: inline-block;
-}
-</style>
 
 <style>
 .el-dialog {

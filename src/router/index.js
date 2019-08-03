@@ -213,11 +213,11 @@ export const asyncRoutes = [
         }
       },
       {
-        path: '/system/parameter',
-        component: () => import('@/views/system/parameter'),
-        name: 'parameter',
+        path: '/system/config',
+        component: () => import('@/views/system/config'),
+        name: 'config',
         meta: {
-          title: 'parameter', icon: 'parameter'
+          title: 'config', icon: 'config'
         }
       },
       {
@@ -226,6 +226,14 @@ export const asyncRoutes = [
         name: 'notice',
         meta: {
           title: 'notice', icon: 'notice'
+        }
+      },
+      {
+        path: '/system/fwb',
+        component: () => import('@/views/system/fwb'),
+        name: 'fwb',
+        meta: {
+          title: 'fwb', icon: 'fwb'
         }
       },
       {

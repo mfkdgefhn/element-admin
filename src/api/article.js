@@ -230,7 +230,7 @@ export function createDictDataArticle(data) {
 // 删除字典数据
 export function deleteByDictCode(data) {
   return request({
-    url: url + '/sys/dict-type/deleteByDictCode',
+    url: url + '/sys/dict-data/deleteByDictCode',
     method: 'post',
     data
   })
@@ -239,11 +239,84 @@ export function deleteByDictCode(data) {
 // 修改字典数据
 export function updateDictDataArticle(data) {
   return request({
-    url: url + '/sys/dict-type/updateDictDataByDictCode',
+    url: url + '/sys/dict-data/updateDictDataByDictCode',
     method: 'post',
     data
   })
 }
+
+// 获取系统参数列表
+export function fetchConfigList(query) {
+  return request({
+    url: url + '/sys/config/getConfigList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 修改字典数据
+export function updateConfigArticle(data) {
+  return request({
+    url: url + '/sys/config/updateConfigById',
+    method: 'post',
+    data
+  })
+}
+
+// 新增字典数据
+export function createConfigArticle(data) {
+  return request({
+    url: url + '/sys/config/addConfig',
+    method: 'post',
+    data
+  })
+}
+
+// 删除系统参数
+export function deleteByConfigId(data) {
+  return request({
+    url: url + '/sys/config/deleteByConfigId',
+    method: 'post',
+    data
+  })
+}
+
+// 获取公告列表
+export function fetchNoticeList(query) {
+  return request({
+    url: url + '/sys/notice/getNoticeList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 修改公告数据
+export function updateNoticeArticle(data) {
+  return request({
+    url: url + '/sys/notice/updateNoticeById',
+    method: 'post',
+    data
+  })
+}
+
+// 新增公告数据
+export function createNoticeArticle(data) {
+  return request({
+    url: url + '/sys/notice/addNotice',
+    method: 'post',
+    data
+  })
+}
+
+// 删除系统参数
+export function deleteByNoticeId(data) {
+  return request({
+    url: url + '/sys/notice/deleteByNoticeId',
+    method: 'post',
+    data
+  })
+}
+
 /**
  *
  * @param {} query
