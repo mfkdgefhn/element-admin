@@ -93,6 +93,7 @@
       <social-sign />
     </el-dialog>
 
+    <!-- 第三方搜狐获取IP地址 -->
     <remote-js src="http://pv.sohu.com/cityjson?ie=utf-8" />
   </div>
 </template>
@@ -101,6 +102,9 @@
 // import { validUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './components/SocialSignin'
+
+// 获取浏览器以及操作系统
+import getBrowseInfo from '@/utils/getBrowseInfo'
 
 export default {
   name: 'Login',
@@ -135,7 +139,11 @@ export default {
       loginForm: {
         userName: 'admin',
         password: '123456',
-        loginIp: ''
+        loginIp: '',
+        loginLocation: '',
+        browser: '',
+        os: '',
+        msg: ''
       },
       loginRules: {
         userName: [{ required: true, trigger: 'blur', message: '请输入用户名' }], // validator: validateUsername
@@ -146,7 +154,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      browseInfo: []
     }
   },
   watch: {
@@ -204,6 +213,13 @@ export default {
           this.loading = true
           // eslint-disable-next-line no-undef
           this.loginForm.loginIp = returnCitySN['cip']
+          // eslint-disable-next-line no-undef
+          this.loginForm.loginLocation = returnCitySN['cname']
+          this.browseInfo = getBrowseInfo()
+          this.loginForm.browser = this.browseInfo[0]
+          this.loginForm.os = this.browseInfo[1] + ' ' + this.browseInfo[2].substr(0, 1)
+
+          // console.log(this.getBrowserInfo())
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
@@ -226,6 +242,59 @@ export default {
         }
         return acc
       }, {})
+    },
+    // 获取操作系统，浏览器信息
+    getBrowserInfo1() {
+      var agent = navigator.userAgent.toLowerCase()
+      console.log(agent)
+      var arr = []
+      var system = agent.split(' ')[1].split(' ')[0].split('(')[1]
+      arr.push(system)
+      var regStr_edge = /edge\/[\d.]+/gi
+      var regStr_ie = /trident\/[\d.]+/gi
+      var regStr_ff = /firefox\/[\d.]+/gi
+      var regStr_chrome = /chrome\/[\d.]+/gi
+      var regStr_saf = /safari\/[\d.]+/gi
+      var regStr_opera = /opr\/[\d.]+/gi
+      // IE
+      if (agent.indexOf('trident') > 0) {
+        arr.push(agent.match(regStr_ie)[0].split('/')[0])
+        arr.push(agent.match(regStr_ie)[0].split('/')[1])
+        return arr
+      }
+      // Edge
+      if (agent.indexOf('edge') > 0) {
+        arr.push(agent.match(regStr_edge)[0].split('/')[0])
+        arr.push(agent.match(regStr_edge)[0].split('/')[1])
+        return arr
+      }
+      // firefox
+      if (agent.indexOf('firefox') > 0) {
+        arr.push(agent.match(regStr_ff)[0].split('/')[0])
+        arr.push(agent.match(regStr_ff)[0].split('/')[1])
+        return arr
+      }
+      // Opera
+      if (agent.indexOf('opr') > 0) {
+        arr.push(agent.match(regStr_opera)[0].split('/')[0])
+        arr.push(agent.match(regStr_opera)[0].split('/')[1])
+        return arr
+      }
+      // Safari
+      if (agent.indexOf('safari') > 0 && agent.indexOf('chrome') < 0) {
+        arr.push(agent.match(regStr_saf)[0].split('/')[0])
+        arr.push(agent.match(regStr_saf)[0].split('/')[1])
+        return arr
+      }
+      // Chrome
+      if (agent.indexOf('chrome') > 0) {
+        arr.push(agent.match(regStr_chrome)[0].split('/')[0])
+        arr.push(agent.match(regStr_chrome)[0].split('/')[1])
+        return arr
+      } else {
+        arr.push('请更换主流浏览器，例如chrome,firefox,opera,safari,IE,Edge!')
+        return arr
+      }
     }
     // afterQRScan() {
     //   if (e.key === 'x-admin-oauth-code') {
