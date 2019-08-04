@@ -335,6 +335,24 @@ export function deleteByLogininfors(data) {
   })
 }
 
+// 获取操作日志记录列表
+export function fetchOperLogList(query) {
+  return request({
+    url: url + '/sys/oper-log/getOperLogList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 删除操作日志
+export function deleteByOperLogs(data) {
+  return request({
+    url: url + '/sys/oper-log/deleteOperLogs',
+    method: 'delete',
+    data
+  })
+}
+
 /**
  *
  * @param {} query

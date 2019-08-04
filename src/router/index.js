@@ -235,13 +235,13 @@ export const asyncRoutes = [
         meta: {
           title: 'log', icon: 'log'
         },
-        redirect: '/system/log/openationllog',
+        redirect: '/system/log/operlog',
         children: [
           {
-            path: 'operationallog',
-            component: () => import('@/views/system/log/operationallog'), // Parent router-view
-            name: 'operationallog',
-            meta: { title: 'operationallog', icon: 'operationallog' }
+            path: 'operlog',
+            component: () => import('@/views/system/log/operlog'), // Parent router-view
+            name: 'operlog',
+            meta: { title: 'operlog', icon: 'operlog' }
           },
           {
             path: 'loginlog',
