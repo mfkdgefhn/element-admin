@@ -229,14 +229,6 @@ export const asyncRoutes = [
         }
       },
       {
-        path: '/system/fwb',
-        component: () => import('@/views/system/fwb'),
-        name: 'fwb',
-        meta: {
-          title: 'fwb', icon: 'fwb'
-        }
-      },
-      {
         path: 'log',
         component: () => import('@/views/system/log/index'),
         name: 'log',

@@ -317,6 +317,24 @@ export function deleteByNoticeId(data) {
   })
 }
 
+// 获取登录日志记录列表
+export function fetchLogininforList(query) {
+  return request({
+    url: url + '/sys/logininfor/getLogininforList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 删除系统参数
+export function deleteByLogininfors(data) {
+  return request({
+    url: url + '/sys/logininfor/deleteLogininfors',
+    method: 'delete',
+    data
+  })
+}
+
 /**
  *
  * @param {} query

@@ -12,14 +12,12 @@
 <script>
 
 import editorImage from './components/EditorImage' // 上传组件
-import plugins from './plugins' // 插件
-import toolbar from './toolbar' // 插件
+import plugins from './plugins'
+import toolbar from './toolbar'
 import load from './dynamicLoadScript'
-
 const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js'
 
 export default {
-  name: 'Tinymce',
   components: { editorImage },
   props: {
     id: {
@@ -67,8 +65,7 @@ export default {
         'ja': 'ja'
       }
     }
-  },
-  computed: {
+  }, computed: {
     language() {
       return this.languageTypeList[this.$store.getters.language]
     },

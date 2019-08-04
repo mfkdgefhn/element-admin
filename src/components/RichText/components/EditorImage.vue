@@ -56,6 +56,7 @@ export default {
       const arr = Object.keys(this.listObj).map(v => this.listObj[v])
       if (!this.checkAllSuccess()) {
         this.$message('Please wait for all images to be uploaded successfully. If there is a network problem, please refresh the page and upload again!')
+        // 请等待所有图像成功上载。如果存在网络问题，请刷新页面并重新上传！
         return
       }
       this.$emit('successCBK', arr)
