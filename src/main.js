@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+import 'default-passive-events'
+
 import Cookies from 'js-cookie'
 
 // CSS重置的现代替代方案

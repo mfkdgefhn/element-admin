@@ -66,6 +66,11 @@ const actions = {
     })
   },
 
+  setDepts({ commit }, deptDate) {
+    console.log('到这了')
+    // commit('SET_DEPTS', deptDate)
+  },
+
   // user login
   login({ commit }, userInfo) {
     const { userName, password, loginIp, browser, os, loginLocation } = userInfo

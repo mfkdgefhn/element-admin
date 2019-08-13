@@ -504,5 +504,10 @@ export default {
     tagsView: '开启 Tags-View',
     fixedHeader: '固定 Header',
     sidebarLogo: '侧边栏 Logo'
+  },
+  currency: {
+    search: '搜索',
+    add: '添加',
+    export: '导出'
   }
 }

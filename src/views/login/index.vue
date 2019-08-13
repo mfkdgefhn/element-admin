@@ -216,8 +216,8 @@ export default {
           // eslint-disable-next-line no-undef
           this.loginForm.loginLocation = returnCitySN['cname']
           this.browseInfo = getBrowseInfo()
-          this.loginForm.browser = this.browseInfo[0]
-          this.loginForm.os = this.browseInfo[1] + ' ' + this.browseInfo[2].substr(0, 1)
+          this.loginForm.os = this.browseInfo[0]
+          this.loginForm.browser = this.browseInfo[1] + ' ' + this.browseInfo[2].split(' ')[0]
 
           // console.log(this.getBrowserInfo())
           this.$store.dispatch('user/login', this.loginForm)
@@ -246,7 +246,6 @@ export default {
     // 获取操作系统，浏览器信息
     getBrowserInfo1() {
       var agent = navigator.userAgent.toLowerCase()
-      console.log(agent)
       var arr = []
       var system = agent.split(' ')[1].split(' ')[0].split('(')[1]
       arr.push(system)

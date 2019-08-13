@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-var url = 'http://localhost:8888'
+var url = 'http://192.168.10.222:8888'
 
 // 获取部门列表
 export function getDeptList(query) {

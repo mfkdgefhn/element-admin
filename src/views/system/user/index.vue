@@ -42,7 +42,7 @@ export default {
     initUserInfo() {
       this.$store.dispatch('user/getUserList')
         .then(() => {
-          console.log('获取用户信息并存入vuex成功')
+          // console.log('获取用户信息并存入vuex成功')
         })
         .catch(() => {
           console.log('失败')

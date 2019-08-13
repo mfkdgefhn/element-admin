@@ -102,7 +102,7 @@
       <!-- 部门 -->
       <el-table-column :label="$t('usertable.dept')" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.deptId }}</span>
+          <span>{{ scope.row.deptName }}</span>
         </template>
       </el-table-column>
 
@@ -225,12 +225,8 @@
         </el-form-item>
 
         <!-- 登陆密码 -->
-        <el-form-item
-          v-if="dialogStatus==='create'"
-          :label="$t('usertable.password')"
-          prop="userName"
-        >
-          <el-input v-model="temp.password" />
+        <el-form-item v-if="dialogStatus==='create'" :label="$t('usertable.password')">
+          <el-input v-model="temp.password" show-password />
         </el-form-item>
 
         <!-- 用户名称 -->
@@ -239,8 +235,8 @@
         </el-form-item>
 
         <!-- 部门 -->
-        <el-form-item :label="$t('usertable.dept')" prop="deptId">
-          <el-input v-model="temp.deptId" />
+        <el-form-item :label="$t('usertable.dept')">
+          <el-input v-model="temp.deptName" @focus="dialogPvVisible=true" />
         </el-form-item>
 
         <!-- 手机 -->
@@ -292,27 +288,23 @@
       </div>
     </el-dialog>
 
-    <!-- 弹出层 -->
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('usertable.confirm') }}</el-button>
-      </span>
+    <!-- 弹出部门树 -->
+    <el-dialog :visible.sync="dialogPvVisible" title="部门">
+      <cliren-left-tree @updateTreeDeptId="updateTreeDeptId" />
     </el-dialog>
 
+    <!-- 获取用户IP地址等信息--搜狐 -->
     <remote-js src="http://pv.sohu.com/cityjson?ie=utf-8" />
   </div>
 </template>
 
 <script>
-import { updateUserByUserId, deleteUserById, fetchPv, updateArticle } from '@/api/article'
+import { updateUserByUserId, deleteUserById, fetchPv, updateArticle, getDeptList } from '@/api/article'
 import { register } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import clirenLeftTree from './cliren-left-tree'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -333,6 +325,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 export default {
   name: 'ComplexTable',
   components: {
+    clirenLeftTree,
     Pagination,
     'remote-js': {
       render(createElement) {
@@ -382,6 +375,7 @@ export default {
         userName: '',
         userNick: '',
         deptId: '',
+        deptName: '',
         phonenumber: '',
         email: '',
         sex: '',
@@ -397,6 +391,7 @@ export default {
         update: '修改',
         create: '创建'
       },
+      deptDate: [],
       dialogPvVisible: false,
       pvData: [],
       // 表单校验规则
@@ -404,6 +399,7 @@ export default {
         userName: [{ required: true, message: '请输入用户名称', trigger: ['blur'] }, { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: ['blur'] }],
         userNick: [{ required: true, message: '请输入用户昵称', trigger: ['blur'] }, { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: ['blur'] }],
         deptId: [{ required: true, message: '请输入部门', trigger: ['blur'] }],
+        deptName: [{ required: true, message: '请输入部门', trigger: ['blur'] }],
         phonenumber: [{ required: true, message: '请输入手机号码', trigger: ['blur'] }, { min: 11, max: 11, message: '手机号码必须为11位', trigger: ['blur'] }, { pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
         email: [{ required: true, message: '请输入邮箱地址', trigger: ['blur'] }, { type: 'email', message: '邮箱格式出错', trigger: ['blur'] }],
         sex: [{ min: 1, max: 2, message: '字数范围不对', trigger: ['blur'] }],
@@ -419,18 +415,44 @@ export default {
     },
     getUserCount() {
       return this.$store.state.user.total
+    },
+    tempDeptName() {
+      return this.temp.deptId
     }
   },
   watch: {
     getUserList(a, b) {
       this.list = a
       this.listLoading = false
+    },
+    tempDeptName(a, b) {
+      if (a !== b) {
+        this.deptDate = this.$store.state.dept.depts
+        for (let i = 0; i < this.deptDate.length; i++) {
+          if (this.deptDate[i].deptId === a) {
+            this.temp.deptName = this.deptDate[i].deptName
+            break
+          }
+        }
+      }
     }
   },
   created() {
   },
+  mounted() {
+    this.getDeptLists()
+  },
   methods: {
-
+    getDeptLists() {
+      getDeptList().then((response) => {
+        this.$store.dispatch('dept/setDepts', response.data)
+      })
+    },
+    updateTreeDeptId(data) {
+      this.temp.deptId = data.deptId
+      this.temp.deptName = data.deptName
+      this.dialogPvVisible = false
+    },
     getList() {
       this.listLoading = true
     },
@@ -440,6 +462,8 @@ export default {
       this.listQuery.limit = 8
       this.listQuery.userName = ''
       this.listQuery.userNick = ''
+      this.listQuery.deptId = ''
+      this.listQuery.deptName = ''
       this.listQuery.phonenumber = ''
       this.initUserInfo()
       setTimeout(() => {
@@ -453,11 +477,6 @@ export default {
     // 初始化用户信息
     initUserInfo() {
       this.$store.dispatch('user/getUserList', this.listQuery)
-        .then(() => {
-        })
-        .catch(() => {
-          console.log('失败')
-        })
     },
     isShowclase() {
       this.isShow = !this.isShow
@@ -470,7 +489,6 @@ export default {
       if (status === 'discontinuation') {
         // 停用
         row.status = '1'
-        console.log(row)
         updateUserByUserId(row).then(response => {
           this.$message({
             message: '停用',
@@ -521,6 +539,7 @@ export default {
         userName: '',
         userNick: '',
         deptId: '',
+        deptName: '',
         phonenumber: '',
         email: '',
         sex: '',
@@ -549,7 +568,6 @@ export default {
           this.temp.loginIp = ip
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           register(this.temp).then(response => {
-            console.log(response)
             // this.list.unshift(this.temp)  //静态加入页面中，但并没有加入到数据库
             this.dialogFormVisible = false // 关闭弹出层
             this.$notify({

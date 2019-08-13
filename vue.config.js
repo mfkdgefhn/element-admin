@@ -57,7 +57,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       // 详细信息：https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:${port}/mock`,
+        target: `http://192.168.10.222:${port}/mock`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

@@ -2,7 +2,7 @@
   <div>
     <el-row class="left-tree">
       <el-col :span="span" class="tree-margin">
-        <el-input v-model="filterText" placeholder="过滤" class="tree-input" type="width:80%" />
+        <el-input v-model="filterText" placeholder="请输入部门名称" class="tree-input" type="width:80%" />
         <el-tree
           ref="deptList"
           :check-strictly="checkStrictly"
@@ -17,8 +17,6 @@
           class="permission-tree"
           @node-click="handleNodeClick"
         />
-
-        <!-- :check-on-click-node="checkNode" -->
       </el-col>
     </el-row>
   </div>
@@ -26,25 +24,17 @@
 
 <script>
 
-import { getDeptList, getUserByDeptIds } from '@/api/article'
-// import { getDeptList } from '@/api/system'
+import { getDeptList } from '@/api/article'
 
 export default {
   data() {
     return {
       span: 24,
       filterText: '',
-      expandAll: false,
-      checkNode: true,
       showCheckbox: false,
       checkStrictly: false,
       routesData: [],
       expandOnClickNode: false,
-      deptUser: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      },
       listQuery: {
         page: 1,
         limit: 8
@@ -64,7 +54,6 @@ export default {
     initDeptList() {
       this.listLoading = true
       getDeptList(this.listQuery).then(response => {
-        // this.$store.dispatch('user/login', this.loginForm)
         this.routesData = response.data// [0].children
         setTimeout(() => {
           this.listLoading = false
@@ -73,23 +62,8 @@ export default {
     },
     // 点击树节点获取用户列表
     handleNodeClick(data) {
-      this.listLoading = true
-      // 遍历部门及下级部门的所有ID
-      var depts = []
-      this.retrievalTree(this.routesData, data, depts)
-      // 获取该部门下所有ID进一个数组内
-      var deptIds = []
-      this.retrievalDeptId(depts, deptIds)
-      // 获取后台数据
-      getUserByDeptIds(deptIds.join(',')).then(response => {
-        this.deptUser = response.data
-        this.$store.dispatch('user/SET_USERLIST', response.data)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-
-      // var test = this.$refs.deptList.getCheckedKeys()
+      this.deptDate = data
+      this.$emit('updateTreeDeptId', data)
     },
     // 检索部门树，返回符合参数值的树
     retrievalTree(arr, data, newArr) {
@@ -112,37 +86,9 @@ export default {
         }
       })
     },
-    Checkbox() {
-      this.showCheckbox = !this.showCheckbox
-    },
-    expand() {
-      this.expandAll = !this.expandAll
-    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
-    },
-    getCheckedNodes() {
-      console.log(this.$refs.deptList.getCheckedNodes())
-    },
-    getCheckedKeys() {
-      console.log(this.$refs.deptList.getCheckedKeys())
-    },
-    setCheckedNodes() {
-      this.$refs.deptList.setCheckedNodes([{
-        id: 5,
-        label: '二级 2-1'
-      }, {
-        id: 9,
-        label: '三级 1-1-1'
-      }])
-    },
-    setCheckedKeys() {
-      var test = this.$refs.deptList.getCheckedKeys()
-      test.push(1)
-    },
-    resetChecked() {
-      this.$refs.deptList.setCheckedKeys([])
     }
   }
 }

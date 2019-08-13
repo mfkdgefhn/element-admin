@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-var url = 'http://127.0.0.1:8888'
+var url = 'http://192.168.10.222:8888'
 
 export function login(data) {
   return request({

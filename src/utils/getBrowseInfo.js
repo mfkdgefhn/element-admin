@@ -1,10 +1,36 @@
 // 获取浏览器信息以及操作系统信息
 export default function getBrowserInfo() {
   var agent = navigator.userAgent.toLowerCase()
-  console.log(agent)
   var arr = []
-  var system = agent.split(' ')[1].split(' ')[0].split('(')[1]
-  arr.push(system)
+  // var system = agent.split(' ')[1].split(' ')[0].split('(')[1]
+  // arr.push(system)
+
+  // 获取操作系统版本
+  var Edition = ''
+  var isWin = (navigator.platform === 'Win32') || (navigator.platform === 'Windows')
+  var isMac = (navigator.platform === 'Mac68K') || (navigator.platform === 'MacPPC') || (navigator.platform === 'Macintosh') || (navigator.platform === 'MacIntel')
+  if (isMac) Edition = 'Mac'
+  var isUnix = (navigator.platform === 'X11') && !isWin && !isMac
+  if (isUnix) Edition = 'Unix'
+  var isLinux = (String(navigator.platform).indexOf('Linux') > -1)
+  if (isLinux) Edition = 'Linux'
+  if (isWin) {
+    var isWin2K = agent.indexOf('windows nt 5.0') > -1 || agent.indexOf('windows 2000') > -1
+    if (isWin2K) Edition = 'Windows 2000'
+    var isWinXP = agent.indexOf('windows nt 5.1') > -1 || agent.indexOf('windows xp') > -1
+    if (isWinXP) Edition = 'Windows XP'
+    var isWin2003 = agent.indexOf('windows nt 5.2') > -1 || agent.indexOf('windows 2003') > -1
+    if (isWin2003) Edition = 'Windows 2003'
+    var isWinVista = agent.indexOf('windows nt 6.0') > -1 || agent.indexOf('windows vista') > -1
+    if (isWinVista) Edition = 'Windows Vista'
+    var isWin7 = agent.indexOf('windows nt 6.1') > -1 || agent.indexOf('windows 7') > -1
+    if (isWin7) Edition = 'Windows 7'
+    var isWin10 = agent.indexOf('windows nt 10') > -1 || agent.indexOf('windows 10') > -1
+    if (isWin10) Edition = 'Windows 10'
+  }
+  arr.push(Edition)
+
+  // 获取浏览器以前版本
   var regStr_edge = /edge\/[\d.]+/gi
   var regStr_ie = /trident\/[\d.]+/gi
   var regStr_ff = /firefox\/[\d.]+/gi
