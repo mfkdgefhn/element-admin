@@ -1,99 +1,109 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
+  <div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 访问编号 -->
-      <el-table-column :label="$t('loginlogtable.infoId')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.infoId }}</span>
-        </template>
-      </el-table-column>
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 访问编号 -->
+            <el-table-column :label="$t('loginlogtable.infoId')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.infoId }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 登录名称 -->
-      <el-table-column :label="$t('loginlogtable.loginName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 登录名称 -->
+            <el-table-column :label="$t('loginlogtable.loginName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.loginName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 登录地址 -->
-      <el-table-column :label="$t('loginlogtable.ipaddr')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.ipaddr }}</span>
-        </template>
-      </el-table-column>
+            <!-- 登录地址 -->
+            <el-table-column :label="$t('loginlogtable.ipaddr')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.ipaddr }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 登录地点 -->
-      <el-table-column :label="$t('loginlogtable.loginLocation')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginLocation }}</span>
-        </template>
-      </el-table-column>
+            <!-- 登录地点 -->
+            <el-table-column :label="$t('loginlogtable.loginLocation')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.loginLocation }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 浏览器 -->
-      <el-table-column :label="$t('loginlogtable.browser')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.browser }}</span>
-        </template>
-      </el-table-column>
+            <!-- 浏览器 -->
+            <el-table-column :label="$t('loginlogtable.browser')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.browser }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作系统 -->
-      <el-table-column :label="$t('loginlogtable.os')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.os }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作系统 -->
+            <el-table-column :label="$t('loginlogtable.os')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.os }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 登录状态 -->
-      <el-table-column :label="$t('loginlogtable.status')" align="center">
-        <template slot-scope="scope">
-          <el-tag
-            effect="Plain"
-            :type="scope.row.status | statusFilter"
-          >{{ statusAuthority[scope.row.status] }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 登录状态 -->
+            <el-table-column :label="$t('loginlogtable.status')" align="center">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="Plain"
+                  :type="scope.row.status | statusFilter"
+                >{{ statusAuthority[scope.row.status] }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 操作信息--提示信息 -->
-      <el-table-column :label="$t('loginlogtable.msg')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.msg }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作信息--提示信息 -->
+            <el-table-column :label="$t('loginlogtable.msg')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.msg }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 登录时间 -->
-      <el-table-column width="150" :label="$t('loginlogtable.loginTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginTime?scope.row.loginTime:'' | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+            <!-- 登录时间 -->
+            <el-table-column width="150" :label="$t('loginlogtable.loginTime')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.loginTime?scope.row.loginTime:'' | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
 
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getLogininforList"
-    />
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getLogininforList"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -335,5 +345,8 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>

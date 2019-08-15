@@ -1,123 +1,142 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleCreate="handleCreate"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
+  <div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleCreate="handleCreate"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      row-key="menuId"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 序号 -->
-      <!-- <el-table-column type="index" width="40" align="center" /> -->
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            row-key="menuId"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 序号 -->
+            <!-- <el-table-column type="index" width="40" align="center" /> -->
 
-      <!-- 角色名称 -->
-      <el-table-column :label="$t('menutable.menuName')" align="left" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.menuName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 角色名称 -->
+            <el-table-column :label="$t('menutable.menuName')" align="left" width="200">
+              <template slot-scope="scope">
+                <span>{{ scope.row.menuName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 显示顺序 -->
-      <el-table-column :label="$t('menutable.orderNum')" align="center" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.orderNum }}</span>
-        </template>
-      </el-table-column>
+            <!-- 显示顺序 -->
+            <el-table-column :label="$t('menutable.orderNum')" align="center" width="80">
+              <template slot-scope="scope">
+                <span>{{ scope.row.orderNum }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 请求地址 -->
-      <el-table-column :label="$t('menutable.url')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.url }}</span>
-        </template>
-      </el-table-column>
+            <!-- 请求地址 -->
+            <el-table-column :label="$t('menutable.url')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.url }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 菜单类型 -->
-      <el-table-column :label="$t('menutable.menuType')" align="center" width="80">
-        <template slot-scope="scope">
-          <el-tag
-            effect="dark"
-            :type="scope.row.menuType | menuTypeFilter"
-          >{{ typeAuthority[scope.row.menuType] }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 菜单类型 -->
+            <el-table-column :label="$t('menutable.menuType')" align="center" width="80">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="dark"
+                  :type="scope.row.menuType | menuTypeFilter"
+                >{{ typeAuthority[scope.row.menuType] }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 菜单状态 -->
-      <el-table-column :label="$t('menutable.visible')" align="center" width="80">
-        <template slot-scope="scope">
-          <el-tag
-            effect="Plain"
-            :type="scope.row.visible | visibleFilter"
-          >{{ visibleAuthority[scope.row.visible] }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 菜单状态 -->
+            <el-table-column :label="$t('menutable.visible')" align="center" width="80">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="Plain"
+                  :type="scope.row.visible | visibleFilter"
+                >{{ visibleAuthority[scope.row.visible] }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 权限标识 -->
-      <el-table-column :label="$t('menutable.perms')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.perms }}</span>
-        </template>
-      </el-table-column>
+            <!-- 权限标识 -->
+            <el-table-column :label="$t('menutable.perms')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.perms }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- <el-table-column :label="$t('menutable.perms')" align="center">
+            <!-- <el-table-column :label="$t('menutable.perms')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.perms | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
-      </el-table-column>-->
+            </el-table-column>-->
 
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('menutable.edit')"
-        align="center"
-        width="190"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作/编辑 -->
-          <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('menutable.edit')"
+              align="center"
+              width="190"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
 
-          <!-- 新增 -->
-          <el-button
-            circle
-            type="warning"
-            icon="el-icon-star-off"
-            @click="handleCreateMenu(row,'insert')"
+                <!-- 新增 -->
+                <el-button
+                  circle
+                  type="warning"
+                  icon="el-icon-star-off"
+                  @click="handleCreateMenu(row,'insert')"
+                />
+
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.show"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getMenuList"
           />
-
-          <!-- 删除 -->
-          <el-popover v-model="row.show" placement="top" width="160" style="margin-left:10px;">
-            <p>你确定要删除该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
-            </div>
-            <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getMenuList"
-    />
+        </el-card>
+      </el-col>
+    </el-row>
 
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">

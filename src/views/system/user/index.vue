@@ -14,9 +14,8 @@
 
       <!-- 右边表格 -->
       <el-col :span="span">
-        <el-card shadow="hover">
-          <complex-table />
-        </el-card>
+        <complex-table />
+        <el-card shadow="hover" />
       </el-col>
     </el-row>
   </div>

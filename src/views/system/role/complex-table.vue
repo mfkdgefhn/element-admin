@@ -1,118 +1,139 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleCreate="handleCreate"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
-
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 序号 -->
-      <el-table-column type="index" width="40" align="center" />
-
-      <!-- 角色名称 -->
-      <el-table-column :label="$t('roletable.roleName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.roleName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 权限字符 -->
-      <el-table-column :label="$t('roletable.roleKey')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.roleKey }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 数据范围 -->
-      <el-table-column :label="$t('roletable.dataScope')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
-        </template>
-      </el-table-column>
-      <!-- {{ scope.row.dataScope }} -->
-      <!-- 角色状态 -->
-      <el-table-column :label="$t('roletable.status')" align="center">
-        <template slot-scope="{row}">
-          <el-tag effect="dark" :type="row.status | statusFilter">{{ row.status==='0' ?'正常': '停用' }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <!-- 创建时间 -->
-      <el-table-column :label="$t('roletable.createTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('roletable.actions')"
-        align="center"
-        width="250"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作/编辑 -->
-          <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
-
-          <!-- 数据权限/分配用户 -->
-          <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
-            <svg-icon icon-class="adduser" />
-          </el-button>
-
-          <!-- 停用 -->
-          <el-button
-            v-if="row.status!=='1'"
-            circle
-            type="warning"
-            icon="el-icon-star-off"
-            @click="handleModifyStatus(row,'discontinuation')"
+  <div>
+    <el-row :gutter="12">
+      <el-col class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleCreate="handleCreate"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
           />
+        </el-card>
+      </el-col>
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 序号 -->
+            <el-table-column type="index" width="40" align="center" />
 
-          <!-- 启用 -->
-          <el-button
-            v-if="row.status!=='0'"
-            circle
-            type="danger"
-            icon="el-icon-star-off"
-            @click="handleModifyStatus(row,'enabling')"
+            <!-- 角色名称 -->
+            <el-table-column :label="$t('roletable.roleName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.roleName }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- 权限字符 -->
+            <el-table-column :label="$t('roletable.roleKey')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.roleKey }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- 数据范围 -->
+            <el-table-column :label="$t('roletable.dataScope')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
+              </template>
+            </el-table-column>
+            <!-- {{ scope.row.dataScope }} -->
+            <!-- 角色状态 -->
+            <el-table-column :label="$t('roletable.status')" align="center">
+              <template slot-scope="{row}">
+                <el-tag
+                  effect="dark"
+                  :type="row.status | statusFilter"
+                >{{ row.status==='0' ?'正常': '停用' }}</el-tag>
+              </template>
+            </el-table-column>
+
+            <!-- 创建时间 -->
+            <el-table-column :label="$t('roletable.createTime')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('roletable.actions')"
+              align="center"
+              width="250"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+
+                <!-- 数据权限/分配用户 -->
+                <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
+                  <svg-icon icon-class="adduser" />
+                </el-button>
+
+                <!-- 停用 -->
+                <el-button
+                  v-if="row.status!=='1'"
+                  circle
+                  type="warning"
+                  icon="el-icon-star-off"
+                  @click="handleModifyStatus(row,'discontinuation')"
+                />
+
+                <!-- 启用 -->
+                <el-button
+                  v-if="row.status!=='0'"
+                  circle
+                  type="danger"
+                  icon="el-icon-star-off"
+                  @click="handleModifyStatus(row,'enabling')"
+                />
+
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.visible"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getRoleList"
           />
-
-          <!-- 删除 -->
-          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
-            <p>你确定要删除该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
-            </div>
-            <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getRoleList"
-    />
+        </el-card>
+      </el-col>
+    </el-row>
 
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -338,8 +359,8 @@ export default {
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
         // 停用
-        row.status = '1'
         updateRoleByRoleId(row).then(response => {
+          row.status = '1'
           this.$message({
             message: '停用',
             type: 'success'
@@ -351,8 +372,8 @@ export default {
         })
       } else if (status === 'enabling') {
         // 启用
-        row.status = '0'
         updateRoleByRoleId(row).then(response => {
+          row.status = '0'
           this.$message({
             message: '启用',
             type: 'success'
@@ -507,5 +528,8 @@ export default {
 }
 .role-key {
   font-size: 0.5rem;
+}
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>

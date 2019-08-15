@@ -1,119 +1,128 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
+  <div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 日志编号 -->
-      <el-table-column :label="$t('operlogtable.operId')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operId }}</span>
-        </template>
-      </el-table-column>
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 日志编号 -->
+            <el-table-column :label="$t('operlogtable.operId')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operId }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 系统模块 -->
-      <el-table-column :label="$t('operlogtable.title')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
-        </template>
-      </el-table-column>
+            <!-- 系统模块 -->
+            <el-table-column :label="$t('operlogtable.title')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.title }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作类型 -->
-      <el-table-column :label="$t('operlogtable.operatorType')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operatorType }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作类型 -->
+            <el-table-column :label="$t('operlogtable.operatorType')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operatorType }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作人员 -->
-      <el-table-column :label="$t('operlogtable.operName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作人员 -->
+            <el-table-column :label="$t('operlogtable.operName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 部门名称 -->
-      <el-table-column :label="$t('operlogtable.deptName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.deptName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 部门名称 -->
+            <el-table-column :label="$t('operlogtable.deptName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.deptName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 主机 -->
-      <el-table-column :label="$t('operlogtable.operIp')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operIp }}</span>
-        </template>
-      </el-table-column>
+            <!-- 主机 -->
+            <el-table-column :label="$t('operlogtable.operIp')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operIp }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作地点 -->
-      <el-table-column :label="$t('operlogtable.operLocation')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operLocation }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作地点 -->
+            <el-table-column :label="$t('operlogtable.operLocation')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operLocation }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作状态 -->
-      <el-table-column :label="$t('operlogtable.status')" align="center">
-        <template slot-scope="scope">
-          <el-tag
-            effect="Plain"
-            :type="scope.row.status | statusFilter"
-          >{{ statusAuthority[scope.row.status] }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 操作状态 -->
+            <el-table-column :label="$t('operlogtable.status')" align="center">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="Plain"
+                  :type="scope.row.status | statusFilter"
+                >{{ statusAuthority[scope.row.status] }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 操作时间 -->
-      <el-table-column width="150" :label="$t('operlogtable.operTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operTime?scope.row.operTime:'' | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+            <!-- 操作时间 -->
+            <el-table-column width="150" :label="$t('operlogtable.operTime')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.operTime?scope.row.operTime:'' | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('operlogtable.actions')"
-        align="center"
-        width="180"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作/编辑 -->
-          <el-button
-            type="primary"
-            icon="el-icon-edit"
-            size="mini"
-            round
-            @click="handleUpdate(row)"
-          >{{ $t('operlogtable.detailed') }}</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('operlogtable.actions')"
+              align="center"
+              width="180"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button
+                  type="primary"
+                  icon="el-icon-edit"
+                  size="mini"
+                  round
+                  @click="handleUpdate(row)"
+                >{{ $t('operlogtable.detailed') }}</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
 
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getOperLogList"
-    />
-
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getOperLogList"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <!-- visible.sync：的意思是如果子组件的属性有变化，父组件则同步过来 -->
@@ -359,5 +368,8 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>

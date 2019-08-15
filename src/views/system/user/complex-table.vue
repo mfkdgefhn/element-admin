@@ -1,155 +1,172 @@
 <template>
   <div class="app-container">
-    <!-- 菜单栏 -->
-    <div class="filter-container">
-      <searchs
-        :seach-type="seachType"
-        @handleFilter="handleFilter"
-        @handleCreate="handleCreate"
-        @handleDownload="handleDownload"
-        @refresh="refresh"
-      />
-    </div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleCreate="handleCreate"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <el-table-column type="index" width="40" align="center" />
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <el-table-column type="index" width="40" align="center" />
 
-      <!-- 登陆帐号-->
-      <el-table-column :label="$t('usertable.userName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.userName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 登陆帐号-->
+            <el-table-column :label="$t('usertable.userName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.userName }}</span>
+              </template>
+            </el-table-column>
 
-      <el-table-column :label="$t('usertable.userNick')" align="center" width="100">
-        <template slot-scope="scope">
-          <el-popover trigger="focus" placement="top">
-            <p>用户名：{{ scope.row.userName }}</p>
-            <p>用户昵称：{{ scope.row.userNick }}</p>
-            <p>email：{{ scope.row.email }}</p>
-            <p>手机号码：{{ scope.row.phonenumber }}</p>
-            <p>性别：{{ scope.row.sex }}</p>
-            <p>最后登陆IP{{ scope.row.loginIp }}</p>
-            <p>最后登陆时间：{{ scope.row.loginDate }}</p>
-            <p>备注：{{ scope.row.remarks }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.userNick }}</el-tag>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
+            <el-table-column :label="$t('usertable.userNick')" align="center" width="100">
+              <template slot-scope="scope">
+                <el-popover trigger="focus" placement="top">
+                  <p>用户名：{{ scope.row.userName }}</p>
+                  <p>用户昵称：{{ scope.row.userNick }}</p>
+                  <p>email：{{ scope.row.email }}</p>
+                  <p>手机号码：{{ scope.row.phonenumber }}</p>
+                  <p>性别：{{ scope.row.sex }}</p>
+                  <p>最后登陆IP{{ scope.row.loginIp }}</p>
+                  <p>最后登陆时间：{{ scope.row.loginDate }}</p>
+                  <p>备注：{{ scope.row.remarks }}</p>
+                  <div slot="reference" class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.userNick }}</el-tag>
+                  </div>
+                </el-popover>
+              </template>
+            </el-table-column>
 
-      <!-- 部门 -->
-      <el-table-column :label="$t('usertable.dept')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.deptName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 部门 -->
+            <el-table-column :label="$t('usertable.dept')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.deptName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 手机 -->
-      <el-table-column :label="$t('usertable.phonenumber')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.phonenumber }}</span>
-        </template>
-      </el-table-column>
+            <!-- 手机 -->
+            <el-table-column :label="$t('usertable.phonenumber')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.phonenumber }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 邮箱 -->
-      <el-table-column :label="$t('usertable.email')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-      </el-table-column>
+            <!-- 邮箱 -->
+            <el-table-column :label="$t('usertable.email')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.email }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 性别 -->
-      <el-table-column :label="$t('usertable.sex')" class-name="status-col" width="70">
-        <template slot-scope="{row}">
-          <el-tag>{{ row.sex === '0' ? '男' : row.sex=== '1' ? '女' : '未知' }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 性别 -->
+            <el-table-column :label="$t('usertable.sex')" class-name="status-col" width="70">
+              <template slot-scope="{row}">
+                <el-tag>{{ row.sex === '0' ? '男' : row.sex=== '1' ? '女' : '未知' }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 状态 -->
-      <el-table-column :label="$t('usertable.status')" class-name="status-col" width="90">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">{{ row.status==='0'?'正常':'停用' }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 状态 -->
+            <el-table-column :label="$t('usertable.status')" class-name="status-col" width="90">
+              <template slot-scope="{row}">
+                <el-tag :type="row.status | statusFilter">{{ row.status==='0'?'正常':'停用' }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 最后一次登陆IP -->
-      <el-table-column :label="$t('usertable.loginIp')" class-name="status-col">
-        <template slot-scope="{row}">
-          <span>{{ row.loginIp }}</span>
-        </template>
-      </el-table-column>
+            <!-- 最后一次登陆IP -->
+            <el-table-column :label="$t('usertable.loginIp')" class-name="status-col">
+              <template slot-scope="{row}">
+                <span>{{ row.loginIp }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 时间 -->
-      <el-table-column :label="$t('usertable.loginDate')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.loginDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+            <!-- 时间 -->
+            <el-table-column :label="$t('usertable.loginDate')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.loginDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('usertable.actions')"
-        align="center"
-        width="230"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作 -->
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleUpdate(row)"
-          >{{ $t('usertable.edit') }}</el-button>
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('usertable.actions')"
+              align="center"
+              width="230"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作 -->
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="handleUpdate(row)"
+                >{{ $t('usertable.edit') }}</el-button>
 
-          <!-- 停用 -->
-          <el-button
-            v-if="row.status!=='1'"
-            size="mini"
-            type="warning"
-            @click="handleModifyStatus(row,'discontinuation')"
-          >{{ $t('usertable.discontinuation') }}</el-button>
+                <!-- 停用 -->
+                <el-button
+                  v-if="row.status!=='1'"
+                  size="mini"
+                  type="warning"
+                  @click="handleModifyStatus(row,'discontinuation')"
+                >{{ $t('usertable.discontinuation') }}</el-button>
 
-          <!-- 启用 -->
-          <el-button
-            v-if="row.status!=='0'"
-            size="mini"
-            type="success"
-            @click="handleModifyStatus(row,'enabling')"
-          >{{ $t('usertable.enabling') }}</el-button>
+                <!-- 启用 -->
+                <el-button
+                  v-if="row.status!=='0'"
+                  size="mini"
+                  type="success"
+                  @click="handleModifyStatus(row,'enabling')"
+                >{{ $t('usertable.enabling') }}</el-button>
 
-          <!-- 删除 -->
-          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
-            <p>你确定要删除该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
-            </div>
-            <el-button slot="reference" type="danger" size="mini">删除</el-button>
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.visible"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button slot="reference" type="danger" size="mini">删除</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
 
-    <!-- 页码 -->
-    <pagination
-      v-show="getUserCount>0"
-      :total="getUserCount"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="initUserInfo()"
-    />
+          <!-- 页码 -->
+          <pagination
+            v-show="getUserCount>0"
+            :total="getUserCount"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="initUserInfo()"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
 
     <!-- 弹出层 -->
     <el-dialog
@@ -584,5 +601,8 @@ export default {
 <style>
 .el-dialog {
   min-width: 530px;
+}
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>

@@ -2,12 +2,12 @@
   <!-- 菜单栏 -->
   <div>
     <!-- 用户开始 -->
-    <div v-if="seachType==='user'" class="filter-container">
+    <div v-if="seachType==='user'">
       <!-- 用户名 -->
       <el-input
         v-model="listQuery.userName"
         :placeholder="$t('usertable.userName')"
-        style="width: 150px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -16,7 +16,7 @@
       <el-input
         v-model="listQuery.userNick"
         :placeholder="$t('usertable.userNick')"
-        style="width: 150px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -33,7 +33,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('usertable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -69,12 +69,12 @@
     </div>
 
     <!-- 角色开始 -->
-    <div v-if="seachType==='role'" class="filter-container">
+    <div v-if="seachType==='role'">
       <!-- 角色名称 -->
       <el-input
         v-model="listQuery.roleName"
         :placeholder="$t('roletable.roleName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -83,7 +83,7 @@
       <el-input
         v-model="listQuery.roleKey"
         :placeholder="$t('roletable.roleKey')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -91,7 +91,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('roletable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -141,12 +141,12 @@
     </div>
 
     <!-- 菜单开始 -->
-    <div v-if="seachType==='menu'" class="filter-container">
+    <div v-if="seachType==='menu'">
       <!-- 菜单名称 -->
       <el-input
         v-model="listQuery.menuName"
         :placeholder="$t('menutable.menuName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -155,7 +155,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('currency.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -193,12 +193,12 @@
     </div>
 
     <!-- 部门开始 -->
-    <div v-if="seachType==='dept'" class="filter-container">
+    <div v-if="seachType==='dept'">
       <!-- 部门名称 -->
       <el-input
         v-model="listQuery.deptName"
         :placeholder="$t('depttable.deptName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -207,7 +207,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('depttable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -244,12 +244,12 @@
     </div>
 
     <!-- 岗位开始 -->
-    <div v-if="seachType==='post'" class="filter-container">
+    <div v-if="seachType==='post'">
       <!-- 岗位编码 -->
       <el-input
         v-model="listQuery.postCode"
         :placeholder="$t('posttable.postCode')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -258,7 +258,7 @@
       <el-input
         v-model="listQuery.postName"
         :placeholder="$t('posttable.postName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -267,7 +267,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('posttable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -304,12 +304,12 @@
     </div>
 
     <!-- 字典管理 -->
-    <div v-if="seachType==='dictionary'" class="filter-container">
+    <div v-if="seachType==='dictionary'">
       <!-- 字典名称 -->
       <el-input
         v-model="listQuery.dictName"
         :placeholder="$t('dictionarytable.dictName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -318,7 +318,7 @@
       <el-input
         v-model="listQuery.dictType"
         :placeholder="$t('dictionarytable.dictType')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -327,7 +327,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('dictionarytable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -375,7 +375,7 @@
     </div>
 
     <!-- 字典数据 -->
-    <div v-if="seachType==='dictdata'" class="filter-container">
+    <div v-if="seachType==='dictdata'">
       <!-- 字典名称 -->
       <el-select v-model="listQuery.dictType" placeholder="请选择字典类型">
         <el-option
@@ -390,7 +390,7 @@
       <el-input
         v-model="listQuery.dictLabel"
         :placeholder="$t('dictdatatable.dictLabel')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -399,7 +399,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('dictdatatable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -436,12 +436,12 @@
     </div>
 
     <!-- 参数开始 -->
-    <div v-if="seachType==='config'" class="filter-container">
+    <div v-if="seachType==='config'">
       <!-- 参数名称 -->
       <el-input
         v-model="listQuery.configName"
         :placeholder="$t('configtable.configName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -450,7 +450,7 @@
       <el-input
         v-model="listQuery.configKey"
         :placeholder="$t('configtable.configKey')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -459,7 +459,7 @@
       <el-input
         v-model="listQuery.configType"
         :placeholder="$t('configtable.configType')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -507,12 +507,12 @@
     </div>
 
     <!-- 公告开始 -->
-    <div v-if="seachType==='notice'" class="filter-container">
+    <div v-if="seachType==='notice'">
       <!-- 公告标题 -->
       <el-input
         v-model="listQuery.noticeTitle"
         :placeholder="$t('noticetable.noticeTitle')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -521,7 +521,7 @@
       <el-input
         v-model="listQuery.createBy"
         :placeholder="$t('noticetable.createBy')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -530,7 +530,7 @@
       <el-input
         v-model="listQuery.noticeType"
         :placeholder="$t('noticetable.noticeType')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -567,12 +567,12 @@
     </div>
 
     <!-- 操作日志开始 -->
-    <div v-if="seachType==='operlog'" class="filter-container">
+    <div v-if="seachType==='operlog'">
       <!-- 系统模块 -->
       <el-input
         v-model="listQuery.title"
         :placeholder="$t('operlogtable.title')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -581,7 +581,7 @@
       <el-input
         v-model="listQuery.operName"
         :placeholder="$t('operlogtable.operName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -590,7 +590,7 @@
       <el-input
         v-model="listQuery.operatorType"
         :placeholder="$t('operlogtable.operatorType')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -599,7 +599,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('operlogtable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -651,12 +651,12 @@
     </div>
 
     <!-- 登陆日志开始 -->
-    <div v-if="seachType==='loginlog'" class="filter-container">
+    <div v-if="seachType==='loginlog'">
       <!-- 登录地址 -->
       <el-input
         v-model="listQuery.loginLocation"
         :placeholder="$t('loginlogtable.loginLocation')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -665,7 +665,7 @@
       <el-input
         v-model="listQuery.loginName"
         :placeholder="$t('loginlogtable.loginName')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
@@ -674,7 +674,7 @@
       <el-input
         v-model="listQuery.status"
         :placeholder="$t('loginlogtable.status')"
-        style="width: 200px;"
+        style="width: 100px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />

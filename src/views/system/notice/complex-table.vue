@@ -1,107 +1,126 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleCreate="handleCreate"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
+  <div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleCreate="handleCreate"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 序号 -->
-      <el-table-column type="index" width="50" align="center" label="序号" />
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 序号 -->
+            <el-table-column type="index" width="50" align="center" label="序号" />
 
-      <!-- 公告标题 -->
-      <el-table-column :label="$t('noticetable.noticeTitle')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.noticeTitle }}</span>
-        </template>
-      </el-table-column>
+            <!-- 公告标题 -->
+            <el-table-column :label="$t('noticetable.noticeTitle')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.noticeTitle }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 公告类型 -->
-      <el-table-column :label="$t('noticetable.noticeType')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.noticeType }}</span>
-        </template>
-      </el-table-column>
+            <!-- 公告类型 -->
+            <el-table-column :label="$t('noticetable.noticeType')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.noticeType }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 状态 -->
-      <el-table-column :label="$t('noticetable.status')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
-        </template>
-      </el-table-column>
+            <!-- 状态 -->
+            <el-table-column :label="$t('noticetable.status')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 创建者 -->
-      <el-table-column :label="$t('noticetable.createBy')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createBy }}</span>
-        </template>
-      </el-table-column>
+            <!-- 创建者 -->
+            <el-table-column :label="$t('noticetable.createBy')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.createBy }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 创建时间 -->
-      <el-table-column width="150" :label="$t('noticetable.createTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+            <!-- 创建时间 -->
+            <el-table-column width="150" :label="$t('noticetable.createTime')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('noticetable.actions')"
-        align="center"
-        width="180"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作/编辑 -->
-          <el-button
-            type="primary"
-            icon="el-icon-edit"
-            size="mini"
-            round
-            @click="handleUpdate(row)"
-          >{{ $t('noticetable.edit') }}</el-button>
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('noticetable.actions')"
+              align="center"
+              width="180"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button
+                  type="primary"
+                  icon="el-icon-edit"
+                  size="mini"
+                  round
+                  @click="handleUpdate(row)"
+                >{{ $t('noticetable.edit') }}</el-button>
 
-          <!-- 删除 -->
-          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
-            <p>你确定要删除该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
-            </div>
-            <el-button
-              slot="reference"
-              size="mini"
-              round
-              type="danger"
-              icon="el-icon-delete"
-            >{{ $t('noticetable.delete') }}</el-button>
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.visible"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button
+                    slot="reference"
+                    size="mini"
+                    round
+                    type="danger"
+                    icon="el-icon-delete"
+                  >{{ $t('noticetable.delete') }}</el-button>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
 
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getNoticeList"
-    />
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getNoticeList"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
 
     <!-- 弹出层 -->
     <el-dialog
@@ -449,5 +468,8 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>

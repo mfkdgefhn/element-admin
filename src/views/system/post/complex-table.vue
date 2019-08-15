@@ -1,98 +1,117 @@
 <template>
-  <div class="app-container">
-    <!-- 菜单栏 -->
-    <searchs
-      :seach-type="seachType"
-      @handleFilter="handleFilter"
-      @handleCreate="handleCreate"
-      @handleDownload="handleDownload"
-      @refresh="refresh"
-    />
+  <div>
+    <el-row :gutter="12">
+      <el-col :span="24" class="seach-class">
+        <el-card shadow="hover">
+          <!-- 菜单栏 -->
+          <searchs
+            :seach-type="seachType"
+            @handleFilter="handleFilter"
+            @handleCreate="handleCreate"
+            @handleDownload="handleDownload"
+            @refresh="refresh"
+          />
+        </el-card>
+      </el-col>
 
-    <!-- 表格 -->
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-    >
-      <!-- 序号 -->
-      <el-table-column type="index" width="40" align="center" />
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            :data="list"
+            border
+            fit
+            highlight-current-row
+            style="width: 100%;"
+            @sort-change="sortChange"
+          >
+            <!-- 序号 -->
+            <el-table-column type="index" width="40" align="center" />
 
-      <!-- 岗位编码 -->
-      <el-table-column :label="$t('posttable.postCode')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.postCode }}</span>
-        </template>
-      </el-table-column>
+            <!-- 岗位编码 -->
+            <el-table-column :label="$t('posttable.postCode')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.postCode }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 岗位名称 -->
-      <el-table-column :label="$t('posttable.postName')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.postName }}</span>
-        </template>
-      </el-table-column>
+            <!-- 岗位名称 -->
+            <el-table-column :label="$t('posttable.postName')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.postName }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 显示顺序 -->
-      <el-table-column :label="$t('posttable.postSort')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.postSort }}</span>
-        </template>
-      </el-table-column>
+            <!-- 显示顺序 -->
+            <el-table-column :label="$t('posttable.postSort')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.postSort }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 状态 -->
-      <el-table-column :label="$t('posttable.status')" align="center">
-        <template slot-scope="scope">
-          <el-tag
-            effect="Plain"
-            :type="scope.row.status | statusFilter"
-          >{{ statusAuthority[scope.row.status] }}</el-tag>
-        </template>
-      </el-table-column>
+            <!-- 状态 -->
+            <el-table-column :label="$t('posttable.status')" align="center">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="Plain"
+                  :type="scope.row.status | statusFilter"
+                >{{ statusAuthority[scope.row.status] }}</el-tag>
+              </template>
+            </el-table-column>
 
-      <!-- 创建时间 -->
-      <el-table-column :label="$t('posttable.createTime')" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+            <!-- 创建时间 -->
+            <el-table-column :label="$t('posttable.createTime')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+              </template>
+            </el-table-column>
 
-      <!-- 操作 -->
-      <el-table-column
-        :label="$t('posttable.actions')"
-        align="center"
-        width="150"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="{row}">
-          <!-- 操作/编辑 -->
-          <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('posttable.actions')"
+              align="center"
+              width="150"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
 
-          <!-- 删除 -->
-          <el-popover v-model="row.visible" placement="top" width="160" style="margin-left:10px;">
-            <p>你确定要删除该用户吗？</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="handleModifyStatus(row,'deleted')">确定</el-button>
-            </div>
-            <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-          </el-popover>
-        </template>
-      </el-table-column>
-    </el-table>
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.visible"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
 
-    <!-- 页码 -->
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="listQuery.page"
-      :limit.sync="listQuery.limit"
-      @pagination="getPostList"
-    />
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getPostList"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
 
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -439,5 +458,9 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+
+.seach-class {
+  margin-bottom: 10px;
 }
 </style>
