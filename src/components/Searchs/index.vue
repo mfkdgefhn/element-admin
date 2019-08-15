@@ -1,6 +1,6 @@
 <template>
   <!-- 菜单栏 -->
-  <div>
+  <div class="seach-length">
     <!-- 用户开始 -->
     <div v-if="seachType==='user'">
       <!-- 用户名 -->
@@ -65,7 +65,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 角色开始 -->
@@ -137,7 +137,7 @@
       >{{ $t('currency.export') }}</el-button>
 
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 菜单开始 -->
@@ -189,7 +189,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 部门开始 -->
@@ -240,7 +240,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 岗位开始 -->
@@ -300,7 +300,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 字典管理 -->
@@ -371,7 +371,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 字典数据 -->
@@ -432,7 +432,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 参数开始 -->
@@ -503,7 +503,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 公告开始 -->
@@ -563,7 +563,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
     </div>
 
     <!-- 操作日志开始 -->
@@ -633,7 +633,7 @@
         @click="handleDownload"
       >{{ $t('currency.export') }}</el-button>
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
 
       <!-- 清空 -->
       <el-popover v-model="visible" placement="top" width="160">
@@ -710,7 +710,7 @@
       >{{ $t('currency.export') }}</el-button>
 
       <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
 
       <!-- 清空 -->
       <el-popover v-model="visible" placement="top" width="160">
@@ -771,7 +771,7 @@ export default {
     handleDownload() {
       this.$emit('handleDownload', this.listQuery)
     },
-    refreshUserList() {
+    refresh() {
       this.$emit('refresh', this.listQuery)
     }
   }
@@ -779,4 +779,7 @@ export default {
 </script>
 
 <style>
+.seach-length {
+  min-width: 870px;
+}
 </style>

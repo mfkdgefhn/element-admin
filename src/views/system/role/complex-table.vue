@@ -49,13 +49,25 @@
                 <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
               </template>
             </el-table-column>
-            <!-- {{ scope.row.dataScope }} -->
+
+            <!-- 默认角色 -->
+            <el-table-column :label="$t('roletable.isDefault')" align="center">
+              <template slot-scope="{row}">
+                <el-tag
+                  effect="dark"
+                  :type="row.isDefault | isDefaultFilter"
+                  @click="setDefault(row,row.isDefault==='0'? '确认设置':'确认取消')"
+                >{{ row.isDefault==='0' ?'取消默认': '设为默认' }}</el-tag>
+              </template>
+            </el-table-column>
+
             <!-- 角色状态 -->
             <el-table-column :label="$t('roletable.status')" align="center">
               <template slot-scope="{row}">
                 <el-tag
                   effect="dark"
                   :type="row.status | statusFilter"
+                  @click="handleModifyStatus(row,row.status==='0'? 'discontinuation':'enabling')"
                 >{{ row.status==='0' ?'正常': '停用' }}</el-tag>
               </template>
             </el-table-column>
@@ -71,7 +83,7 @@
             <el-table-column
               :label="$t('roletable.actions')"
               align="center"
-              width="250"
+              width="200"
               class-name="small-padding fixed-width"
             >
               <template slot-scope="{row}">
@@ -82,24 +94,6 @@
                 <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
                   <svg-icon icon-class="adduser" />
                 </el-button>
-
-                <!-- 停用 -->
-                <el-button
-                  v-if="row.status!=='1'"
-                  circle
-                  type="warning"
-                  icon="el-icon-star-off"
-                  @click="handleModifyStatus(row,'discontinuation')"
-                />
-
-                <!-- 启用 -->
-                <el-button
-                  v-if="row.status!=='0'"
-                  circle
-                  type="danger"
-                  icon="el-icon-star-off"
-                  @click="handleModifyStatus(row,'enabling')"
-                />
 
                 <!-- 删除 -->
                 <el-popover
@@ -236,7 +230,7 @@
 </template>
 
 <script>
-import { deleteByRoleId, updateRoleByRoleId, fetchRoleList, fetchPv, createRoleArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, updateRoleByRoleId, updateRoleDefaultJurisdiction, fetchRoleList, fetchPv, createRoleArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -268,10 +262,18 @@ export default {
     statusFilter(status) {
       const statusMap = {
         0: 'success',
-        1: 'info',
+        1: 'warning',
         2: 'danger'
       }
       return statusMap[status]
+    },
+    isDefaultFilter(status) {
+      const isDefaultFilterMap = {
+        0: 'success',
+        1: 'info',
+        2: 'danger'
+      }
+      return isDefaultFilterMap[status]
     },
     typeFilter(type) {
       return calendarTypeKeyValue[type]
@@ -322,6 +324,37 @@ export default {
     this.getRoleList()
   },
   methods: {
+    // 设为默认角色
+    setDefault(row) {
+      let str
+      let ent
+      if (row.isDefault === '0') {
+        str = '确认取消'
+        ent = '您确认要取消所选的 ROLE_USER 角色为默认?'
+      } else {
+        str = '确认取消'
+        ent = '您确认要设置所选的 ROLE_TEST 为注册用户默认角色?'
+      }
+      this.$confirm(ent, str, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        updateRoleDefaultJurisdiction(row).then(response => {
+          this.getRoleList()
+          this.$message({
+            type: 'success',
+            message: '设置成功!'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消设置'
+        })
+      })
+    },
+
     // 刷新按钮
     async refresh() {
       this.refreshButton = 'el-icon-loading'
@@ -329,16 +362,14 @@ export default {
         page: 1,
         limit: 8
       }
-      await this.getRoleList().then(response => {
-        this.refreshButton = 'el-icon-refresh'
-      }).catch(() => {
-        this.refreshButton = 'el-icon-refresh'
-      })
+      await this.getRoleList()
+      this.refreshButton = 'el-icon-refresh'
       this.$message({
         message: '刷新完成',
         type: 'success'
       })
     },
+
     // 获取角色列表
     getRoleList() {
       this.listLoading = true
@@ -359,21 +390,17 @@ export default {
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
         // 停用
+        row.status = '1'
         updateRoleByRoleId(row).then(response => {
-          row.status = '1'
           this.$message({
             message: '停用',
-            type: 'success'
+            type: 'warning'
           })
-          // 抛出错误，将停用的状态更改回来
-          // eslint-disable-next-line handle-callback-err
-        }).catch(err => {
-          row.status = '0'
         })
       } else if (status === 'enabling') {
         // 启用
+        row.status = '0'
         updateRoleByRoleId(row).then(response => {
-          row.status = '0'
           this.$message({
             message: '启用',
             type: 'success'

@@ -110,6 +110,15 @@ export function updateArticle(data) {
   })
 }
 
+// 修改角色默认权限
+export function updateRoleDefaultJurisdiction(data) {
+  return request({
+    url: url + '/sys/role/updateRoleDefaultJurisdiction',
+    method: 'post',
+    data
+  })
+}
+
 // 获取部门列表
 export function fetchDeptList(query) {
   return request({

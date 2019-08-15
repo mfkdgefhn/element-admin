@@ -212,7 +212,8 @@ export default {
     confirm: 'Confirm',
     cancel: 'Cancel',
     date: 'Date',
-    editRole: 'Editor role permissions'
+    editRole: 'Editor role permissions',
+    isDefault: 'Default roles'
   },
   menutable: {
     id: 'Id',

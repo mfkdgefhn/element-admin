@@ -213,7 +213,8 @@ export default {
     confirm: '确 定',
     cancel: '取 消',
     date: '时间',
-    editRole: '编辑角色权限'
+    editRole: '编辑角色权限',
+    isDefault: '默认角色'
   },
   menutable: {
     id: '序号',
