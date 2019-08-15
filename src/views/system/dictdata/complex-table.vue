@@ -1,66 +1,12 @@
 <template>
   <div class="app-container">
-    <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 字典名称 -->
-      <el-select v-model="listQuery.dictType" placeholder="请选择字典类型">
-        <el-option
-          v-for="item in dictType"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-
-      <!-- 字典标签 -->
-      <el-input
-        v-model="listQuery.dictLabel"
-        :placeholder="$t('dictdatatable.dictLabel')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 数据状态 -->
-      <el-input
-        v-model="listQuery.status"
-        :placeholder="$t('dictdatatable.status')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('dictdatatable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('dictdatatable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('dictdatatable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -250,13 +196,14 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 // import { format } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -270,6 +217,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'dictdata',
       closeOnClickModal: false,
       scopeAuthority: [
         { key: '1', value: '全部数据权限' },
@@ -293,31 +241,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        dictName: undefined,
-        dictType: undefined,
-        dictId: undefined,
-        status: undefined,
-        remark: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        dictLabel: undefined
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        dictId: '',
-        dictType: '',
-        status: '0',
-        dictLabel: '',
-        dictValue: '',
-        cssClass: '',
-        dictSort: '',
-        listClass: '',
-        isDefault: '',
-        remark: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -339,16 +267,12 @@ export default {
   },
   methods: {
     // 刷新按钮
-    async refreshList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.dictName = ''
-      this.listQuery.dictType = ''
-      this.listQuery.dictId = ''
-      this.listQuery.remark = ''
-      this.listQuery.status = ''
-      this.listQuery.dictLabel = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getDictDataList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

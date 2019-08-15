@@ -293,7 +293,7 @@ export default {
     search: '搜索',
     editMenu: '编辑菜单'
   },
-  dicttypetable: {
+  dictionarytable: {
     id: '序号',
     dictId: '字典主键',
     dictName: '字典名称',
@@ -508,6 +508,9 @@ export default {
   currency: {
     search: '搜索',
     add: '添加',
-    export: '导出'
+    export: '导出',
+    status: '状态',
+    startDate: '开始时间',
+    endDate: '结束时间'
   }
 }

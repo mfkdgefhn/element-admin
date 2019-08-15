@@ -1,90 +1,12 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 系统模块 -->
-      <el-input
-        v-model="listQuery.title"
-        :placeholder="$t('operlogtable.title')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 操作人员 -->
-      <el-input
-        v-model="listQuery.operName"
-        :placeholder="$t('operlogtable.operName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 操作类型 -->
-      <el-input
-        v-model="listQuery.operatorType"
-        :placeholder="$t('operlogtable.operatorType')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 操作状态 -->
-      <el-input
-        v-model="listQuery.status"
-        :placeholder="$t('operlogtable.status')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 登录时间 -->
-      <el-date-picker
-        v-model="value1"
-        type="daterange"
-        range-separator="-"
-        :start-placeholder="$t('operlogtable.startDate')"
-        :end-placeholder="$t('operlogtable.endDate')"
-        style="width:250px;padding:0px 10px;"
-        value-format="yyyyMMdd"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('operlogtable.search') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('operlogtable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
-
-      <!-- 清空 -->
-      <el-popover v-model="visible" placement="top" width="160">
-        <p>
-          <span style="color:red;font-weight:900;display:block;font-size:20px">(危险操作)</span>
-          你确定要清空操作日志吗？
-        </p>
-        <div style="text-align: right; margin: 0">
-          <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-          <el-button type="primary" size="mini" @click="empty()">确定</el-button>
-        </div>
-        <!-- <el-button slot="reference">删除</el-button> -->
-        <el-button slot="reference" type="danger" icon="el-icon-delete" circle />
-      </el-popover>
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -253,13 +175,14 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 // import { format } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -273,6 +196,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'operlog',
       rules: {
         dictName: [{ required: true, message: '请输入字典名称', trigger: ['blur'] }],
         dictType: [{ required: true, message: '请输入字典类型', trigger: ['blur'] }],
@@ -302,26 +226,9 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        status: undefined,
-        title: undefined,
-        operName: undefined,
-        operatorType: undefined,
-        startDate: undefined,
-        endDate: undefined
+        sort: '+id'
       },
-      temp: {
-        id: undefined,
-        status: '0',
-        title: '',
-        operName: '',
-        operatorType: '',
-        startDate: '',
-        endDate: '',
-        operUrl: '',
-        method: '',
-        operParam: ''
-      },
+      temp: {},
       importanceOptions: [1, 2, 3],
       dialogFormVisible: false,
       dialogStatus: '',
@@ -349,16 +256,12 @@ export default {
       })
     },
     // 刷新按钮
-    async refreshList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.status = ''
-      this.listQuery.title = ''
-      this.listQuery.operName = ''
-      this.listQuery.operatorType = ''
-      this.listQuery.startDate = ''
-      this.listQuery.endDate = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getOperLogList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

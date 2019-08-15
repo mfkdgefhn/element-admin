@@ -1,56 +1,13 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 菜单名称 -->
-      <el-input
-        v-model="listQuery.menuName"
-        :placeholder="$t('menutable.menuName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 菜单状态 -->
-      <el-input
-        v-model="listQuery.visible"
-        :placeholder="$t('menutable.visible')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('menutable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('menutable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('menutable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -294,6 +251,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
 
@@ -315,7 +273,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -339,6 +297,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'menu',
       closeOnClickModal: false,
       typeAuthority: {
         'M': '目录',
@@ -368,37 +327,12 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        title: undefined,
-        type: undefined,
         sort: '+id',
-        menuName: undefined,
-        parentId: 0,
-        menuId: undefined,
-        orderNum: undefined,
-        url: undefined,
-        target: undefined,
-        show: undefined,
-        menuType: undefined,
-        perms: undefined,
-        icon: undefined,
-        remark: undefined
+        parentId: 0
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      temp: {
-        id: undefined,
-        menuId: '',
-        menuName: '',
-        menuType: '',
-        parentId: '',
-        orderNum: '',
-        url: '',
-        target: '',
-        show: '',
-        perms: '',
-        icon: '',
-        remark: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -421,12 +355,13 @@ export default {
       console.log(value.menuType)
     },
     // 刷新按钮
-    async refreshRoleList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.roleName = ''
-      this.listQuery.roleKey = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8,
+        parentId: 0
+      }
       await this.getMenuList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
@@ -448,23 +383,12 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      // this.getList()
       this.getMenuList()
     },
     handleModifyStatus(row, status) {
       if (status === 'insert') {
         // 新增
         console.log(row)
-        // updateRoleByRoleId(row).then(response => {
-        //   this.$message({
-        //     message: '停用',
-        //     type: 'success'
-        //   })
-        //   // 抛出错误，将停用的状态更改回来
-        //   // eslint-disable-next-line handle-callback-err
-        // }).catch(err => {
-        //   row.status = '0'
-        // })
       } else if (status === 'deleted') {
         // 删除
         row.show = false

@@ -1,65 +1,13 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 岗位编码 -->
-      <el-input
-        v-model="listQuery.postCode"
-        :placeholder="$t('posttable.postCode')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 岗位名称 -->
-      <el-input
-        v-model="listQuery.postName"
-        :placeholder="$t('posttable.postName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 岗位状态 -->
-      <el-input
-        v-model="listQuery.status"
-        :placeholder="$t('posttable.status')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('posttable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('posttable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('posttable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshPostList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -74,18 +22,6 @@
     >
       <!-- 序号 -->
       <el-table-column type="index" width="40" align="center" />
-
-      <!-- 显示顺序 -->
-      <!-- <el-table-column
-        :sortable="true"
-        :label="$t('posttable.postSort')"
-        align="center"
-        :sort-method="sortByDate"
-      >
-        <template slot-scope="scope">
-          <span>{{ scope.row.postSort }}</span>
-        </template>
-      </el-table-column>-->
 
       <!-- 岗位编码 -->
       <el-table-column :label="$t('posttable.postCode')" align="center">
@@ -228,6 +164,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -247,7 +184,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -264,6 +201,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'post',
       closeOnClickModal: false,
       scopeAuthority: [
         { key: '1', value: '全部数据权限' },
@@ -285,26 +223,12 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        postName: undefined,
-        postCode: undefined,
-        postId: undefined,
-        status: undefined,
-        postSort: undefined,
-        remark: undefined
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        postId: '',
-        remark: '',
-        postName: '',
-        postCode: '',
-        postSort: '',
-        status: '0'
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -326,13 +250,12 @@ export default {
   },
   methods: {
     // 刷新按钮
-    async refreshPostList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.postName = ''
-      this.listQuery.postCode = ''
-      this.listQuery.postSort = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getPostList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({
@@ -409,16 +332,7 @@ export default {
       this.handleFilter()
     },
     resetTemp() {
-      this.temp = {
-        id: undefined,
-        remark: '',
-        title: '',
-        status: '0',
-        type: '',
-        postName: '',
-        postCode: '',
-        postSort: ''
-      }
+      this.temp = {}
     },
     handleCreate() {
       this.resetTemp()

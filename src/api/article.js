@@ -51,7 +51,7 @@ export function updateUserByUserId(data) {
 export function deleteUserById(data) {
   return request({
     url: url + '/sys/user/deleteUserById',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -78,7 +78,7 @@ export function updateRoleByRoleId(data) {
 export function deleteByRoleId(data) {
   return request({
     url: url + '/sys/role/deleteByRoleId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -123,7 +123,7 @@ export function fetchDeptList(query) {
 export function deleteByDeptId(data) {
   return request({
     url: url + '/sys/dept/deleteByDeptId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -150,7 +150,7 @@ export function fetchPostList(query) {
 export function deleteByPostId(data) {
   return request({
     url: url + '/sys/post/deleteByPostId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -204,7 +204,7 @@ export function updateDictTypeArticle(data) {
 export function deleteByDictId(data) {
   return request({
     url: url + '/sys/dict-type/deleteByDictId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -231,7 +231,7 @@ export function createDictDataArticle(data) {
 export function deleteByDictCode(data) {
   return request({
     url: url + '/sys/dict-data/deleteByDictCode',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -276,7 +276,7 @@ export function createConfigArticle(data) {
 export function deleteByConfigId(data) {
   return request({
     url: url + '/sys/config/deleteByConfigId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }
@@ -312,7 +312,7 @@ export function createNoticeArticle(data) {
 export function deleteByNoticeId(data) {
   return request({
     url: url + '/sys/notice/deleteByNoticeId',
-    method: 'post',
+    method: 'delete',
     data
   })
 }

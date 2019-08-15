@@ -293,7 +293,7 @@ export default {
     cancel: 'Cancelar',
     editMenu: 'Editar menú'
   },
-  dicttypetable: {
+  dictionarytable: {
     id: 'Número',
     dictId: 'Clave primaria',
     dictName: 'Nombre del diccionario',
@@ -500,5 +500,13 @@ export default {
     tagsView: 'Open Tags-View',
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
+  },
+  currency: {
+    search: 'Búsqueda',
+    add: 'Adición',
+    export: 'Exportación',
+    status: 'Estado',
+    startDate: 'Hora de inicio',
+    endDate: 'End time'
   }
 }

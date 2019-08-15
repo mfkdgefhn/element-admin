@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getUserList } from '@/api/article'
+import { getUserList, getDeptList } from '@/api/article'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -32,6 +32,9 @@ const mutations = {
   SET_USERLIST: (state, userList) => {
     state.userList = userList
   },
+  SET_USERLIST_DEPTNAME: (state, index, deptName) => {
+    state.userList[index].deptName = deptName
+  },
   SET_USERCOUNT: (state, total) => {
     state.total = total
   }
@@ -50,14 +53,36 @@ const actions = {
         limit: 8
       }
     }
-    // console.log(data)
+
     return new Promise((resolve, reject) => {
       getUserList(data).then(response => {
         if (!response.data.records) {
           commit('SET_USERLIST', response.data)
+          getDeptList().then(resule => {
+            var _userList = state.userList
+            for (let i = 0; i < _userList.length; i++) {
+              for (let j = 0; j < resule.data.length; j++) {
+                if (_userList[i].deptId === resule.data[j].deptId) {
+                  _userList[i].deptName = resule.data[j].deptName
+                  break
+                }
+              }
+            }
+          })
         } else {
           commit('SET_USERLIST', response.data.records)
           commit('SET_USERCOUNT', response.data.total)
+          getDeptList().then(resule => {
+            var _userList = state.userList
+            for (let i = 0; i < _userList.length; i++) {
+              for (let j = 0; j < resule.data.length; j++) {
+                if (_userList[i].deptId === resule.data[j].deptId) {
+                  _userList[i].deptName = resule.data[j].deptName
+                  break
+                }
+              }
+            }
+          })
         }
         resolve()
       }).catch(error => {

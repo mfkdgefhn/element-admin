@@ -1,76 +1,12 @@
 <template>
   <div class="app-container">
-    <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 参数名称 -->
-      <el-input
-        v-model="listQuery.configName"
-        :placeholder="$t('configtable.configName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 参数键名 -->
-      <el-input
-        v-model="listQuery.configKey"
-        :placeholder="$t('configtable.configKey')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 系统内置 -->
-      <el-input
-        v-model="listQuery.configType"
-        :placeholder="$t('configtable.configType')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 创建时间 -->
-      <el-date-picker
-        v-model="value1"
-        type="daterange"
-        range-separator="-"
-        :start-placeholder="$t('dicttypetable.startDate')"
-        :end-placeholder="$t('dicttypetable.endDate')"
-        style="width:250px;padding:0px 10px;"
-        value-format="yyyyMMdd"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('configtable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('configtable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('configtable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -240,13 +176,14 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 // import { format } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -260,6 +197,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'config',
       closeOnClickModal: false,
       scopeAuthority: [
         { key: '1', value: '全部数据权限' },
@@ -284,26 +222,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        status: undefined,
-        remark: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        configName: undefined,
-        configKey: undefined,
-        configType: undefined
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        status: '0',
-        remark: '',
-        configType: '',
-        configValue: '',
-        configKey: '',
-        configName: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -330,17 +253,12 @@ export default {
   },
   methods: {
     // 刷新按钮
-    async refreshList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.remark = ''
-      this.listQuery.status = ''
-      this.listQuery.startDate = ''
-      this.listQuery.endDate = ''
-      this.listQuery.configName = ''
-      this.listQuery.configKey = ''
-      this.listQuery.configType = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getConfigList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

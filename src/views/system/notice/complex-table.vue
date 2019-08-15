@@ -1,65 +1,13 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 公告标题 -->
-      <el-input
-        v-model="listQuery.noticeTitle"
-        :placeholder="$t('noticetable.noticeTitle')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 操作人员 -->
-      <el-input
-        v-model="listQuery.createBy"
-        :placeholder="$t('noticetable.createBy')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 公告类型 -->
-      <el-input
-        v-model="listQuery.noticeType"
-        :placeholder="$t('noticetable.noticeType')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('noticetable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('noticetable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('noticetable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -217,13 +165,14 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import EditorBar from './WangEditor'
 // import { checkMaxVal } from '@/utils/validator'
 // import { format } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, EditorBar },
+  components: { Pagination, EditorBar, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -237,6 +186,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'notice',
       isClear: false,
       hasChange: false,
       hasInit: false,
@@ -272,23 +222,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        status: undefined,
-        remark: undefined,
-        noticeTitle: undefined,
-        createBy: undefined,
-        noticeType: undefined
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        status: '0',
-        remark: '',
-        noticeTitle: '',
-        noticeType: '',
-        noticeContent: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -309,15 +247,12 @@ export default {
   },
   methods: {
     // 刷新按钮
-    async refreshList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.remark = ''
-      this.listQuery.status = ''
-      this.listQuery.noticeTitle = ''
-      this.listQuery.createBy = ''
-      this.listQuery.noticeType = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getNoticeList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

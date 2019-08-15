@@ -1,81 +1,12 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 登录地址 -->
-      <el-input
-        v-model="listQuery.loginLocation"
-        :placeholder="$t('loginlogtable.loginLocation')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 登录名称 -->
-      <el-input
-        v-model="listQuery.loginName"
-        :placeholder="$t('loginlogtable.loginName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 登录状态 -->
-      <el-input
-        v-model="listQuery.status"
-        :placeholder="$t('loginlogtable.status')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 登录时间 -->
-      <el-date-picker
-        v-model="value1"
-        type="daterange"
-        range-separator="-"
-        :start-placeholder="$t('loginlogtable.startDate')"
-        :end-placeholder="$t('loginlogtable.endDate')"
-        style="width:250px;padding:0px 10px;"
-        value-format="yyyyMMdd"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('loginlogtable.search') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('loginlogtable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshList()" />
-
-      <!-- 清空 -->
-      <el-popover v-model="visible" placement="top" width="160">
-        <p>
-          <span style="color:red;font-weight:900;display:block;font-size:20px">(危险操作)</span>
-          你确定要清空登录信息吗？
-        </p>
-        <div style="text-align: right; margin: 0">
-          <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-          <el-button type="primary" size="mini" @click="empty()">确定</el-button>
-        </div>
-        <!-- <el-button slot="reference">删除</el-button> -->
-        <el-button slot="reference" type="danger" icon="el-icon-delete" circle />
-      </el-popover>
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -173,13 +104,14 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 // import { format } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -193,6 +125,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'loginlog',
       value1: '',
       visible: false,
       closeOnClickModal: false,
@@ -217,10 +150,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        sort: '+id',
-        loginLocation: undefined,
-        loginName: undefined,
-        status: undefined
+        sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       dialogFormVisible: false,
@@ -249,14 +179,12 @@ export default {
       })
     },
     // 刷新按钮
-    async refreshList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.status = ''
-      this.listQuery.loginLocation = ''
-      this.listQuery.loginName = ''
-      this.listQuery.status = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       await this.getLogininforList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

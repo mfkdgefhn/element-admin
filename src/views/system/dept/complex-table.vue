@@ -1,56 +1,13 @@
 <template>
   <div class="app-container">
-    <!-- 部门栏 -->
-    <div class="filter-container">
-      <!-- 部门名称 -->
-      <el-input
-        v-model="listQuery.deptName"
-        :placeholder="$t('depttable.deptName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 部门状态 -->
-      <el-input
-        v-model="listQuery.status"
-        :placeholder="$t('depttable.status')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('depttable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('depttable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('depttable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
-    </div>
+    <!-- 菜单栏 -->
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -217,6 +174,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
+import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
 
@@ -238,7 +196,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -262,6 +220,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'dept',
       closeOnClickModal: false,
       typeAuthority: {
         'M': '目录',
@@ -292,31 +251,11 @@ export default {
         page: 1,
         limit: 8,
         sort: '+id',
-        deptName: undefined,
-        status: undefined,
-        parentId: 0,
-        ancestors: undefined,
-        deptId: undefined,
-        orderNum: undefined,
-        leader: undefined,
-        phone: undefined,
-        email: undefined,
-        del_flag: undefined
+        parentId: 0
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
-      temp: {
-        id: undefined,
-        deptId: '',
-        deptName: '',
-        ancestors: '',
-        parentId: '',
-        orderNum: '',
-        leader: undefined,
-        phone: undefined,
-        email: undefined,
-        del_flag: undefined
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -341,13 +280,13 @@ export default {
       console.log(value.menuType)
     },
     // 刷新按钮
-    async refreshRoleList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.deptName = ''
-      this.listQuery.parentId = 0
-      this.listQuery.status = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8,
+        parentId: 0
+      }
       await this.getDeptList()
       this.refreshButton = 'el-icon-refresh'
       this.$message({

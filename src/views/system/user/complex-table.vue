@@ -2,63 +2,13 @@
   <div class="app-container">
     <!-- 菜单栏 -->
     <div class="filter-container">
-      <!-- 用户名 -->
-      <el-input
-        v-model="listQuery.userName"
-        :placeholder="$t('usertable.userName')"
-        style="width: 150px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
+      <searchs
+        :seach-type="seachType"
+        @handleFilter="handleFilter"
+        @handleCreate="handleCreate"
+        @handleDownload="handleDownload"
+        @refresh="refresh"
       />
-
-      <!-- 昵称 -->
-      <el-input
-        v-model="listQuery.userNick"
-        :placeholder="$t('usertable.userNick')"
-        style="width: 150px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 手机号 -->
-      <el-input
-        v-model="listQuery.phonenumber"
-        :placeholder="$t('usertable.phonenumber')"
-        style="width: 150px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('usertable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('usertable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('usertable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshUserList()" />
     </div>
 
     <!-- 表格 -->
@@ -299,12 +249,13 @@
 </template>
 
 <script>
-import { updateUserByUserId, deleteUserById, fetchPv, updateArticle, getDeptList } from '@/api/article'
+import { updateUserByUserId, deleteUserById, fetchPv, getDeptList } from '@/api/article'
 import { register } from '@/api/user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import clirenLeftTree from './cliren-left-tree'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -326,6 +277,7 @@ export default {
   name: 'ComplexTable',
   components: {
     clirenLeftTree,
+    Searchs,
     Pagination,
     'remote-js': {
       render(createElement) {
@@ -352,6 +304,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'user',
       refreshButton: 'el-icon-refresh',
       visible: false,
       tableKey: 0,
@@ -362,29 +315,11 @@ export default {
       listQuery: {
         page: 1,
         limit: 8,
-        userName: undefined,
-        userNick: undefined,
-        phonenumber: undefined,
-        type: undefined,
         sort: '+id'
       },
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        userName: '',
-        userNick: '',
-        deptId: '',
-        deptName: '',
-        phonenumber: '',
-        email: '',
-        sex: '',
-        loginIp: '',
-        loginDate: '',
-        remarks: '',
-        status: '',
-        password: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -410,34 +345,21 @@ export default {
     }
   },
   computed: {
+    // tempDeptName() {
+    //   return this.temp.deptId
+    // },
     getUserList() {
       return this.$store.state.user.userList
     },
     getUserCount() {
       return this.$store.state.user.total
-    },
-    tempDeptName() {
-      return this.temp.deptId
     }
   },
   watch: {
     getUserList(a, b) {
       this.list = a
       this.listLoading = false
-    },
-    tempDeptName(a, b) {
-      if (a !== b) {
-        this.deptDate = this.$store.state.dept.depts
-        for (let i = 0; i < this.deptDate.length; i++) {
-          if (this.deptDate[i].deptId === a) {
-            this.temp.deptName = this.deptDate[i].deptName
-            break
-          }
-        }
-      }
     }
-  },
-  created() {
   },
   mounted() {
     this.getDeptLists()
@@ -446,6 +368,7 @@ export default {
     getDeptLists() {
       getDeptList().then((response) => {
         this.$store.dispatch('dept/setDepts', response.data)
+        this.deptDate = response.data
       })
     },
     updateTreeDeptId(data) {
@@ -456,15 +379,12 @@ export default {
     getList() {
       this.listLoading = true
     },
-    refreshUserList() {
+    refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.userName = ''
-      this.listQuery.userNick = ''
-      this.listQuery.deptId = ''
-      this.listQuery.deptName = ''
-      this.listQuery.phonenumber = ''
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
       this.initUserInfo()
       setTimeout(() => {
         this.refreshButton = 'el-icon-refresh'
@@ -481,15 +401,19 @@ export default {
     isShowclase() {
       this.isShow = !this.isShow
     },
-    handleFilter() {
+    handleFilter(data) {
+      this.listQuery.userName = data.userName
+      this.listQuery.userNick = data.userNick
+      this.listQuery.phonenumber = data.phonenumber
       this.listQuery.page = 1
+      this.listQuery.limit = 8
       this.initUserInfo()
     },
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
         // 停用
-        row.status = '1'
         updateUserByUserId(row).then(response => {
+          row.status = '1'
           this.$message({
             message: '停用',
             type: 'success'
@@ -497,8 +421,8 @@ export default {
         })
       } else if (status === 'enabling') {
         // 启用
-        row.status = '0'
         updateUserByUserId(row).then(response => {
+          row.status = '0'
           this.$message({
             message: '启用',
             type: 'success'
@@ -551,7 +475,7 @@ export default {
       }
     },
     // 添加
-    handleCreate() {
+    handleCreate(data) {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -593,7 +517,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateUserByUserId(tempData).then(() => {
             for (const v of this.list) {
               if (v.id === this.temp.id) {
                 const index = this.list.indexOf(v)
@@ -602,6 +526,7 @@ export default {
               }
             }
             this.dialogFormVisible = false
+            this.initUserInfo()
             this.$notify({
               title: '成功',
               message: '更新成功',

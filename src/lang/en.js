@@ -293,7 +293,7 @@ export default {
     cancel: 'Cancel',
     editMenu: 'editMenu'
   },
-  dicttypetable: {
+  dictionarytable: {
     id: 'id',
     dictId: 'dictId',
     dictName: 'dictName',
@@ -500,5 +500,13 @@ export default {
     tagsView: 'Open Tags-View',
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
+  },
+  currency: {
+    search: 'search',
+    add: 'add',
+    export: 'export',
+    status: 'status',
+    startDate: 'startDate',
+    endDate: 'endDate'
   }
 }

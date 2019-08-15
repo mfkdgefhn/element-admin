@@ -294,7 +294,7 @@ export default {
     cancel: '取り消し',
     editMenu: '編集メニュー'
   },
-  dicttypetable: {
+  dictionarytable: {
     id: '番号付け',
     dictId: '辞書のキー',
     dictName: '辞書の名前',
@@ -500,5 +500,13 @@ export default {
     tagsView: 'Tags-View 開く',
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
+  },
+  currency: {
+    search: '検索',
+    add: '追加',
+    export: 'エクスポート',
+    status: '状態',
+    startDate: '開始時間',
+    endDate: '終了時間'
   }
 }

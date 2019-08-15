@@ -1,56 +1,13 @@
 <template>
   <div class="app-container">
     <!-- 菜单栏 -->
-    <div class="filter-container">
-      <!-- 标题 -->
-      <el-input
-        v-model="listQuery.roleName"
-        :placeholder="$t('roletable.roleName')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 权限字符 -->
-      <el-input
-        v-model="listQuery.roleKey"
-        :placeholder="$t('roletable.roleKey')"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
-
-      <!-- 搜索按钮 -->
-      <el-button
-        v-waves
-        class="filter-item"
-        type="primary"
-        icon="el-icon-search"
-        @click="handleFilter"
-      >{{ $t('roletable.search') }}</el-button>
-
-      <!-- 添加 -->
-      <el-button
-        class="filter-item"
-        style="margin-left: 10px;"
-        type="primary"
-        icon="el-icon-edit"
-        @click="handleCreate"
-      >{{ $t('roletable.add') }}</el-button>
-
-      <!-- 导出 -->
-      <el-button
-        v-waves
-        :loading="downloadLoading"
-        class="filter-item"
-        type="primary"
-        icon="el-icon-download"
-        @click="handleDownload"
-      >{{ $t('roletable.export') }}</el-button>
-
-      <!-- 刷新 -->
-      <el-button type="primary" :icon="refreshButton" circle @click="refreshRoleList()" />
-    </div>
+    <searchs
+      :seach-type="seachType"
+      @handleFilter="handleFilter"
+      @handleCreate="handleCreate"
+      @handleDownload="handleDownload"
+      @refresh="refresh"
+    />
 
     <!-- 表格 -->
     <el-table
@@ -65,18 +22,6 @@
     >
       <!-- 序号 -->
       <el-table-column type="index" width="40" align="center" />
-
-      <!-- 显示顺序 -->
-      <!-- <el-table-column
-        :sortable="true"
-        :label="$t('roletable.roleSort')"
-        align="center"
-        :sort-method="sortByDate"
-      >
-        <template slot-scope="scope">
-          <span>{{ scope.row.roleSort }}</span>
-        </template>
-      </el-table-column>-->
 
       <!-- 角色名称 -->
       <el-table-column :label="$t('roletable.roleName')" align="center">
@@ -182,7 +127,7 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 角色ID -->
-        <el-form-item :label="$t('roletable.roleId')">
+        <el-form-item v-if="false" :label="$t('roletable.roleId')">
           <el-input v-model="temp.roleId" disabled placeholder="系统默认生成" />
         </el-form-item>
 
@@ -194,6 +139,10 @@
         <!-- 角色权限字符串 -->
         <el-form-item :label="$t('roletable.roleKey')" prop="roleKey">
           <el-input v-model="temp.roleKey" />
+          <div class="role-key">
+            <i class="el-icon-warning" />
+            <span>控制器中定义的权限字符，如：@RequiresRoles("")</span>
+          </div>
         </el-form-item>
 
         <!-- 显示顺序 -->
@@ -218,12 +167,12 @@
         </el-form-item>
 
         <!-- 创建时间 -->
-        <el-form-item :label="$t('roletable.createTime')" prop="date">
+        <el-form-item v-if="false" :label="$t('roletable.createTime')" prop="date">
           <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
 
         <!-- 修改时间 -->
-        <el-form-item :label="$t('roletable.updateTime')" prop="date">
+        <el-form-item v-if="false" :label="$t('roletable.updateTime')" prop="date">
           <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
 
@@ -272,6 +221,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
 import RoleToPermission from './roleToPermission'
+import Searchs from '@/components/Searchs'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -291,7 +241,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, RoleToPermission },
+  components: { Pagination, RoleToPermission, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -308,6 +258,7 @@ export default {
   },
   data() {
     return {
+      seachType: 'role',
       closeOnClickModal: false,
       scopeAuthority: [
         { key: '1', value: '全部数据权限' },
@@ -324,28 +275,12 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 8,
-        title: undefined,
-        type: undefined,
-        sort: '+id',
-        roleName: undefined,
-        roleKey: undefined,
-        visible: undefined
+        limit: 8
       },
       importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      temp: {
-        id: undefined,
-        roleId: '',
-        remark: '',
-        roleName: '',
-        roleKey: '',
-        roleSort: '',
-        dataScope: '',
-        status: '0',
-        visible: ''
-      },
+      temp: {},
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -363,26 +298,21 @@ export default {
     }
   },
   created() {
-    // this.getList()
-    // this.getUserList()
     this.getRoleList()
   },
   methods: {
-    // 排序方法
-    // sortByDate(obj1, obj2) {
-    //   const val1 = obj1.deadline
-    //   const val2 = obj2.deadline
-    //   return val1 - val2
-    // },
     // 刷新按钮
-    async refreshRoleList() {
+    async refresh() {
       this.refreshButton = 'el-icon-loading'
-      this.listQuery.page = 1
-      this.listQuery.limit = 8
-      this.listQuery.roleName = ''
-      this.listQuery.roleKey = ''
-      await this.getRoleList()
-      this.refreshButton = 'el-icon-refresh'
+      this.listQuery = {
+        page: 1,
+        limit: 8
+      }
+      await this.getRoleList().then(response => {
+        this.refreshButton = 'el-icon-refresh'
+      }).catch(() => {
+        this.refreshButton = 'el-icon-refresh'
+      })
       this.$message({
         message: '刷新完成',
         type: 'success'
@@ -574,5 +504,8 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+.role-key {
+  font-size: 0.5rem;
 }
 </style>

@@ -57,9 +57,9 @@ export default {
     leftTree
   },
   props: {
-    // eslint-disable-next-line vue/require-default-prop
     temp: {
-      type: Object
+      type: Object,
+      default: () => { }
     }
   },
   data() {
