@@ -214,7 +214,8 @@ export default {
     cancel: '取 消',
     date: '时间',
     editRole: '编辑角色权限',
-    isDefault: '默认角色'
+    isDefault: '默认角色',
+    menuPermissions: '菜单权限'
   },
   menutable: {
     id: '序号',

@@ -214,7 +214,8 @@ export default {
     cancel: '取り消し',
     date: '日時',
     editRole: 'キャラクターの権限を編集',
-    isDefault: 'デフォルトのキャラクター'
+    isDefault: 'デフォルトのキャラクター',
+    menuPermissions: 'メニューのパーミッション'
   },
   menutable: {
     id: '番号付け',

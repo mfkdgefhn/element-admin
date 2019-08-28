@@ -213,7 +213,8 @@ export default {
     cancel: 'Cancelar',
     date: 'Fecha',
     editRole: 'Editar permisos',
-    isDefault: 'Función predeterminada'
+    isDefault: 'Función predeterminada',
+    menuPermissions: 'Permisos de menú'
   },
   menutable: {
     id: 'Número',

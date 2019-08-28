@@ -30,14 +30,14 @@
             <el-table-column type="index" width="40" align="center" />
 
             <!-- 角色名称 -->
-            <el-table-column :label="$t('roletable.roleName')" align="center">
+            <el-table-column :label="$t('roletable.roleName')" width="100" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.roleName }}</span>
               </template>
             </el-table-column>
 
             <!-- 权限字符 -->
-            <el-table-column :label="$t('roletable.roleKey')" align="center">
+            <el-table-column :label="$t('roletable.roleKey')" width="150" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.roleKey }}</span>
               </template>
@@ -73,7 +73,7 @@
             </el-table-column>
 
             <!-- 创建时间 -->
-            <el-table-column :label="$t('roletable.createTime')" align="center">
+            <el-table-column :label="$t('roletable.createTime')" width="150" align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
               </template>
@@ -83,24 +83,22 @@
             <el-table-column
               :label="$t('roletable.actions')"
               align="center"
-              width="200"
+              width="280"
               class-name="small-padding fixed-width"
             >
               <template slot-scope="{row}">
                 <!-- 操作/编辑 -->
-                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
-
+                <el-button size="mini" round type="primary" @click="handleUpdate(row)">菜单权限</el-button>
                 <!-- 数据权限/分配用户 -->
-                <el-button circle type="success" icon="authorization" @click="handleFetchPv(row)">
-                  <svg-icon icon-class="adduser" />
-                </el-button>
-
+                <el-button size="mini" round type="success" @click="handleFetchPv(row)">数据权限</el-button>
+                <!-- 分配用户 -->
+                <el-button size="mini" round type="success" @click="handleFetchPv(row)">分配用户</el-button>
                 <!-- 删除 -->
                 <el-popover
                   v-model="row.visible"
                   placement="top"
                   width="160"
-                  style="margin-left:10px;"
+                  style="margin-left:5px;"
                 >
                   <p>你确定要删除该用户吗？</p>
                   <div style="text-align: right; margin: 0">
@@ -111,7 +109,7 @@
                       @click="handleModifyStatus(row,'deleted')"
                     >确定</el-button>
                   </div>
-                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                  <el-button slot="reference" size="mini" round type="danger">删除</el-button>
                 </el-popover>
               </template>
             </el-table-column>
@@ -200,6 +198,11 @@
             placeholder="该角色很懒，未写备注信息..."
           />
         </el-form-item>
+
+        <!-- 菜单 -->
+        <el-form-item :label="$t('roletable.menuPermissions')">
+          <left-tree :role-id="temp.roleId" />
+        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -237,6 +240,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import { checkMaxVal } from '@/utils/validator'
 import RoleToPermission from './roleToPermission'
 import Searchs from '@/components/Searchs'
+import leftTree from './left-tree'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -256,7 +260,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, RoleToPermission, Searchs },
+  components: { Pagination, RoleToPermission, Searchs, leftTree },
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -558,5 +562,11 @@ export default {
 }
 .seach-class {
   margin-bottom: 10px;
+}
+.fixed-width .el-button--mini {
+  padding: 7px 5px;
+}
+.el-button + .el-button {
+  margin-left: 0.3125rem;
 }
 </style>

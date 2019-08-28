@@ -228,6 +228,7 @@ export default {
             })
             .catch(() => {
               this.loading = false
+              console.log(123)
             })
         } else {
           console.log('error submit!!')

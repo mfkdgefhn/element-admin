@@ -4,21 +4,12 @@
       <el-col :span="span" class="tree-margin">
         <el-input v-model="filterText" placeholder="过滤" class="tree-input" type="width:80%" />
         <el-tree
-          ref="deptList"
-          :check-strictly="checkStrictly"
+          ref="menuList"
+          :props="defaultProps"
           :data="routesData"
-          default-expand-all
-          highlight-current
-          :expand-on-click-node="expandOnClickNode"
-          check-on-click-node
           node-key="id"
-          :show-checkbox="showCheckbox"
-          :filter-node-method="filterNode"
-          class="permission-tree"
-          @node-click="handleNodeClick"
+          class="memu-tree"
         />
-
-        <!-- :check-on-click-node="checkNode" -->
       </el-col>
     </el-row>
   </div>
@@ -26,118 +17,83 @@
 
 <script>
 
-import { getDeptList, getUserByDeptIds } from '@/api/article'
-// import { getDeptList } from '@/api/system'
+import { fetchMenuList } from '@/api/article'
 
 export default {
+  props: {
+    roleId: {
+      type: Number,
+      default: null
+    }
+  },
   data() {
     return {
+      listQuery: {
+        page: 1,
+        limit: 8
+      },
+      defaultProps: {
+        lable: 'menuName'
+      },
       span: 24,
       filterText: '',
-      expandAll: false,
-      checkNode: true,
-      showCheckbox: false,
-      checkStrictly: false,
-      routesData: [],
-      expandOnClickNode: false,
-      deptUser: [],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+      routesData: [{
+        id: 1,
+        'menuName': '一级 1',
+        children: [{
+          id: 4,
+          'menuName': '二级 1-1',
+          children: [{
+            id: 9,
+            'menuName': '三级 1-1-1'
+          }, {
+            id: 10,
+            'menuName': '三级 1-1-2'
+          }]
+        }]
+      }]
     }
   },
-  watch: {
-    filterText(val) {
-      this.$refs.deptList.filter(val)
-    }
-  },
-  created() {
-    this.initDeptList()
+  mounted() {
+    // this.initMenuList()
   },
   methods: {
     // 初始化部门列表
-    initDeptList() {
+    initMenuList() {
       this.listLoading = true
-      getDeptList(this.listQuery).then(response => {
+      fetchMenuList(this.listQuery).then(response => {
+        console.log('成功')
+        console.log(response.data)
         this.routesData = response.data// [0].children
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.routesData.forEach(menu => {
+          console.log(menu.menuName)
+        })
+        // setTimeout(() => {
+        //   this.listLoading = false
+        // }, 1.5 * 1000)
       })
     },
+
     // 点击树节点获取用户列表
     handleNodeClick(data) {
-      this.listLoading = true
+      // this.listLoading = true
       // 遍历部门及下级部门的所有ID
-      var depts = []
-      this.retrievalTree(this.routesData, data, depts)
+      // var depts = []
+      // this.retrievalTree(this.routesData, data, depts)
       // 获取该部门下所有ID进一个数组内
-      var deptIds = []
-      this.retrievalDeptId(depts, deptIds)
+      // var deptIds = []
+      // this.retrievalDeptId(depts, deptIds)
       // 获取后台数据
-      getUserByDeptIds(deptIds.join(',')).then(response => {
-        this.deptUser = response.data
-        this.$store.dispatch('user/SET_USERLIST', response.data)
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
+      // getUserByDeptIds(deptIds.join(',')).then(response => {
+      //   this.deptUser = response.data
+      //   this.$store.dispatch('user/SET_USERLIST', response.data)
+      //   setTimeout(() => {
+      //     this.listLoading = false
+      //   }, 1.5 * 1000)
+      // })
 
       // var test = this.$refs.deptList.getCheckedKeys()
-    },
-    // 检索部门树，返回符合参数值的树
-    retrievalTree(arr, data, newArr) {
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].deptId === data.deptId) {
-          newArr.push(arr[i])
-        } else {
-          if (arr[i].children) {
-            this.retrievalTree(arr[i].children, data, newArr)
-          }
-        }
-      }
-    },
-    // 获取该部门下所有ID进一个数组内
-    retrievalDeptId(arr, newArr) {
-      arr.forEach(dept => {
-        newArr.push(dept.deptId)
-        if (dept.children) {
-          this.retrievalDeptId(dept.children, newArr)
-        }
-      })
-    },
-    Checkbox() {
-      this.showCheckbox = !this.showCheckbox
-    },
-    expand() {
-      this.expandAll = !this.expandAll
-    },
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
-    },
-    getCheckedNodes() {
-      console.log(this.$refs.deptList.getCheckedNodes())
-    },
-    getCheckedKeys() {
-      console.log(this.$refs.deptList.getCheckedKeys())
-    },
-    setCheckedNodes() {
-      this.$refs.deptList.setCheckedNodes([{
-        id: 5,
-        label: '二级 2-1'
-      }, {
-        id: 9,
-        label: '三级 1-1-1'
-      }])
-    },
-    setCheckedKeys() {
-      var test = this.$refs.deptList.getCheckedKeys()
-      test.push(1)
-    },
-    resetChecked() {
-      this.$refs.deptList.setCheckedKeys([])
+
     }
   }
 }
@@ -158,7 +114,7 @@ export default {
   margin-bottom: 10px;
 }
 
-.permission-tree {
+.menu-tree {
   margin-bottom: 30px;
 }
 .vertical-line {
@@ -167,7 +123,4 @@ export default {
   width: 100%;
   border: 1px solid #000;
 }
-/* .el-input {
-  margin: 10px;
-} */
 </style>

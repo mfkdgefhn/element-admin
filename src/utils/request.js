@@ -64,7 +64,7 @@ service.interceptors.response.use(
       Message({
         message: res.msg || 'Error',
         type: 'error',
-        duration: 5 * 1000
+        duration: 1 * 1000
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
@@ -88,10 +88,15 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
+    // debugger
+    // var str = '登陆失败  '
+    // if (error.message === 'Network Error') {
+    //   str += '网络不通!'
+    // }
     Message({
-      message: error.msg,
+      message: error.message ? error.message : error.msg,
       type: 'error',
-      duration: 5 * 1000
+      duration: 1 * 1000
     })
     return Promise.reject(error)
   }
