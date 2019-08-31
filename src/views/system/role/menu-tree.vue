@@ -3,13 +3,24 @@
     <el-row class="left-tree">
       <el-col :span="span" class="tree-margin">
         <el-input v-model="filterText" placeholder="过滤" class="tree-input" type="width:80%" />
-        <el-tree
-          ref="menuList"
-          :props="defaultProps"
-          :data="routesData"
-          node-key="id"
-          class="memu-tree"
-        />
+        <div class="tree">
+          <el-tree
+            ref="menuList"
+            :props="defaultProps"
+            :data="data"
+            show-checkbox
+            default-expand-all
+            :expand-on-click-node="expandOnClickNode"
+            node-key="menuId"
+            empty-text="没有菜单"
+            highlight-current
+            check-on-click-node
+            :default-checked-keys="menuData"
+            class="memu-tree"
+            @current-change="currentChange"
+          />
+          <!-- @node-click="handleNodeClick" -->
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -24,6 +35,14 @@ export default {
     roleId: {
       type: Number,
       default: null
+    },
+    menuData: {
+      type: Array,
+      default: () => []
+    },
+    sure: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -32,48 +51,43 @@ export default {
         page: 1,
         limit: 8
       },
-      defaultProps: {
-        lable: 'menuName'
-      },
       span: 24,
       filterText: '',
-      routesData: [{
-        id: 1,
-        'menuName': '一级 1',
-        children: [{
-          id: 4,
-          'menuName': '二级 1-1',
-          children: [{
-            id: 9,
-            'menuName': '三级 1-1-1'
-          }, {
-            id: 10,
-            'menuName': '三级 1-1-2'
-          }]
-        }]
-      }]
+      data: [],
+      defaultProps: {
+        children: 'children',
+        label: 'menuName'
+      },
+      defaultCheckedKey: [],
+      expandOnClickNode: false
+    }
+  },
+  watch: {
+    menuData(val) {
+      this.$refs.menuList.setCheckedKeys([])
+      this.defaultCheckedKey = val
+    },
+    sure(val) {
+      // 向父组件传值
+      this.$emit('editMenu', this.$refs.menuList.getCheckedNodes())
     }
   },
   mounted() {
-    // this.initMenuList()
+    this.initMenuList()
   },
   methods: {
     // 初始化部门列表
     initMenuList() {
       this.listLoading = true
       fetchMenuList(this.listQuery).then(response => {
-        console.log('成功')
-        console.log(response.data)
-        this.routesData = response.data// [0].children
-        this.routesData.forEach(menu => {
-          console.log(menu.menuName)
-        })
-        // setTimeout(() => {
-        //   this.listLoading = false
-        // }, 1.5 * 1000)
+        this.data = response.data // [0].children
       })
     },
-
+    // 节点选中变动触发的节点
+    // 共两个参数，依次为：当前节点的数据，当前节点的 Node 对象
+    currentChange(a, b) {
+      // console.log(this.$refs.menuList.getCheckedNodes())
+    },
     // 点击树节点获取用户列表
     handleNodeClick(data) {
       // this.listLoading = true
@@ -104,6 +118,7 @@ export default {
   border: 1px solid #e6ebf5;
   border-radius: 5px;
 }
+
 .tree-margin {
   margin: 0px;
   text-align: center;
@@ -122,5 +137,15 @@ export default {
   height: 200px;
   width: 100%;
   border: 1px solid #000;
+}
+.el-tree {
+  min-width: 100%;
+  font-size: 14px;
+  display: inline-block;
+}
+.tree {
+  overflow-y: auto;
+  overflow-x: scroll;
+  height: 400px;
 }
 </style>

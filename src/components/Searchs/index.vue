@@ -636,7 +636,7 @@
       <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
 
       <!-- 清空 -->
-      <el-popover v-model="visible" placement="top" width="160">
+      <el-popover v-model="visible" placement="top" width="250">
         <p>
           <span style="color:red;font-weight:900;display:block;font-size:20px">(危险操作)</span>
           你确定要清空日志吗？

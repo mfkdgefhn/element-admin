@@ -362,6 +362,62 @@ export function deleteByOperLogs(data) {
   })
 }
 
+// 修改角色所对应的菜单
+export function updateRoleToMenu(data, roleId) {
+  return request({
+    url: url + '/sys/role-menu/updateRoleToMenu',
+    method: 'post',
+    data: {
+      data: data,
+      roleId: roleId
+    }
+  })
+}
+// 修改角色所对应的用户
+export function updateRoleToUser(data, roleId) {
+  return request({
+    url: url + '/sys/user-role/updateRoleToUser',
+    method: 'post',
+    data: {
+      data: data,
+      roleId: roleId
+    }
+  })
+}
+// 修改角色所对应的部门
+export function updateRoleToDept(data, roleId) {
+  return request({
+    url: url + '/sys/role-dept/updateRoleToDept',
+    method: 'post',
+    data: {
+      data: data,
+      roleId: roleId
+    }
+  })
+}
+// 根据角色ID获取所属菜单、所属用户、所属部门信息
+export function fetchRoleInfo(roleId) {
+  return request({
+    url: url + '/sys/role/fetchRoleInfo',
+    method: 'get',
+    params: {
+      roleId: roleId
+    }
+  })
+}
+
+// 根据角色ID修改数据范围
+export function editDataScope(dataScope, roleId) {
+  return request({
+    url: url + '/sys/role/editDataScope',
+    method: 'post',
+    data: {
+      dataScope: dataScope,
+      roleId: roleId
+    }
+  })
+}
+
 /**
  *
  * @param {} query

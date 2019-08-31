@@ -429,8 +429,8 @@ export default {
     handleModifyStatus(row, status) {
       if (status === 'discontinuation') {
         // 停用
+        row.status = '1'
         updateUserByUserId(row).then(response => {
-          row.status = '1'
           this.$message({
             message: '停用',
             type: 'success'
@@ -438,8 +438,8 @@ export default {
         })
       } else if (status === 'enabling') {
         // 启用
+        row.status = '0'
         updateUserByUserId(row).then(response => {
-          row.status = '0'
           this.$message({
             message: '启用',
             type: 'success'

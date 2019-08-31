@@ -46,12 +46,12 @@
             <!-- 数据范围 -->
             <el-table-column :label="$t('roletable.dataScope')" align="center">
               <template slot-scope="scope">
-                <span>{{ scopeAuthority[scope.row.dataScope].value }}</span>
+                <span>{{ scopeAuthority[scope.row.dataScope-1].value }}</span>
               </template>
             </el-table-column>
 
             <!-- 默认角色 -->
-            <el-table-column :label="$t('roletable.isDefault')" align="center">
+            <el-table-column :label="$t('roletable.isDefault')" align="center" width="110">
               <template slot-scope="{row}">
                 <el-tag
                   effect="dark"
@@ -83,18 +83,17 @@
             <el-table-column
               :label="$t('roletable.actions')"
               align="center"
-              width="280"
+              width="220"
               class-name="small-padding fixed-width"
             >
               <template slot-scope="{row}">
                 <!-- 操作/编辑 -->
-                <el-button size="mini" round type="primary" @click="handleUpdate(row)">菜单权限</el-button>
+                <el-button size="mini" round type="primary" @click="handleUpdate(row)">编辑</el-button>
                 <!-- 数据权限/分配用户 -->
-                <el-button size="mini" round type="success" @click="handleFetchPv(row)">数据权限</el-button>
-                <!-- 分配用户 -->
-                <el-button size="mini" round type="success" @click="handleFetchPv(row)">分配用户</el-button>
+                <el-button size="mini" round type="success" @click="handleFetchPv(row)">权限</el-button>
                 <!-- 删除 -->
                 <el-popover
+                  v-if="row.roleId!==1"
                   v-model="row.visible"
                   placement="top"
                   width="160"
@@ -164,12 +163,11 @@
         </el-form-item>
 
         <!-- 数据范围 -->
-        <el-form-item :label="$t('roletable.dataScope')" prop="dataScope">
+        <!-- <el-form-item :label="$t('roletable.dataScope')" prop="dataScope">
           <el-select v-model="temp.dataScope" placeholder="请选择数据范围">
             <el-option v-for="i in scopeAuthority" :key="i.key" :label="i.value" :value="i.key" />
           </el-select>
-          <!-- <el-input v-model="temp.dataScope" /> -->
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 状态 -->
         <el-form-item :label="$t('roletable.status')">
@@ -198,11 +196,6 @@
             placeholder="该角色很懒，未写备注信息..."
           />
         </el-form-item>
-
-        <!-- 菜单 -->
-        <el-form-item :label="$t('roletable.menuPermissions')">
-          <left-tree :role-id="temp.roleId" />
-        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -227,20 +220,20 @@
       custom-class="dialog-dietRole"
       :close-on-click-modal="closeOnClickModal"
     >
-      <role-to-permission :temp="temp" />
+      <role-to-permission v-if="vis" :temp="temp" @sureModify="sureModify" @dataScope="dataScope" />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { deleteByRoleId, updateRoleByRoleId, updateRoleDefaultJurisdiction, fetchRoleList, fetchPv, createRoleArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, updateRoleByRoleId, updateRoleDefaultJurisdiction, fetchRoleList, createRoleArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
 import RoleToPermission from './roleToPermission'
 import Searchs from '@/components/Searchs'
-import leftTree from './left-tree'
+// import leftTree from './left-tree'
 
 // 弹出层dialog拖拽工具
 import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
@@ -260,7 +253,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, RoleToPermission, Searchs, leftTree },
+  components: { Pagination, RoleToPermission, Searchs }, //, leftTree
   directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
@@ -300,6 +293,7 @@ export default {
       shenheren: true,
       total: 0,
       listLoading: true,
+      vis: true,
       listQuery: {
         page: 1,
         limit: 8
@@ -328,16 +322,31 @@ export default {
     this.getRoleList()
   },
   methods: {
+    dataScope(data) {
+      var _list = this.list
+      _list.forEach(role => {
+        if (role.roleId === this.temp.roleId) {
+          role.dataScope = data
+        }
+      })
+    },
+    sureModify(data) {
+      this.dialogPvVisible = data
+    },
+    // 权限分配
+    allocationOfPrivileges() {
+
+    },
     // 设为默认角色
     setDefault(row) {
       let str
       let ent
       if (row.isDefault === '0') {
         str = '确认取消'
-        ent = '您确认要取消所选的 ROLE_USER 角色为默认?'
+        ent = '您确认要取消所选的《' + row.roleName + '》角色为默认?'
       } else {
         str = '确认取消'
-        ent = '您确认要设置所选的 ROLE_TEST 为注册用户默认角色?'
+        ent = '您确认要设置所选的《' + row.roleName + '》为注册用户默认角色?'
       }
       this.$confirm(ent, str, {
         confirmButtonText: '确定',
@@ -400,6 +409,8 @@ export default {
             message: '停用',
             type: 'warning'
           })
+        }).catch(() => {
+          row.status = '0'
         })
       } else if (status === 'enabling') {
         // 启用
@@ -409,6 +420,8 @@ export default {
             message: '启用',
             type: 'success'
           })
+        }).catch(() => {
+          row.status = '1'
         })
       } else if (status === 'deleted') {
         // 删除
@@ -519,9 +532,7 @@ export default {
     // 弹出权限分配窗口
     handleFetchPv(row) {
       this.temp = Object.assign({}, row) // copy obj
-      fetchPv(row).then(response => {
-        this.dialogPvVisible = true
-      })
+      this.dialogPvVisible = true
     },
     handleDownload() {
       this.downloadLoading = true
