@@ -32,7 +32,12 @@
             <!-- 角色名称 -->
             <el-table-column :label="$t('roletable.roleName')" width="100" align="center">
               <template slot-scope="scope">
-                <span>{{ scope.row.roleName }}</span>
+                <el-popover trigger="hover" placement="top">
+                  <p>备注：{{ scope.row.remark }}</p>
+                  <div slot="reference" class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.roleName }}</el-tag>
+                  </div>
+                </el-popover>
               </template>
             </el-table-column>
 
@@ -162,29 +167,12 @@
           <el-input v-model.number="temp.roleSort" />
         </el-form-item>
 
-        <!-- 数据范围 -->
-        <!-- <el-form-item :label="$t('roletable.dataScope')" prop="dataScope">
-          <el-select v-model="temp.dataScope" placeholder="请选择数据范围">
-            <el-option v-for="i in scopeAuthority" :key="i.key" :label="i.value" :value="i.key" />
-          </el-select>
-        </el-form-item>-->
-
         <!-- 状态 -->
         <el-form-item :label="$t('roletable.status')">
           <el-select v-model="temp.status" placeholder="请选择用户状态">
             <el-option label="正常" value="0" />
             <el-option label="停用" value="1" />
           </el-select>
-        </el-form-item>
-
-        <!-- 创建时间 -->
-        <el-form-item v-if="false" :label="$t('roletable.createTime')" prop="date">
-          <el-date-picker v-model="temp.createTime" disabled type="datetime" placeholder="系统时间" />
-        </el-form-item>
-
-        <!-- 修改时间 -->
-        <el-form-item v-if="false" :label="$t('roletable.updateTime')" prop="date">
-          <el-date-picker v-model="temp.updateTime" disabled type="datetime" placeholder="系统时间" />
         </el-form-item>
 
         <!-- 角色说明 -->

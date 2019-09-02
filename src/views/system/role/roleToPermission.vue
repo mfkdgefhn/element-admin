@@ -127,9 +127,11 @@ export default {
     },
     // 修改菜单
     editMenu(data) {
-      updateRoleToMenu(data, this.temp.roleId).then(() => {
-        // 成功
-      })
+      if (this.temp.roleId !== 1) {
+        updateRoleToMenu(data, this.temp.roleId).then(() => {
+          // 成功
+        })
+      }
     },
     // 修改用户
     editUser(data) {
@@ -139,18 +141,27 @@ export default {
     },
     // 修改部门
     editDept(data) {
-      if (data.constructor === Array) {
-        updateRoleToDept(data, this.temp.roleId).then(() => {
-          // 成功
-          this.$emit('dataScope', '2')
+      if (this.temp.roleId === 1) {
+        this.$message({
+          type: 'info',
+          message: '管理员不得设置菜单权限、与部门权限，只可设置用户权限',
+          duration: 3000
         })
-      } else if (data.constructor === String) {
-        editDataScope(data, this.temp.roleId).then(() => {
-          // 成功
-          this.$emit('dataScope', data)
-        })
+      } else {
+        if (data.constructor === Array) {
+          updateRoleToDept(data, this.temp.roleId).then(() => {
+            // 成功
+            this.$emit('dataScope', '2')
+          })
+        } else if (data.constructor === String) {
+          editDataScope(data, this.temp.roleId).then(() => {
+            // 成功
+            this.$emit('dataScope', data)
+          })
+        }
       }
     }
+
   }
 }
 </script>

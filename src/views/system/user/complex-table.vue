@@ -503,6 +503,7 @@ export default {
 
     createData() {
       this.$refs['dataForm'].validate((valid) => {
+        // 获取IP地址信息
         // eslint-disable-next-line no-undef
         var ip = returnCitySN['cip']
         if (valid) {
@@ -510,6 +511,7 @@ export default {
           // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           register(this.temp).then(response => {
             // this.list.unshift(this.temp)  //静态加入页面中，但并没有加入到数据库
+            console.log(this.temp)
             this.dialogFormVisible = false // 关闭弹出层
             this.$notify({
               title: '成功',
