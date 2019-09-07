@@ -38,15 +38,15 @@
 
             <el-table-column :label="$t('usertable.userNick')" align="center" width="100">
               <template slot-scope="scope">
-                <el-popover trigger="focus" placement="top">
-                  <p>用户名：{{ scope.row.userName }}</p>
-                  <p>用户昵称：{{ scope.row.userNick }}</p>
-                  <p>email：{{ scope.row.email }}</p>
-                  <p>手机号码：{{ scope.row.phonenumber }}</p>
-                  <p>性别：{{ scope.row.sex }}</p>
-                  <p>最后登陆IP{{ scope.row.loginIp }}</p>
-                  <p>最后登陆时间：{{ scope.row.loginDate }}</p>
-                  <p>备注：{{ scope.row.remarks }}</p>
+                <el-popover trigger="hover" close-delay="1" placement="top">
+                  <p>{{ $t('usertable.userName') }}:{{ scope.row.userName }}</p>
+                  <p>{{ $t('usertable.userNick') }}:{{ scope.row.userNick }}</p>
+                  <p>{{ $t('usertable.email') }}:{{ scope.row.email }}</p>
+                  <p>{{ $t('usertable.phonenumber') }}:{{ scope.row.phonenumber }}</p>
+                  <p>{{ $t('usertable.sex') }}:{{ scope.row.sex }}</p>
+                  <p>{{ $t('usertable.loginIp') }}:{{ scope.row.loginIp }}</p>
+                  <p>{{ $t('usertable.loginDate') }}:{{ scope.row.loginDate }}</p>
+                  <p>{{ $t('usertable.remarks') }}:{{ scope.row.remarks }}</p>
                   <div slot="reference" class="name-wrapper">
                     <el-tag size="medium">{{ scope.row.userNick }}</el-tag>
                   </div>

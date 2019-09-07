@@ -65,6 +65,13 @@ export default {
     userData(val) {
       this.$refs.userList.setCheckedKeys([])
       this.defaultCheckedKey = val
+      var data = this.data
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].userId === 1) {
+          data[i]['disabled'] = true
+          break
+        }
+      }
     },
     sure(val) {
       // 向父组件传值

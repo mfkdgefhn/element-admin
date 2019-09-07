@@ -36,6 +36,7 @@ router.beforeEach(async(to, from, next) => {
       // if is logged in, redirect to the home page
       // 如果已登录，则重定向到主页
       next({ path: '/' })
+      // 进度条完成
       NProgress.done()
     } else {
       // determine whether the user has obtained his permission roles through getInfo
@@ -49,6 +50,8 @@ router.beforeEach(async(to, from, next) => {
           // 获取用户信息
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
           // 注意：角色必须是对象数组！例如：【管理员】或，【开发人员】、【编辑人员】
+
+          // 获取角色权限，数组
           const { roles } = await store.dispatch('user/getInfo')
 
           // generate accessible routes map based on roles

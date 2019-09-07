@@ -102,7 +102,9 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ userName: userName.trim(), password: password, loginIp: loginIp, browser: browser, os: os, loginLocation: loginLocation }).then(response => {
         const { data } = response
+        // 设置store的token
         commit('SET_TOKEN', data.token)
+        // 设置Cookies的token
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -111,6 +113,7 @@ const actions = {
     })
   },
 
+  // 获取用户信息
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {

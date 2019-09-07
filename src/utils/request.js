@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-07 16:57:20
+ */
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
@@ -17,7 +24,7 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     // 在发送请求之前做一些事情
-
+    // 第一次请求登陆的时候请求头获取不到，所以请求头为content-type
     if (store.getters.token) {
       // let each request carry token
       // 让每个请求携带令牌
@@ -25,7 +32,7 @@ service.interceptors.request.use(
       // ['X-TOKEN']是自定义头密钥
       // please modify it according to the actual situation
       // 请根据实际情况进行修改
-      config.headers['X-Token'] = getToken()
+      config.headers['anan-token'] = getToken()
     }
     return config
   },

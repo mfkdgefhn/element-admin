@@ -33,7 +33,7 @@
             <el-table-column :label="$t('roletable.roleName')" width="100" align="center">
               <template slot-scope="scope">
                 <el-popover trigger="hover" placement="top">
-                  <p>备注：{{ scope.row.remark }}</p>
+                  <p>{{ $t('roletable.remarks') }}:{{ scope.row.remark }}</p>
                   <div slot="reference" class="name-wrapper">
                     <el-tag size="medium">{{ scope.row.roleName }}</el-tag>
                   </div>
@@ -93,9 +93,21 @@
             >
               <template slot-scope="{row}">
                 <!-- 操作/编辑 -->
-                <el-button size="mini" round type="primary" @click="handleUpdate(row)">编辑</el-button>
+                <el-button
+                  size="mini"
+                  round
+                  type="primary"
+                  @click="handleUpdate(row)"
+                >{{ $t('roletable.edit') }}</el-button>
+
                 <!-- 数据权限/分配用户 -->
-                <el-button size="mini" round type="success" @click="handleFetchPv(row)">权限</el-button>
+                <el-button
+                  size="mini"
+                  round
+                  type="success"
+                  @click="handleFetchPv(row)"
+                >{{ $t('roletable.Permissions') }}</el-button>
+
                 <!-- 删除 -->
                 <el-popover
                   v-if="row.roleId!==1"
@@ -104,16 +116,25 @@
                   width="160"
                   style="margin-left:5px;"
                 >
-                  <p>你确定要删除该用户吗？</p>
+                  <p>{{ $t('roletable.deletePrompt') }}</p>
                   <div style="text-align: right; margin: 0">
-                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                    <el-button
+                      size="mini"
+                      type="text"
+                      @click="row.visible = false"
+                    >{{ $t('roletable.cancel') }}</el-button>
                     <el-button
                       type="primary"
                       size="mini"
                       @click="handleModifyStatus(row,'deleted')"
-                    >确定</el-button>
+                    >{{ $t('roletable.confirm') }}</el-button>
                   </div>
-                  <el-button slot="reference" size="mini" round type="danger">删除</el-button>
+                  <el-button
+                    slot="reference"
+                    size="mini"
+                    round
+                    type="danger"
+                  >{{ $t('roletable.delete') }}</el-button>
                 </el-popover>
               </template>
             </el-table-column>

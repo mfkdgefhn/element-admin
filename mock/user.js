@@ -9,14 +9,14 @@
 // }
 
 const users = {
-  'admin-token': {
+  'admin': {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Super Admin'
   },
-  'editor-token': {
-    roles: ['editor'],
+  'anan': {
+    roles: ['anan'],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Normal Editor'
@@ -53,9 +53,11 @@ export default [
     type: 'get',
     response: config => {
       // const { token } = config.query
-
       // const info = users[token]
-      const info = users['admin-token']
+      // const info = users['anan']
+      const info = users['admin']
+
+      console.log(info)
 
       // mock error
       if (!info) {

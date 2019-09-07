@@ -154,7 +154,6 @@ export const asyncRoutes = [
     redirect: '/system',
     alwaysShow: true,
     meta: {
-      roles: ['ananuser', 'anana', 'Empleado'],
       title: 'system',
       icon: 'system'
     },
@@ -164,7 +163,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/user'),
         name: 'systemuser',
         meta: {
-          roles: ['ananuser', 'anana', 'Empleado'],
           title: 'systemuser', icon: 'adduser', noCache: true
         }
       },
@@ -173,7 +171,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/role'),
         name: 'systemrole',
         meta: {
-          roles: ['ananuser', 'anana'],
           title: 'systemrole', icon: 'role'
         }
       },
@@ -182,7 +179,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/menu'),
         name: 'systemmenu',
         meta: {
-          roles: ['admin', 'anana'],
           title: 'systemmenu', icon: 'menu'
         }
       },
@@ -191,7 +187,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/dept'),
         name: 'systemdept',
         meta: {
-          roles: ['admin', 'anana'],
           title: 'systemdept', icon: 'dept'
         }
       },
@@ -200,7 +195,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/post'),
         name: 'systempost',
         meta: {
-          roles: ['admin'],
           title: 'systempost', icon: 'post'
         }
       },
@@ -209,7 +203,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/dictionary'),
         name: 'dictionary',
         meta: {
-          roles: ['admin'],
           title: 'dictionary', icon: 'dictionary'
         }
       },
@@ -218,7 +211,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/dictdata'),
         name: 'dictdata',
         meta: {
-          roles: ['admin'],
           title: 'dictdata', icon: 'dictdata'
         }
       },
@@ -227,7 +219,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/config'),
         name: 'config',
         meta: {
-          roles: ['admin'],
           title: 'config', icon: 'config'
         }
       },
@@ -236,7 +227,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/notice'),
         name: 'notice',
         meta: {
-          roles: ['admin'],
           title: 'notice', icon: 'notice'
         }
       },
@@ -245,7 +235,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/log/index'),
         name: 'log',
         meta: {
-          roles: ['admin'],
           title: 'log', icon: 'log'
         },
         redirect: '/system/log/operlog',
@@ -254,21 +243,13 @@ export const asyncRoutes = [
             path: 'operlog',
             component: () => import('@/views/system/log/operlog'), // Parent router-view
             name: 'operlog',
-            meta: {
-              roles: ['admin'],
-              title: 'operlog',
-              icon: 'operlog'
-            }
+            meta: { title: 'operlog', icon: 'operlog' }
           },
           {
             path: 'loginlog',
             component: () => import('@/views/system/log/loginlog'), // Parent router-view
             name: 'loginlog',
-            meta: {
-              roles: ['admin'],
-              title: 'loginlog',
-              icon: 'loginlog'
-            }
+            meta: { title: 'loginlog', icon: 'loginlog' }
           }
         ]
       }

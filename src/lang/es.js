@@ -214,7 +214,10 @@ export default {
     date: 'Fecha',
     editRole: 'Editar permisos',
     isDefault: 'Función predeterminada',
-    menuPermissions: 'Permisos de menú'
+    menuPermissions: 'Permisos de menú',
+    remarks: 'Observaciones',
+    Permissions: 'Competencia',
+    deletePrompt: '¿Seguro que quieres borrar eso?'
   },
   menutable: {
     id: 'Número',

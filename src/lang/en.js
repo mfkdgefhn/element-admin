@@ -214,7 +214,10 @@ export default {
     date: 'Date',
     editRole: 'Editor role permissions',
     isDefault: 'Default roles',
-    menuPermissions: 'menu permissions'
+    menuPermissions: 'menu permissions',
+    remarks: 'Remarks',
+    Permissions: 'Jurisdiction',
+    deletePrompt: 'Are you sure you want to delete it?'
   },
   menutable: {
     id: 'Id',

@@ -215,7 +215,10 @@ export default {
     date: '日時',
     editRole: 'キャラクターの権限を編集',
     isDefault: 'デフォルトのキャラクター',
-    menuPermissions: 'メニューのパーミッション'
+    menuPermissions: 'メニューのパーミッション',
+    remarks: 'コメント',
+    Permissions: 'パーミッション',
+    deletePrompt: '本当に削除しますか？'
   },
   menutable: {
     id: '番号付け',

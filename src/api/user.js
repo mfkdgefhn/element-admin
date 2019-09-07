@@ -18,29 +18,21 @@ export function register(data) {
   })
 }
 
-// export function login(data) {
-//   return request({
-//     url: '/user/login',
-//     method: 'post',
-//     data
-//   })
-// }
-
-// export function getInfo(token) {
-//   return request({
-//     url: '/sys/user/getUserList',
-//     method: 'get',
-//     params: { token }
-//   })
-// }
-
 export function getInfo(token) {
   return request({
-    url: '/user/info',
+    url: url + '/sys/user/info',
     method: 'get',
     params: { token }
   })
 }
+
+// export function getInfo(token) {
+//   return request({
+//     url: '/user/info',
+//     method: 'get',
+//     params: { token }
+//   })
+// }
 
 export function logout() {
   return request({

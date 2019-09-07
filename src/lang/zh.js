@@ -215,7 +215,10 @@ export default {
     date: '时间',
     editRole: '编辑角色权限',
     isDefault: '默认角色',
-    menuPermissions: '菜单权限'
+    remarks: '备注',
+    menuPermissions: '菜单权限',
+    Permissions: '权限',
+    deletePrompt: '你确定要删除吗？'
   },
   menutable: {
     id: '序号',
