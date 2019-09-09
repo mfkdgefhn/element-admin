@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-08-28 16:48:07
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-09 15:52:29
+ -->
 <template>
   <div>
     <el-row class="left-tree">
@@ -6,6 +13,7 @@
         <div class="tree">
           <el-tree
             ref="userList"
+            :render-content="renderContent"
             :props="defaultProps"
             :data="data"
             show-checkbox
@@ -110,6 +118,18 @@ export default {
 
       // var test = this.$refs.deptList.getCheckedKeys()
 
+    },
+    renderContent(h, { node, data, store }) {
+      console.log(node)
+      console.log(data.userName)
+      console.log(store)
+      return (
+        <span class='custom-tree-node'>
+          <span>{node.label}</span>
+          <span>
+            {data.userName}
+          </span>
+        </span>)
     }
   }
 }
@@ -149,5 +169,13 @@ export default {
   overflow-y: auto;
   overflow-x: scroll;
   height: 400px;
+}
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
 }
 </style>

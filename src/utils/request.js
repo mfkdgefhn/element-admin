@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-07 17:44:05
+ * @LastEditTime: 2019-09-09 10:06:03
  */
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
@@ -94,6 +94,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log(error)
     console.log('err' + error) // for debug
     // debugger
     // var str = '登陆失败  '
