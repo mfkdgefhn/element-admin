@@ -1,12 +1,21 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 14:57:29
+ */
 export default {
   route: {
     dashboard: 'Dashboard',
     system: 'System',
-    systemuser: 'Systemuser',
-    systemrole: 'Systemrole',
-    systemmenu: 'systemmenu',
-    systemdept: 'systemdept',
-    systempost: 'systempost',
+    systemmonitoring: 'System monitoring',
+    systemtools: 'System tools',
+    systemuser: 'System user',
+    systemrole: 'System role',
+    systemmenu: 'system menu',
+    systemdept: 'system dept',
+    systempost: 'system post',
     dictionary: 'dictionary',
     dictdata: 'dictdata',
     config: 'parameter',
@@ -14,6 +23,13 @@ export default {
     log: 'log',
     operlog: 'operlog',
     loginlog: 'loginlog',
+    onlineusers: 'online users',
+    timingtasks: 'timing tasks',
+    datamonitoring: 'data monitoring',
+    servicemonitoring: 'service monitoring',
+    formconstruction: 'form construction',
+    codegeneration: 'code generation',
+    systeminterface: 'system interface',
     documentation: 'Documentation',
     guide: 'Guide',
     permission: 'Permission',

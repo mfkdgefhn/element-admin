@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 14:21:30
+ */
 import request from '@/utils/request'
 
 var url = 'http://192.168.10.222:8888'
@@ -87,6 +94,15 @@ export function deleteByRoleId(data) {
 export function fetchMenuList(query) {
   return request({
     url: url + '/sys/menu/getMenuList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 获取菜单列表
+export function getMenuList(query) {
+  return request({
+    url: url + '/sys/menu/getMenuListMC',
     method: 'get',
     params: query
   })
@@ -415,6 +431,15 @@ export function editDataScope(dataScope, roleId) {
       dataScope: dataScope,
       roleId: roleId
     }
+  })
+}
+
+// 根据角色ID修改数据范围
+export function getAsyncRoutes(token) {
+  return request({
+    url: url + '/sys/async-routes/getAsyncRoutes',
+    method: 'get',
+    params: { token }
   })
 }
 

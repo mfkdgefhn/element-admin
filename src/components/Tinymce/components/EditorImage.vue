@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-07-13 13:52:51
+ -->
 <template>
   <div class="upload-container">
     <!-- 上传按钮 -->
@@ -6,7 +13,7 @@
       icon="el-icon-upload"
       size="mini"
       type="primary"
-      @click=" dialogVisible=true"
+      @click="dialogVisible=true"
     >upload</el-button>
 
     <!-- 上传按钮弹窗 -->

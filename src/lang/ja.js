@@ -1,7 +1,16 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 14:58:09
+ */
 export default {
   route: {
     dashboard: 'トップ',
     system: 'システム',
+    systemmonitoring: 'システムモニタ',
+    systemtools: 'システムツール',
     systemuser: 'システムユーザ',
     systemrole: 'キャラクター管理',
     systemmenu: 'メニュー管理',
@@ -10,10 +19,17 @@ export default {
     dictionary: '辞書の管理',
     dictdata: 'データ',
     config: 'パラメータ管理',
-    notice: '通知管理',
+    notice: '通知の管理',
     log: 'ログ管理',
     operlog: '操作ログ',
     loginlog: 'ログインログ',
+    onlineusers: 'オンラインユーザ',
+    timingtasks: 'タイム？タスク',
+    datamonitoring: 'データモニタ',
+    servicemonitoring: 'サービスモニタ',
+    formconstruction: 'フォーム構築',
+    codegeneration: 'コード生成',
+    systeminterface: 'システムインターフェース',
     documentation: 'ドキュメント',
     guide: 'ガイド',
     permission: '権限',

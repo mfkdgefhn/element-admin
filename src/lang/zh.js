@@ -1,7 +1,16 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 14:56:26
+ */
 export default {
   route: {
     dashboard: '首页',
     system: '系统管理',
+    systemmonitoring: '系统监控',
+    systemtools: '系统工具',
     systemuser: '用户管理',
     systemrole: '角色管理',
     systemmenu: '菜单管理',
@@ -14,6 +23,13 @@ export default {
     log: '日志管理',
     operlog: '操作日志',
     loginlog: '登陆日志',
+    onlineusers: '在线用户',
+    timingtasks: '定时任务',
+    datamonitoring: '数据监控',
+    servicemonitoring: '服务监控',
+    formconstruction: '表单构建',
+    codegeneration: '代码生成',
+    systeminterface: '系统接口',
     documentation: '文档',
     guide: '引导页',
     permission: '权限测试页',

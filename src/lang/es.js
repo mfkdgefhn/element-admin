@@ -1,7 +1,16 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 14:59:06
+ */
 export default {
   route: {
     dashboard: 'Panel de control',
     system: 'Sistema',
+    systemmonitoring: 'Sistema de seguimiento',
+    systemtools: 'Herramienta del sistema',
     systemuser: 'Systemuser',
     systemrole: 'Gestión de funciones',
     systemmenu: 'Systemenu',
@@ -14,6 +23,13 @@ export default {
     log: 'Log',
     operlog: 'Registro de Operaciones',
     loginlog: 'Registro de entrada',
+    onlineusers: 'Usuarios en línea',
+    timingtasks: 'Tareas programadas',
+    datamonitoring: 'Seguimiento de datos',
+    servicemonitoring: 'Servicios de seguimiento',
+    formconstruction: 'Estructura de formulario',
+    codegeneration: 'Generación de código',
+    systeminterface: 'Interfaz del sistema',
     documentation: 'Documentación',
     guide: 'Guía',
     permission: 'Permisos',

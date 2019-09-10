@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:52
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 09:45:03
+ * @LastEditTime: 2019-09-10 11:51:56
  -->
 <template>
   <div>
@@ -32,17 +32,26 @@
             show-overflow="true,tooltip"
             :tree-config="{children: 'children', expandAll: false}"
           >
+            <!-- 菜单名称 -->
             <vxe-table-column
               field="menuName"
               :title="$t('menutable.menuName')"
               tree-node
               align="left"
+              header-align="center"
+              width="150"
             />
+            <!-- 显示顺序 -->
             <vxe-table-column field="orderNum" :title="$t('menutable.orderNum')" />
+            <!-- 请求地址 -->
             <vxe-table-column field="url" :title="$t('menutable.url')" />
+            <!-- 菜单类型 -->
             <vxe-table-column field="menuType" :title="$t('menutable.menuType')" />
+            <!-- 菜单状态 -->
             <vxe-table-column field="visible" :title="$t('menutable.visible')" />
+            <!-- 权限标识 -->
             <vxe-table-column field="perms" :title="$t('menutable.perms')" />
+            <!-- 操作 -->
             <vxe-table-column title="操作" width="190">
               <template v-slot="{ row }">
                 <template>
@@ -79,6 +88,8 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <el-button type="primary" @click="test">主要按钮</el-button>
 
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -193,7 +204,7 @@
 </template>
 
 <script>
-import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle, getAsyncRoutes } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -307,6 +318,13 @@ export default {
     this.getMenuList()
   },
   methods: {
+    test() {
+      getAsyncRoutes(this.listQuery).then(response => {
+        console.log(response.data)
+        console.log(response.data[0].meta)
+        console.log((new Function('return ' + response.data[0].meta))()) // 字符串转对象
+      })
+    },
     selectRadio(value) {
       console.log(value.menuType)
     },
