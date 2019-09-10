@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-08-28 16:48:07
  * @LastEditors: anan
- * @LastEditTime: 2019-09-09 15:52:29
+ * @LastEditTime: 2019-09-09 15:53:24
  -->
 <template>
   <div>
@@ -120,9 +120,6 @@ export default {
 
     },
     renderContent(h, { node, data, store }) {
-      console.log(node)
-      console.log(data.userName)
-      console.log(store)
       return (
         <span class='custom-tree-node'>
           <span>{node.label}</span>

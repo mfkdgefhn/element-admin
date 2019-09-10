@@ -1,4 +1,14 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-09 17:26:55
+ */
 import Vue from 'vue'
+
+import './plugins/utils'
+import './plugins/xtable'
 
 import 'default-passive-events'
 
@@ -36,14 +46,16 @@ import * as filters from './filters' // global filters 全局筛选器
  * 请在联机前将其删除！！！
  */
 import { mockXHR } from '../mock'
+
 if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
 
-Vue.use(Element, {
-  size: Cookies.get('size') || 'medium', // set element-ui default size //设置元素UI默认大小
-  i18n: (key, value) => i18n.t(key, value)
-})
+Vue.use(
+  Element, {
+    size: Cookies.get('size') || 'medium', // set element-ui default size //设置元素UI默认大小
+    i18n: (key, value) => i18n.t(key, value)
+  })
 
 // register global utility filters
 // 注册全局实用程序筛选器

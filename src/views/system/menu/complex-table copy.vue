@@ -1,10 +1,3 @@
-<!--
- * @Description: 说明
- * @Author: anan
- * @Date: 2019-07-13 13:52:52
- * @LastEditors: anan
- * @LastEditTime: 2019-09-10 09:45:03
- -->
 <template>
   <div>
     <el-row :gutter="12">
@@ -20,62 +13,127 @@
           />
         </el-card>
       </el-col>
+
       <el-col :span="24">
         <el-card shadow="hover">
-          <vxe-table
+          <!-- 表格 -->
+          <el-table
+            :key="tableKey"
+            v-loading="listLoading"
+            row-key="menuId"
             :data="list"
-            stripe
             border
-            align="center"
+            fit
             highlight-current-row
-            highlight-hover-row
-            show-overflow="true,tooltip"
-            :tree-config="{children: 'children', expandAll: false}"
+            style="width: 100%;"
+            @sort-change="sortChange"
           >
-            <vxe-table-column
-              field="menuName"
-              :title="$t('menutable.menuName')"
-              tree-node
-              align="left"
-            />
-            <vxe-table-column field="orderNum" :title="$t('menutable.orderNum')" />
-            <vxe-table-column field="url" :title="$t('menutable.url')" />
-            <vxe-table-column field="menuType" :title="$t('menutable.menuType')" />
-            <vxe-table-column field="visible" :title="$t('menutable.visible')" />
-            <vxe-table-column field="perms" :title="$t('menutable.perms')" />
-            <vxe-table-column title="操作" width="190">
-              <template v-slot="{ row }">
-                <template>
-                  <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
-                  <!-- 新增 -->
-                  <el-button
-                    circle
-                    type="warning"
-                    icon="el-icon-star-off"
-                    @click="handleCreateMenu(row,'insert')"
-                  />
-                  <!-- 删除 -->
-                  <el-popover
-                    v-model="row.show"
-                    placement="top"
-                    width="160"
-                    style="margin-left:10px;"
-                  >
-                    <p>你确定要删除该用户吗？</p>
-                    <div style="text-align: right; margin: 0">
-                      <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
-                      <el-button
-                        type="primary"
-                        size="mini"
-                        @click="handleModifyStatus(row,'deleted')"
-                      >确定</el-button>
-                    </div>
-                    <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-                  </el-popover>
-                </template>
+            <!-- 序号 -->
+            <!-- <el-table-column type="index" width="40" align="center" /> -->
+
+            <!-- 角色名称 -->
+            <el-table-column :label="$t('menutable.menuName')" align="left" width="200">
+              <template slot-scope="scope">
+                <span>{{ scope.row.menuName }}</span>
               </template>
-            </vxe-table-column>
-          </vxe-table>
+            </el-table-column>
+
+            <!-- 显示顺序 -->
+            <el-table-column :label="$t('menutable.orderNum')" align="center" width="80">
+              <template slot-scope="scope">
+                <span>{{ scope.row.orderNum }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- 请求地址 -->
+            <el-table-column :label="$t('menutable.url')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.url }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- 菜单类型 -->
+            <el-table-column :label="$t('menutable.menuType')" align="center" width="80">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="dark"
+                  :type="scope.row.menuType | menuTypeFilter"
+                >{{ typeAuthority[scope.row.menuType] }}</el-tag>
+              </template>
+            </el-table-column>
+
+            <!-- 菜单状态 -->
+            <el-table-column :label="$t('menutable.visible')" align="center" width="80">
+              <template slot-scope="scope">
+                <el-tag
+                  effect="Plain"
+                  :type="scope.row.visible | visibleFilter"
+                >{{ visibleAuthority[scope.row.visible] }}</el-tag>
+              </template>
+            </el-table-column>
+
+            <!-- 权限标识 -->
+            <el-table-column :label="$t('menutable.perms')" align="center">
+              <template slot-scope="scope">
+                <span>{{ scope.row.perms }}</span>
+              </template>
+            </el-table-column>
+
+            <!-- <el-table-column :label="$t('menutable.perms')" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.perms | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+            </el-table-column>-->
+
+            <!-- 操作 -->
+            <el-table-column
+              :label="$t('menutable.edit')"
+              align="center"
+              width="190"
+              class-name="small-padding fixed-width"
+            >
+              <template slot-scope="{row}">
+                <!-- 操作/编辑 -->
+                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+
+                <!-- 新增 -->
+                <el-button
+                  circle
+                  type="warning"
+                  icon="el-icon-star-off"
+                  @click="handleCreateMenu(row,'insert')"
+                />
+
+                <!-- 删除 -->
+                <el-popover
+                  v-model="row.show"
+                  placement="top"
+                  width="160"
+                  style="margin-left:10px;"
+                >
+                  <p>你确定要删除该用户吗？</p>
+                  <div style="text-align: right; margin: 0">
+                    <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="handleModifyStatus(row,'deleted')"
+                    >确定</el-button>
+                  </div>
+                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 页码 -->
+          <pagination
+            v-show="total>0"
+            :total="total"
+            :page.sync="listQuery.page"
+            :limit.sync="listQuery.limit"
+            @pagination="getMenuList"
+          />
         </el-card>
       </el-col>
     </el-row>
@@ -189,6 +247,20 @@
         <el-button @click="dialogFormVisible = false">{{ $t('menutable.cancel') }}</el-button>
       </div>
     </el-dialog>
+
+    <!-- 权限分配窗口 -->
+    <!-- <el-dialog
+      v-el-drag-dialog
+      :visible.sync="dialogPvVisible"
+      :title="$t('menutable.editMenu')"
+      center
+      width="80%"
+      append-to-body
+      custom-class="dialog-dietRole"
+      :close-on-click-modal="closeOnClickModal"
+    >
+      <role-to-permission :temp="temp" />
+    </el-dialog>-->
   </div>
 </template>
 
@@ -196,7 +268,7 @@
 import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-// import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 import Searchs from '@/components/Searchs'
 
@@ -220,7 +292,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Searchs }, // Pagination
+  components: { Pagination, Searchs },
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -244,15 +316,6 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          id: 10001,
-          name: 'test1',
-          sex: 'Man',
-          date: '2019-05-01',
-          address: 'address abc123'
-        }
-      ],
       seachType: 'menu',
       closeOnClickModal: false,
       typeAuthority: {
@@ -510,4 +573,3 @@ export default {
   min-width: 1000px;
 }
 </style>
-
