@@ -161,7 +161,7 @@ export const asyncRoutes = [
   //   redirect: '/system',
   //   alwaysShow: true,
   //   meta: {
-  //     roles: ['Empleado', 'anana', 'ananuser'],
+  //     roles: ['anana', 'ananuser'],
   //     title: 'system',
   //     icon: 'system'
   //   },
@@ -171,7 +171,7 @@ export const asyncRoutes = [
   //       component: () => import('@/views/system/user'),
   //       name: 'systemuser',
   //       meta: {
-  //         roles: ['Empleado', 'anana', 'ananuser'],
+  //         roles: ['anana', 'ananuser'],
   //         title: 'systemuser', icon: 'adduser', noCache: true
   //       }
   //     },

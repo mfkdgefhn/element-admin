@@ -5,7 +5,7 @@
  * @LastEditors: anan
  * @LastEditTime: 2019-09-10 16:51:39
  */
-import { constantRoutes } from '@/router' // , defaultRoutes
+import { constantRoutes, defaultRoutes } from '@/router' // s
 import { getMenuList } from '@/api/article'
 import Layout from '@/layout'
 // import { defaultRoutes } from '../../router'
@@ -79,7 +79,6 @@ const mutations = {
     state.routes = constantRoutes.concat(routes)
   },
   RESET_ROUTES: (state, routes) => {
-    debugger
     state.addRoutes = routes
     state.routes = routes
   }
@@ -110,7 +109,7 @@ const actions = {
           data = response.data.records
           Object.assign(loadMenuData, data)
           generaMenu(asyncRoutes, loadMenuData)
-          // renderMenu(asyncRoutes, defaultRoutes)
+          renderMenu(asyncRoutes, defaultRoutes)
           let accessedRoutes
           if (roles.includes('admin')) {
             accessedRoutes = asyncRoutes || []
