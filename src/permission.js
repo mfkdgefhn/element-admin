@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 17:46:10
+ */
 // 路由拦截，请求权限
 
 // 路由
@@ -57,6 +64,8 @@ router.beforeEach(async(to, from, next) => {
           // generate accessible routes map based on roles
           // 根据角色生成可访问的路由映射
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+
+          // 在生成路由之前初始路由
 
           // dynamically add accessible routes
           // 动态添加可访问路由

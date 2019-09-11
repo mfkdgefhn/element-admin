@@ -3,11 +3,12 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 14:46:44
+ * @LastEditTime: 2019-09-10 16:51:39
  */
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router' // , defaultRoutes
 import { getMenuList } from '@/api/article'
 import Layout from '@/layout'
+// import { defaultRoutes } from '../../router'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -36,6 +37,12 @@ export function generaMenu(routes, data) {
       generaMenu(menu.children, item.children)
     }
     routes.push(menu)
+  })
+}
+
+export function renderMenu(routes, data) {
+  data.forEach(item => {
+    routes.push(item)
   })
 }
 
@@ -70,10 +77,18 @@ const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
+  },
+  RESET_ROUTES: (state, routes) => {
+    debugger
+    state.addRoutes = routes
+    state.routes = routes
   }
 }
 
 const actions = {
+  reset_routes({ commit }) {
+    commit('RESET_ROUTES', [])
+  },
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       const loadMenuData = []
@@ -91,9 +106,11 @@ const actions = {
             type: 0
           })
         } else {
+          const asyncRoutes = []
           data = response.data.records
           Object.assign(loadMenuData, data)
           generaMenu(asyncRoutes, loadMenuData)
+          // renderMenu(asyncRoutes, defaultRoutes)
           let accessedRoutes
           if (roles.includes('admin')) {
             accessedRoutes = asyncRoutes || []

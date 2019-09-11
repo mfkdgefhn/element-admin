@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 17:14:34
+ */
 import { login, logout, getInfo } from '@/api/user'
 import { getUserList, getDeptList } from '@/api/article'
 import { getToken, setToken, removeToken } from '@/utils/auth'
@@ -144,13 +151,17 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
-        removeToken()
+        // debugger
         resetRouter()
+        // dispatch('permission/reset_routes', {}, { root: true })
+        // router.addRoutes(this.$store.getters.permission_routes)
+        // location.reload()
+        removeToken()
         resolve()
       }).catch(error => {
         reject(error)

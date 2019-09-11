@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-07-13 13:52:51
+ */
 module.exports = {
   title: '纸鹤视界',
 
@@ -27,7 +34,7 @@ module.exports = {
    * @description Whether show the logo in sidebar
    * 是否在边栏中显示徽标
    */
-  sidebarLogo: false,
+  sidebarLogo: true,
 
   /**
    * @type {string | array} 'production' | ['production', 'development']

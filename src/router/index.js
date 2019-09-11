@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:51
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-10 17:33:04
+ */
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -148,132 +155,134 @@ export const constantRoutes = [
  * 需要根据用户角色动态加载的路由
  */
 export const asyncRoutes = [
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system',
-    alwaysShow: true,
-    meta: {
-      roles: ['Empleado', 'anana', 'ananuser'],
-      title: 'system',
-      icon: 'system'
-    },
-    children: [
-      {
-        path: '/system/user',
-        component: () => import('@/views/system/user'),
-        name: 'systemuser',
-        meta: {
-          roles: ['Empleado', 'anana', 'ananuser'],
-          title: 'systemuser', icon: 'adduser', noCache: true
-        }
-      },
-      {
-        path: '/system/role',
-        component: () => import('@/views/system/role'),
-        name: 'systemrole',
-        meta: {
-          roles: ['anana', 'ananuser'],
-          title: 'systemrole', icon: 'role'
-        }
-      },
-      {
-        path: '/system/menu',
-        component: () => import('@/views/system/menu'),
-        name: 'systemmenu',
-        meta: {
-          roles: ['admin', 'anana'],
-          title: 'systemmenu', icon: 'menu'
-        }
-      },
-      {
-        path: '/system/dept',
-        component: () => import('@/views/system/dept'),
-        name: 'systemdept',
-        meta: {
-          roles: ['admin', 'anana'],
-          title: 'systemdept', icon: 'dept'
-        }
-      },
-      {
-        path: '/system/post',
-        component: () => import('@/views/system/post'),
-        name: 'systempost',
-        meta: {
-          roles: ['admin'],
-          title: 'systempost', icon: 'post'
-        }
-      },
-      {
-        path: '/system/dictionary',
-        component: () => import('@/views/system/dictionary'),
-        name: 'dictionary',
-        meta: {
-          roles: ['admin'],
-          title: 'dictionary', icon: 'dictionary'
-        }
-      },
-      {
-        path: '/system/dictdata',
-        component: () => import('@/views/system/dictdata'),
-        name: 'dictdata',
-        meta: {
-          roles: ['admin'],
-          title: 'dictdata', icon: 'dictdata'
-        }
-      },
-      {
-        path: '/system/config',
-        component: () => import('@/views/system/config'),
-        name: 'config',
-        meta: {
-          roles: ['admin'],
-          title: 'config', icon: 'config'
-        }
-      },
-      {
-        path: '/system/notice',
-        component: () => import('@/views/system/notice'),
-        name: 'notice',
-        meta: {
-          roles: ['admin'],
-          title: 'notice', icon: 'notice'
-        }
-      },
-      {
-        path: 'log',
-        component: () => import('@/views/system/log/index'),
-        name: 'log',
-        meta: {
-          roles: ['admin'],
-          title: 'log', icon: 'log'
-        },
-        redirect: '/system/log/operlog',
-        children: [
-          {
-            path: 'operlog',
-            component: () => import('@/views/system/log/operlog'), // Parent router-view
-            name: 'operlog',
-            meta: {
-              roles: ['admin'],
-              title: 'operlog',
-              icon: 'operlog'
-            }
-          },
-          {
-            path: 'loginlog',
-            component: () => import('@/views/system/log/loginlog'), // Parent router-view
-            name: 'loginlog',
-            meta: {
-              roles: ['admin'],
-              title: 'loginlog',
-              icon: 'loginlog'
-            }
-          }
-        ]
-      }
-    ]
-  },
+  // {
+  //   path: '/system',
+  //   component: Layout,
+  //   redirect: '/system',
+  //   alwaysShow: true,
+  //   meta: {
+  //     roles: ['Empleado', 'anana', 'ananuser'],
+  //     title: 'system',
+  //     icon: 'system'
+  //   },
+  //   children: [
+  //     {
+  //       path: '/system/user',
+  //       component: () => import('@/views/system/user'),
+  //       name: 'systemuser',
+  //       meta: {
+  //         roles: ['Empleado', 'anana', 'ananuser'],
+  //         title: 'systemuser', icon: 'adduser', noCache: true
+  //       }
+  //     },
+  //     {
+  //       path: '/system/role',
+  //       component: () => import('@/views/system/role'),
+  //       name: 'systemrole',
+  //       meta: {
+  //         roles: ['anana', 'ananuser'],
+  //         title: 'systemrole', icon: 'role'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/menu',
+  //       component: () => import('@/views/system/menu'),
+  //       name: 'systemmenu',
+  //       meta: {
+  //         roles: ['admin', 'anana'],
+  //         title: 'systemmenu', icon: 'menu'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/dept',
+  //       component: () => import('@/views/system/dept'),
+  //       name: 'systemdept',
+  //       meta: {
+  //         roles: ['admin', 'anana'],
+  //         title: 'systemdept', icon: 'dept'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/post',
+  //       component: () => import('@/views/system/post'),
+  //       name: 'systempost',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'systempost', icon: 'post'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/dictionary',
+  //       component: () => import('@/views/system/dictionary'),
+  //       name: 'dictionary',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'dictionary', icon: 'dictionary'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/dictdata',
+  //       component: () => import('@/views/system/dictdata'),
+  //       name: 'dictdata',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'dictdata', icon: 'dictdata'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/config',
+  //       component: () => import('@/views/system/config'),
+  //       name: 'config',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'config', icon: 'config'
+  //       }
+  //     },
+  //     {
+  //       path: '/system/notice',
+  //       component: () => import('@/views/system/notice'),
+  //       name: 'notice',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'notice', icon: 'notice'
+  //       }
+  //     },
+  //     {
+  //       path: 'log',
+  //       component: () => import('@/views/system/log/index'),
+  //       name: 'log',
+  //       meta: {
+  //         roles: ['admin'],
+  //         title: 'log', icon: 'log'
+  //       },
+  //       redirect: '/system/log/operlog',
+  //       children: [
+  //         {
+  //           path: 'operlog',
+  //           component: () => import('@/views/system/log/operlog'), // Parent router-view
+  //           name: 'operlog',
+  //           meta: {
+  //             roles: ['admin'],
+  //             title: 'operlog',
+  //             icon: 'operlog'
+  //           }
+  //         },
+  //         {
+  //           path: 'loginlog',
+  //           component: () => import('@/views/system/log/loginlog'), // Parent router-view
+  //           name: 'loginlog',
+  //           meta: {
+  //             roles: ['admin'],
+  //             title: 'loginlog',
+  //             icon: 'loginlog'
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // }
+]
+export const defaultRoutes = [
   {
     path: '/permission',
     component: Layout,
