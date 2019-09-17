@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:52
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 11:51:56
+ * @LastEditTime: 2019-09-12 11:52:10
  -->
 <template>
   <div>
@@ -44,43 +44,68 @@
             <!-- 显示顺序 -->
             <vxe-table-column field="orderNum" :title="$t('menutable.orderNum')" />
             <!-- 请求地址 -->
-            <vxe-table-column field="url" :title="$t('menutable.url')" />
+            <vxe-table-column field="url" width="150" :title="$t('menutable.url')" />
             <!-- 菜单类型 -->
-            <vxe-table-column field="menuType" :title="$t('menutable.menuType')" />
+            <vxe-table-column field="menuType" :title="$t('menutable.menuType')">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="scope.row.menuType | menuTypeFilter"
+                >{{ typeAuthority[scope.row.menuType] }}</el-tag>
+              </template>
+            </vxe-table-column>
             <!-- 菜单状态 -->
-            <vxe-table-column field="visible" :title="$t('menutable.visible')" />
+            <vxe-table-column field="visible" :title="$t('menutable.visible')">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="scope.row.visible | visibleFilter"
+                >{{ visibleAuthority[scope.row.visible] }}</el-tag>
+              </template>
+              >
+            </vxe-table-column>
             <!-- 权限标识 -->
-            <vxe-table-column field="perms" :title="$t('menutable.perms')" />
+            <vxe-table-column field="perms" width="150" :title="$t('menutable.perms')" />
             <!-- 操作 -->
             <vxe-table-column title="操作" width="190">
               <template v-slot="{ row }">
                 <template>
-                  <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+                  <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                    <el-button
+                      type="primary"
+                      icon="el-icon-edit"
+                      circle
+                      @click="handleUpdate(row)"
+                    />
+                  </el-tooltip>
                   <!-- 新增 -->
-                  <el-button
-                    circle
-                    type="warning"
-                    icon="el-icon-star-off"
-                    @click="handleCreateMenu(row,'insert')"
-                  />
+                  <el-tooltip class="item" effect="dark" content="新增下级" placement="top">
+                    <el-button
+                      circle
+                      type="warning"
+                      icon="el-icon-star-off"
+                      @click="handleCreateMenu(row,'insert')"
+                    />
+                  </el-tooltip>
+
                   <!-- 删除 -->
-                  <el-popover
-                    v-model="row.show"
-                    placement="top"
-                    width="160"
-                    style="margin-left:10px;"
-                  >
-                    <p>你确定要删除该用户吗？</p>
-                    <div style="text-align: right; margin: 0">
-                      <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
-                      <el-button
-                        type="primary"
-                        size="mini"
-                        @click="handleModifyStatus(row,'deleted')"
-                      >确定</el-button>
-                    </div>
-                    <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-                  </el-popover>
+                  <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                    <el-popover
+                      v-model="row.show"
+                      placement="top"
+                      width="160"
+                      style="margin-left:10px;"
+                    >
+                      <p>你确定要删除该用户吗？</p>
+                      <div style="text-align: right; margin: 0">
+                        <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
+                        <el-button
+                          type="primary"
+                          size="mini"
+                          @click="handleModifyStatus(row,'deleted')"
+                        >确定</el-button>
+                      </div>
+                      <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                    </el-popover>
+                  </el-tooltip>
                 </template>
               </template>
             </vxe-table-column>
@@ -88,8 +113,6 @@
         </el-card>
       </el-col>
     </el-row>
-
-    <el-button type="primary" @click="test">主要按钮</el-button>
 
     <!-- 弹出层 -->
     <el-dialog v-el-drag-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -105,10 +128,13 @@
       >
         <!-- 上级菜单 -->
         <el-form-item :label="$t('menutable.parentId')">
-          <!-- <el-input v-model="temp.parentId " /> -->
-          <el-input v-model="temp.parentId" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" />
-          </el-input>
+          <el-input
+            v-if="disabled"
+            v-model="temp.parentName"
+            placeholder="请输入内容"
+            @focus="menuPvVisible=true"
+          />
+          <el-input v-else v-model="temp.parentName" disabled @focus="menuPvVisible=true" />
         </el-form-item>
 
         <!-- 菜单类型 -->
@@ -166,7 +192,7 @@
         <!-- 菜单状态 -->
         <el-form-item :label="$t('menutable.visible')" prop="roleSort">
           <!-- <el-input v-model="temp.visible" /> -->
-          <el-switch v-model="temp.visible" active-text="显示" inactive-text="隐藏" />
+          <el-switch v-model="temp.visible" active-text="隐藏" inactive-text="显示" />
         </el-form-item>
 
         <!-- 创建者 -->
@@ -200,15 +226,21 @@
         <el-button @click="dialogFormVisible = false">{{ $t('menutable.cancel') }}</el-button>
       </div>
     </el-dialog>
+
+    <!-- 弹出部门树 -->
+    <el-dialog :visible.sync="menuPvVisible" title="菜单">
+      <cliren-left-tree @updateTreeMenuId="updateTreeMenuId" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle, getAsyncRoutes } from '@/api/article'
+import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
+import clirenLeftTree from './cliren-left-tree'
 import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
@@ -231,7 +263,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Searchs }, // Pagination
+  components: { Searchs, clirenLeftTree }, // Pagination
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -255,15 +287,8 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          id: 10001,
-          name: 'test1',
-          sex: 'Man',
-          date: '2019-05-01',
-          address: 'address abc123'
-        }
-      ],
+      menuPvVisible: false,
+      dialogPvVisible: false,
       seachType: 'menu',
       closeOnClickModal: false,
       typeAuthority: {
@@ -271,6 +296,7 @@ export default {
         'C': '菜单',
         'F': '按钮'
       },
+      disabled: true,
       visibleAuthority: {
         '0': '显示',
         '1': '隐藏'
@@ -306,7 +332,6 @@ export default {
         update: '修改',
         create: '创建'
       },
-      dialogPvVisible: false,
       rules: {
         menuName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
         menuType: [{ required: true, message: '请选择菜单类型', trigger: ['blur'] }]
@@ -318,12 +343,10 @@ export default {
     this.getMenuList()
   },
   methods: {
-    test() {
-      getAsyncRoutes(this.listQuery).then(response => {
-        console.log(response.data)
-        console.log(response.data[0].meta)
-        console.log((new Function('return ' + response.data[0].meta))()) // 字符串转对象
-      })
+    updateTreeMenuId(data) {
+      this.temp.parentId = data.menuId
+      this.temp.parentName = data.menuName
+      this.menuPvVisible = false
     },
     selectRadio(value) {
       console.log(value.menuType)
@@ -407,21 +430,25 @@ export default {
         remark: ''
       }
     },
+    // 新增按钮
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
+      this.disabled = true
       this.dialogFormVisible = true
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
       // })
     },
+    // 新增下级按钮
     handleCreateMenu(row, status) {
       if (status === 'insert') {
         this.resetTemp()
+        this.disabled = false
         this.temp.parentId = row.menuId
+        this.temp.parentName = row.menuName
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
-        console.log(this.temp)
         // this.$nextTick(() => {
         //   this.$refs['dataForm'].clearValidate()
         // })

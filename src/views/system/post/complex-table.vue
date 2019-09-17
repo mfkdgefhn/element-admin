@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:52
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-12 13:27:48
+ -->
 <template>
   <div>
     <el-row :gutter="12">
@@ -77,26 +84,30 @@
             >
               <template slot-scope="{row}">
                 <!-- 操作/编辑 -->
-                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                  <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+                </el-tooltip>
 
                 <!-- 删除 -->
-                <el-popover
-                  v-model="row.visible"
-                  placement="top"
-                  width="160"
-                  style="margin-left:10px;"
-                >
-                  <p>你确定要删除该用户吗？</p>
-                  <div style="text-align: right; margin: 0">
-                    <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      @click="handleModifyStatus(row,'deleted')"
-                    >确定</el-button>
-                  </div>
-                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-                </el-popover>
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                  <el-popover
+                    v-model="row.visible"
+                    placement="top"
+                    width="160"
+                    style="margin-left:10px;"
+                  >
+                    <p>你确定要删除该用户吗？</p>
+                    <div style="text-align: right; margin: 0">
+                      <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                      <el-button
+                        type="primary"
+                        size="mini"
+                        @click="handleModifyStatus(row,'deleted')"
+                      >确定</el-button>
+                    </div>
+                    <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                  </el-popover>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -126,9 +137,9 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 岗位编号 -->
-        <el-form-item :label="$t('posttable.postId')">
+        <!-- <el-form-item :label="$t('posttable.postId')">
           <el-input v-model="temp.postId" disabled placeholder="系统默认生成" />
-        </el-form-item>
+        </el-form-item>-->
 
         <!-- 岗位名称 -->
         <el-form-item :label="$t('posttable.postName')" prop="postName">

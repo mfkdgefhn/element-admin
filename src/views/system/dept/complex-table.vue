@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-07-13 13:52:52
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-12 13:06:16
+ -->
 <template>
   <div>
     <el-row :gutter="12">
@@ -28,10 +35,6 @@
             style="width: 100%;"
             @sort-change="sortChange"
           >
-            <!-- row-key="deptId" -->
-            <!-- 序号 -->
-            <!-- <el-table-column type="index" width="40" align="center" /> -->
-
             <!-- 部门名称 -->
             <el-table-column :label="$t('depttable.deptName')" header-align="center">
               <template slot-scope="scope">
@@ -71,34 +74,38 @@
             >
               <template slot-scope="{row}">
                 <!-- 操作/编辑 -->
-                <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
-
+                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+                  <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(row)" />
+                </el-tooltip>
                 <!-- 新增 -->
-                <el-button
-                  circle
-                  type="warning"
-                  icon="el-icon-star-off"
-                  @click="handleCreateDept(row,'insert')"
-                />
-
+                <el-tooltip class="item" effect="dark" content="新增下级" placement="top">
+                  <el-button
+                    circle
+                    type="warning"
+                    icon="el-icon-star-off"
+                    @click="handleCreateDept(row,'insert')"
+                  />
+                </el-tooltip>
                 <!-- 删除 -->
-                <el-popover
-                  v-model="row.show"
-                  placement="top"
-                  width="160"
-                  style="margin-left:10px;"
-                >
-                  <p>你确定要删除该用户吗？</p>
-                  <div style="text-align: right; margin: 0">
-                    <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      @click="handleModifyStatus(row,'deleted')"
-                    >确定</el-button>
-                  </div>
-                  <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
-                </el-popover>
+                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                  <el-popover
+                    v-model="row.show"
+                    placement="top"
+                    width="160"
+                    style="margin-left:10px;"
+                  >
+                    <p>你确定要删除该用户吗？</p>
+                    <div style="text-align: right; margin: 0">
+                      <el-button size="mini" type="text" @click="row.show = false">取消</el-button>
+                      <el-button
+                        type="primary"
+                        size="mini"
+                        @click="handleModifyStatus(row,'deleted')"
+                      >确定</el-button>
+                    </div>
+                    <el-button slot="reference" circle type="danger" icon="el-icon-delete" />
+                  </el-popover>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -128,11 +135,13 @@
         style="width: 400px; margin-left:50px;"
       >
         <!-- 上级部门 -->
-        <el-form-item :label="$t('depttable.parentId')">
-          <!-- <el-input v-model="temp.parentId " /> -->
-          <el-input v-model="temp.parentId" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" />
-          </el-input>
+        <el-form-item v-show="disabled" :label="$t('depttable.parentId')">
+          <el-input
+            v-model="temp.parentName"
+            placeholder="请输入内容"
+            class="input-with-select"
+            @focus="deptVisible=true"
+          />
         </el-form-item>
 
         <!-- 部门名称 -->
@@ -184,6 +193,11 @@
         <el-button @click="dialogFormVisible = false">{{ $t('depttable.cancel') }}</el-button>
       </div>
     </el-dialog>
+
+    <!-- 弹出部门树 -->
+    <el-dialog :visible.sync="deptVisible" title="部门">
+      <cliren-left-tree @updateTreeDeptId="updateTreeDeptId" />
+    </el-dialog>
   </div>
 </template>
 
@@ -193,6 +207,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
+import clirenLeftTree from './cliren-left-tree'
 import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
@@ -215,7 +230,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, Searchs },
+  components: { Pagination, Searchs, clirenLeftTree },
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -266,6 +281,7 @@ export default {
       shenheren: true,
       total: 0,
       listLoading: true,
+      disabled: true,
       listQuery: {
         page: 1,
         limit: 8,
@@ -282,6 +298,7 @@ export default {
         create: '创建'
       },
       dialogPvVisible: false,
+      deptVisible: false,
       rules: {
         deptName: [{ required: true, message: '请输入部门名称', trigger: ['blur'] }],
         phone: [{ pattern: /^1[34578]\d{9}$/, message: '您的手机号码输入错误', trigger: ['blur'] }],
@@ -295,6 +312,12 @@ export default {
     this.getDeptList()
   },
   methods: {
+
+    updateTreeDeptId(data) {
+      this.temp.parentId = data.deptId
+      this.temp.parentName = data.deptName
+      this.deptVisible = false
+    },
     selectRadio(value) {
       console.log(value.menuType)
     },
@@ -389,6 +412,8 @@ export default {
     handleCreate() {
       this.resetTemp()
       this.dialogStatus = 'create'
+
+      this.disabled = true
       this.dialogFormVisible = true
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
@@ -397,7 +422,9 @@ export default {
     handleCreateDept(row, status) {
       if (status === 'insert') {
         this.resetTemp()
+        this.disabled = false
         this.temp.parentId = row.deptId
+        this.temp.parentName = row.deptName
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
       }
@@ -426,6 +453,7 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
+      this.disabled = false
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })

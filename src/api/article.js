@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 14:21:30
+ * @LastEditTime: 2019-09-12 13:35:08
  */
 import request from '@/utils/request'
 
@@ -108,6 +108,15 @@ export function getMenuList(query) {
   })
 }
 
+// 获取菜单列表
+export function getMenuLists(query) {
+  return request({
+    url: url + '/sys/menu/getMenuLists',
+    method: 'get',
+    params: query
+  })
+}
+
 // 新增角色
 export function createRoleArticle(data) {
   return request({
@@ -192,7 +201,7 @@ export function createPostArticle(data) {
 // 修改岗位
 export function updatePostArticle(data) {
   return request({
-    url: url + '/sys/post/updatePostByDictId',
+    url: url + '/sys/post/updatePostByPostId',
     method: 'post',
     data
   })
