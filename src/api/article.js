@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-12 13:35:08
+ * @LastEditTime: 2019-09-19 16:58:22
  */
 import request from '@/utils/request'
 
@@ -96,6 +96,15 @@ export function fetchMenuList(query) {
     url: url + '/sys/menu/getMenuList',
     method: 'get',
     params: query
+  })
+}
+
+// 创建菜单
+export function createMenu(data) {
+  return request({
+    url: url + '/sys/menu/createMenu',
+    method: 'post',
+    data
   })
 }
 

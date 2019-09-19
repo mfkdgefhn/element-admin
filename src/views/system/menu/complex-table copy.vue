@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-09-09 16:32:28
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-19 17:41:54
+ -->
 <template>
   <div>
     <el-row :gutter="12">
@@ -265,7 +272,7 @@
 </template>
 
 <script>
-import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { deleteByRoleId, fetchMenuList, fetchPv, createMenu, updateArticle } from '@/api/article' // createMenu,createArticle
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -479,7 +486,7 @@ export default {
           this.temp.status = '0'
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
-          createArticle(this.temp).then(() => {
+          createMenu(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
