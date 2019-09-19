@@ -102,6 +102,8 @@
 ```bash
 # clone the project
 git clone -b i18n git@github.com:PanJiaChen/vue-element-admin.git
+本项目为
+git clone https://github.com/mfkdgefhn/element-admin.git
 
 # enter the project directory
 cd vue-element-admin
