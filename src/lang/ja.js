@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 14:58:09
+ * @LastEditTime: 2019-09-20 17:12:20
  */
 export default {
   route: {
@@ -262,7 +262,8 @@ export default {
     export: 'エクスポート',
     confirm: '確認',
     cancel: '取り消し',
-    editMenu: '編集メニュー'
+    editMenu: '編集メニュー',
+    i18: 'メニューコード'
   },
   depttable: {
     id: '番号付け',

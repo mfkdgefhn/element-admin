@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:52
  * @LastEditors: anan
- * @LastEditTime: 2019-09-12 11:52:10
+ * @LastEditTime: 2019-09-20 17:36:10
  -->
 <template>
   <div>
@@ -131,7 +131,7 @@
           <el-input
             v-if="disabled"
             v-model="temp.parentName"
-            placeholder="请输入内容"
+            placeholder="默认为顶级菜单"
             @focus="menuPvVisible=true"
           />
           <el-input v-else v-model="temp.parentName" disabled @focus="menuPvVisible=true" />
@@ -153,14 +153,22 @@
           <el-input v-model="temp.menuName" />
         </el-form-item>
 
+        <!-- 菜单编码 -->
+        <el-form-item v-if="temp.menuType!=='F'" :label="$t('menutable.i18')" prop="i18">
+          <el-input v-model="temp.i18" />
+        </el-form-item>
+
         <!-- 请求地址 -->
         <el-form-item v-show="temp.menuType==='C'" :label="$t('menutable.url')" prop="url">
-          <el-input v-model="temp.url" />
+          <el-input v-if="url==='#/' || url===''" v-model="temp.url" />
+          <el-input v-else v-model="temp.url" placeholder="请输入内容">
+            <template slot="prepend">{{ url }}</template>
+          </el-input>
         </el-form-item>
 
         <!-- 打开方式target（menuItem页签 menuBlank新窗口）targetAuthority -->
         <el-form-item v-show="temp.menuType==='C'" :label="$t('menutable.target')" prop="target">
-          <el-select v-model="temp.region" placeholder="请选择打开方式">
+          <el-select v-model="temp.region" placeholder="该选项暂时无用">
             <el-option
               v-for="region in targetAuthority"
               :key="region.key"
@@ -174,9 +182,16 @@
         <el-form-item
           v-show="temp.menuType==='C' || temp.menuType==='F' "
           :label="$t('menutable.perms')"
-          prop="roleSort"
+          prop="perms"
         >
-          <el-input v-model="temp.perms" />
+          <el-radio-group v-model="temp.perms">
+            <el-radio
+              v-for="type in permsType"
+              :key="type.key"
+              :disabled="temp.menuType===type.disabled"
+              :label="type.key"
+            >{{ type.value }}</el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <!-- 显示排序 -->
@@ -185,14 +200,35 @@
         </el-form-item>
 
         <!-- 图标 -->
-        <el-form-item v-show="temp.menuType==='M'" :label="$t('menutable.icon')" prop="roleSort">
-          <el-input v-model="temp.icon" />
+        <el-form-item
+          v-show="temp.menuType==='M' ||temp.menuType==='C'"
+          :label="$t('menutable.icon')"
+          prop="roleSort"
+        >
+          <el-input
+            v-if="!temp.icon"
+            v-model="temp.icon"
+            placeholder="请为目录、菜单选择一个图标!!!"
+            @focus="menuPvIcon=true"
+          />
+          <div v-else>
+            <svg-icon :icon-class="temp.icon" class-name="icon-size" @focus="menuPvIcon=true" />
+            <span>点图标进行修改</span>
+          </div>
         </el-form-item>
 
         <!-- 菜单状态 -->
         <el-form-item :label="$t('menutable.visible')" prop="roleSort">
           <!-- <el-input v-model="temp.visible" /> -->
-          <el-switch v-model="temp.visible" active-text="隐藏" inactive-text="显示" />
+          <el-switch
+            v-model="temp.visible"
+            active-text="隐藏"
+            inactive-text="显示"
+            active-color="#909399"
+            inactive-color="#13ce66"
+            active-value="1"
+            inactive-value="0"
+          />
         </el-form-item>
 
         <!-- 创建者 -->
@@ -231,16 +267,22 @@
     <el-dialog :visible.sync="menuPvVisible" title="菜单">
       <cliren-left-tree @updateTreeMenuId="updateTreeMenuId" />
     </el-dialog>
+
+    <!-- 弹出icon选择器 -->
+    <el-dialog :visible.sync="menuPvIcon" width="80%" style="padding:0;">
+      <admin-icon :visible.sync="menuPvIcon" @updateIcon="updateIcon" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { deleteByRoleId, fetchMenuList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { delMenuById, fetchMenuList, fetchPv, createMenu, updateMenuById } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 // import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 // import { checkMaxVal } from '@/utils/validator'
 import clirenLeftTree from './cliren-left-tree'
+import adminIcon from './admin-icon'
 import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
@@ -263,7 +305,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Searchs, clirenLeftTree }, // Pagination
+  components: { Searchs, clirenLeftTree, adminIcon }, // Pagination
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -287,7 +329,16 @@ export default {
   },
   data() {
     return {
+      permsType: [
+        { key: 'view', value: '查', disabled: 'F' },
+        { key: 'create', value: '增', disabled: 'C' },
+        { key: 'delete', value: '删', disabled: 'C' },
+        { key: 'edit', value: '改', disabled: 'C' }
+      ],
+      perms: '',
+      url: '',
       menuPvVisible: false,
+      menuPvIcon: false,
       dialogPvVisible: false,
       seachType: 'menu',
       closeOnClickModal: false,
@@ -334,7 +385,9 @@ export default {
       },
       rules: {
         menuName: [{ required: true, message: '请输入角色名称', trigger: ['blur'] }],
-        menuType: [{ required: true, message: '请选择菜单类型', trigger: ['blur'] }]
+        i18: [{ required: true, message: '请输入角色编码', trigger: ['blur'] }],
+        menuType: [{ required: true, message: '请选择菜单类型', trigger: ['blur'] }],
+        perms: [{ required: true, message: '权限不得为空', trigger: ['blur'] }]
       },
       downloadLoading: false
     }
@@ -347,6 +400,11 @@ export default {
       this.temp.parentId = data.menuId
       this.temp.parentName = data.menuName
       this.menuPvVisible = false
+    },
+    updateIcon(data) {
+      this.menuPvIcon = false
+      this.temp.icon = data
+      console.log(data)
     },
     selectRadio(value) {
       console.log(value.menuType)
@@ -389,7 +447,7 @@ export default {
       } else if (status === 'deleted') {
         // 删除
         row.show = false
-        deleteByRoleId(row).then(response => {
+        delMenuById(row.menuId).then(response => {
           this.$message({
             message: '删除成功',
             type: 'success'
@@ -415,20 +473,7 @@ export default {
       this.handleFilter()
     },
     resetTemp() {
-      this.temp = {
-        id: undefined,
-        menuId: '',
-        menuName: '',
-        menuType: '',
-        parentId: '',
-        orderNum: '',
-        url: '',
-        target: '',
-        show: '',
-        perms: '',
-        icon: '',
-        remark: ''
-      }
+      this.temp = {}
     },
     // 新增按钮
     handleCreate() {
@@ -436,17 +481,22 @@ export default {
       this.dialogStatus = 'create'
       this.disabled = true
       this.dialogFormVisible = true
+      this.url = ''
+      this.perms = ''
       // this.$nextTick(() => {
       //   this.$refs['dataForm'].clearValidate()
       // })
     },
     // 新增下级按钮
     handleCreateMenu(row, status) {
+      console.log(this.temp)
       if (status === 'insert') {
         this.resetTemp()
         this.disabled = false
         this.temp.parentId = row.menuId
         this.temp.parentName = row.menuName
+        this.url = row.url + '/'
+        this.perms = row.perms.substring(0, row.perms.lastIndexOf(':') + 1)
         this.dialogStatus = 'create'
         this.dialogFormVisible = true
         // this.$nextTick(() => {
@@ -461,7 +511,23 @@ export default {
           this.temp.status = '0'
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
-          createArticle(this.temp).then(() => {
+          delete this.temp.children
+
+          switch (this.temp.menuType) {
+            case 'M':
+              this.temp.url = '#'
+              break
+            case 'C':
+              this.temp.perms = 'view'
+              break
+            case 'F':
+              this.temp.url = '#'
+              delete this.temp.i18
+              break
+            default:
+              break
+          }
+          createMenu(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -489,7 +555,10 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.updateTime = new Date()
-          updateArticle(tempData).then(() => {
+          if (tempData.menuType === 'F') {
+            delete tempData.i18
+          }
+          updateMenuById(tempData).then(() => {
             this.dialogFormVisible = false
             this.getMenuList()
             this.$notify({
@@ -553,6 +622,10 @@ export default {
 }
 .dialog-dietRole {
   min-width: 1000px;
+}
+.icon-size {
+  font-size: 1.625rem;
+  font-weight: 500;
 }
 </style>
 

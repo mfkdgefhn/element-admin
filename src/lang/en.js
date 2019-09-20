@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 14:57:29
+ * @LastEditTime: 2019-09-20 17:11:54
  */
 export default {
   route: {
@@ -261,7 +261,8 @@ export default {
     export: 'Export',
     confirm: 'Confirm',
     cancel: 'Cancel',
-    editMenu: 'editMenu'
+    editMenu: 'editMenu',
+    i18: 'MenuCoding'
   },
   depttable: {
     id: 'id',

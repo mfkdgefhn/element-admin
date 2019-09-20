@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-10 14:56:26
+ * @LastEditTime: 2019-09-20 17:11:02
  */
 export default {
   route: {
@@ -262,7 +262,8 @@ export default {
     export: '导出',
     confirm: '确 定',
     cancel: '取 消',
-    editMenu: '编辑菜单'
+    editMenu: '编辑菜单',
+    i18: '菜单编码'
   },
   depttable: {
     id: '序号',

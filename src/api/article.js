@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-19 16:58:22
+ * @LastEditTime: 2019-09-20 15:13:09
  */
 import request from '@/utils/request'
 
@@ -15,6 +15,14 @@ export function getDeptList(query) {
     url: url + '/sys/dept/getDeptList',
     method: 'get',
     params: query
+  })
+}
+
+export function addMenu(data) {
+  return request({
+    url: url + '/sys/menu/addMenu',
+    method: 'post',
+    data
   })
 }
 
@@ -103,6 +111,25 @@ export function fetchMenuList(query) {
 export function createMenu(data) {
   return request({
     url: url + '/sys/menu/createMenu',
+    method: 'post',
+    data
+  })
+}
+// 删除菜单ID
+export function delMenuById(query) {
+  return request({
+    url: url + '/sys/menu/delMenuById',
+    method: 'delete',
+    params: {
+      menuId: query
+    }
+  })
+}
+
+// 创建菜单
+export function updateMenuById(data) {
+  return request({
+    url: url + '/sys/menu/updateMenuById',
     method: 'post',
     data
   })

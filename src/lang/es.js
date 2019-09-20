@@ -261,7 +261,8 @@ export default {
     export: 'Exportación',
     confirm: 'Confirmar',
     cancel: 'Cancelar',
-    editMenu: 'Editar menú'
+    editMenu: 'Editar menú',
+    i18: 'Codificación del menú'
   },
   depttable: {
     id: 'Número',
