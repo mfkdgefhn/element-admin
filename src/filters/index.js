@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-09-19 17:57:19
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-19 17:57:19
+ */
 // import parseTime, formatTime and set to filter
 // 导入parseTime、formattime并设置为filter
 export { parseTime, formatTime } from '@/utils'
@@ -55,6 +62,7 @@ export function numberFormatter(num, digits) {
 }
 
 /**
+ * 为数字加入逗号
  * 10000 => "10,000"
  * @param {number} num
  */
