@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-20 17:12:20
+ * @LastEditTime: 2019-09-21 13:25:41
  */
 export default {
   route: {
@@ -28,6 +28,7 @@ export default {
     datamonitoring: 'データモニタ',
     servicemonitoring: 'サービスモニタ',
     formconstruction: 'フォーム構築',
+    vueeleform: 'ele-form',
     codegeneration: 'コード生成',
     systeminterface: 'システムインターフェース',
     documentation: 'ドキュメント',

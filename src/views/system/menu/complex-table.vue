@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:52
  * @LastEditors: anan
- * @LastEditTime: 2019-09-20 17:36:10
+ * @LastEditTime: 2019-09-21 16:46:02
  -->
 <template>
   <div>
@@ -325,15 +325,28 @@ export default {
     },
     typeFilter(type) {
       return calendarTypeKeyValue[type]
+    },
+    permsFilter(perms) {
+      console.log(perms)
+      return perms
     }
   },
   data() {
     return {
       permsType: [
-        { key: 'view', value: '查', disabled: 'F' },
-        { key: 'create', value: '增', disabled: 'C' },
-        { key: 'delete', value: '删', disabled: 'C' },
-        { key: 'edit', value: '改', disabled: 'C' }
+        { key: 'view', value: '查询', disabled: 'F' },
+        { key: 'list', value: '查询', disabled: 'C' },
+        { key: 'add', value: '新增', disabled: 'C' },
+        { key: 'edit', value: '修改', disabled: 'C' },
+        { key: 'remove', value: '删除', disabled: 'C' },
+        { key: 'export', value: '导出', disabled: 'C' },
+        { key: 'import', value: '导入', disabled: 'C' },
+        { key: 'resetPwd', value: '重置密码', disabled: 'C' },
+        { key: 'detail', value: '详细信息', disabled: 'C' },
+        { key: 'batchForceLogout', value: '批量强退', disabled: 'C' },
+        { key: 'forceLogout', value: '单条强退', disabled: 'C' },
+        { key: 'changestatus', value: '状态修改', disabled: 'C' },
+        { key: 'code', value: '代码生成', disabled: 'C' }
       ],
       perms: '',
       url: '',
@@ -506,27 +519,32 @@ export default {
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
+        debugger
         if (valid) {
           this.temp.dataScope = '1'
           this.temp.status = '0'
           this.temp.createTime = new Date()
           this.temp.updateTime = new Date()
           delete this.temp.children
-
+          var str = ''
           switch (this.temp.menuType) {
             case 'M':
               this.temp.url = '#'
               break
             case 'C':
-              this.temp.perms = 'view'
+              str = this.filterUrl(this.temp.url)
+              this.temp.perms = str + 'view'
               break
             case 'F':
               this.temp.url = '#'
               delete this.temp.i18
+              str = this.filterUrl(this.temp.url)
+              this.temp.perms = str + this.temp.perms
               break
             default:
               break
           }
+
           createMenu(this.temp).then(() => {
             // 这条是本地新增一行
             // this.list.unshift(this.temp)
@@ -542,10 +560,24 @@ export default {
         }
       })
     },
+    filterUrl(data) {
+      console.log(data)
+      var fh = ''
+      const str = data.indexOf('/') === 0 ? data.substring(1) : data
+      var array = str.split('/')
+      array.forEach(arr => {
+        fh = fh + arr + ':'
+      })
+      return fh
+    },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
+      this.url = ''
       this.dialogFormVisible = true
+      if (this.temp.menuType !== 'M' && this.temp.perms.indexOf(':') > 0) {
+        this.temp.perms = this.temp.perms.substring(this.temp.perms.lastIndexOf(':') + 1)
+      }
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -557,6 +589,10 @@ export default {
           tempData.updateTime = new Date()
           if (tempData.menuType === 'F') {
             delete tempData.i18
+          }
+          if (tempData.menuType === 'C') {
+            var str = this.filterUrl(this.temp.url)
+            tempData.perms = str + 'view'
           }
           updateMenuById(tempData).then(() => {
             this.dialogFormVisible = false

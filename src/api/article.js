@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-20 15:13:09
+ * @LastEditTime: 2019-09-21 17:40:37
  */
 import request from '@/utils/request'
 
@@ -18,6 +18,16 @@ export function getDeptList(query) {
   })
 }
 
+// 修改部门信息
+export function updateDeptById(data) {
+  return request({
+    url: url + '/sys/dept/updateDeptById',
+    method: 'post',
+    data
+  })
+}
+
+// 新增菜单
 export function addMenu(data) {
   return request({
     url: url + '/sys/menu/addMenu',

@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:52
  * @LastEditors: anan
- * @LastEditTime: 2019-09-12 13:06:16
+ * @LastEditTime: 2019-09-21 17:42:26
  -->
 <template>
   <div>
@@ -156,7 +156,7 @@
 
         <!--  负责人 -->
         <el-form-item :label="$t('depttable.leader')" prop="leader">
-          <el-input v-model="temp.leader" />
+          <el-input v-model="temp.leader" @focus="userVisible=true" />
         </el-form-item>
 
         <!-- 联系电话 -->
@@ -198,16 +198,23 @@
     <el-dialog :visible.sync="deptVisible" title="部门">
       <cliren-left-tree @updateTreeDeptId="updateTreeDeptId" />
     </el-dialog>
+
+    <!-- 弹出用户树 -->
+    <el-dialog :visible.sync="userVisible" title="部门">
+      <user-tree @updateTreeUserId="updateTreeUserId" />
+      <!--  -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { deleteByDeptId, fetchDeptList, fetchPv, createDeptArticle, updateArticle } from '@/api/article'
+import { deleteByDeptId, fetchDeptList, fetchPv, createDeptArticle, updateDeptById } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { checkMaxVal } from '@/utils/validator'
 import clirenLeftTree from './cliren-left-tree'
+import userTree from './user-tree'
 import Searchs from '@/components/Searchs'
 
 // updateRoleByRoleId ,
@@ -230,7 +237,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, Searchs, clirenLeftTree },
+  components: { Pagination, Searchs, clirenLeftTree, userTree },
   directives: { waves, elDragDialog },
   filters: {
     menuTypeFilter(status) {
@@ -298,6 +305,7 @@ export default {
         create: '创建'
       },
       dialogPvVisible: false,
+      userVisible: false,
       deptVisible: false,
       rules: {
         deptName: [{ required: true, message: '请输入部门名称', trigger: ['blur'] }],
@@ -312,7 +320,10 @@ export default {
     this.getDeptList()
   },
   methods: {
-
+    updateTreeUserId(data) {
+      this.temp.leader = data.userNick
+      this.userVisible = false
+    },
     updateTreeDeptId(data) {
       this.temp.parentId = data.deptId
       this.temp.parentName = data.deptName
@@ -395,19 +406,7 @@ export default {
       this.handleFilter()
     },
     resetTemp() {
-      this.temp = {
-        id: undefined,
-        deptId: '',
-        deptName: '',
-        status: '',
-        parentId: '',
-        orderNum: '',
-        ancestors: '',
-        leader: '',
-        phone: '',
-        del_flag: '',
-        email: ''
-      }
+      this.temp = {}
     },
     handleCreate() {
       this.resetTemp()
@@ -463,7 +462,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.updateTime = new Date()
-          updateArticle(tempData).then(() => {
+          updateDeptById(tempData).then(() => {
             this.dialogFormVisible = false
             this.getDeptList()
             this.$notify({

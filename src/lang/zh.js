@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-20 17:11:02
+ * @LastEditTime: 2019-09-21 13:25:23
  */
 export default {
   route: {
@@ -28,6 +28,7 @@ export default {
     datamonitoring: '数据监控',
     servicemonitoring: '服务监控',
     formconstruction: '表单构建',
+    vueeleform: 'ele-form',
     codegeneration: '代码生成',
     systeminterface: '系统接口',
     documentation: '文档',
