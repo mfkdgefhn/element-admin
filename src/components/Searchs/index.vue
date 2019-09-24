@@ -1,3 +1,10 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-09-19 17:57:19
+ * @LastEditors: anan
+ * @LastEditTime: 2019-09-23 11:08:56
+ -->
 <template>
   <!-- 菜单栏 -->
   <div class="seach-length">
@@ -726,6 +733,62 @@
         <el-button slot="reference" type="danger" icon="el-icon-delete" circle />
       </el-popover>
     </div>
+
+    <!-- 操作用户   查询所有在线    包含游客用户 -->
+
+    <!-- 在线用户  onlineUsers -->
+    <div v-if="seachType==='onlineUsers'">
+      <!-- 操作用户 -->
+      <el-input
+        v-model="listQuery.operationUser"
+        style="width: 200px;"
+        :placeholder="$t('onlineUsers.operationUser')"
+        class="input-with-select"
+        @keyup.enter.native="handleFilter"
+      >
+        <el-button slot="append" icon="el-icon-search" />
+      </el-input>
+
+      <!-- 查询所有在线 -->
+      <el-checkbox-group v-model="listQuery.queryAllOnline" class="checkbox-group">
+        <el-checkbox :label="$t('onlineUsers.queryAllOnline')" />
+      </el-checkbox-group>
+
+      <!-- 包含游客用户 -->
+      <el-checkbox-group v-model="listQuery.includingVisitorUsers" class="checkbox-group">
+        <el-checkbox :label="$t('onlineUsers.includingVisitorUsers')" />
+      </el-checkbox-group>
+
+      <!-- 查询所有在线 -->
+      <!-- <el-input
+        v-model="listQuery.loginName"
+        :placeholder="$t('onlineUsers.queryAllOnline')"
+        style="width: 100px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />-->
+
+      <!-- 包含游客用户 -->
+      <!-- <el-input
+        v-model="listQuery.status"
+        :placeholder="$t('onlineUsers.includingVisitorUsers')"
+        style="width: 100px;"
+        class="filter-item"
+        @keyup.enter.native="handleFilter"
+      />-->
+
+      <!-- 搜索按钮 -->
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        @click="handleFilter"
+      >{{ $t('currency.search') }}</el-button>
+
+      <!-- 刷新 -->
+      <el-button type="primary" :icon="refreshButton" circle @click="refresh()" />
+    </div>
   </div>
 </template>
 
@@ -763,6 +826,7 @@ export default {
   },
   methods: {
     handleFilter() {
+      console.log(this.listQuery)
       this.$emit('handleFilter', this.listQuery)
     },
     handleCreate() {
@@ -781,5 +845,9 @@ export default {
 <style>
 .seach-length {
   min-width: 870px;
+}
+.checkbox-group {
+  display: inline-table;
+  margin-left: 10px;
 }
 </style>

@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-21 13:25:23
+ * @LastEditTime: 2019-09-23 10:45:51
  */
 export default {
   route: {
@@ -202,7 +202,8 @@ export default {
     discontinuation: '停用',
     enabling: '启用',
     remarks: '备注',
-    password: '密码'
+    password: '密码',
+    postName: '岗位'
   },
   roletable: {
     id: '序号',
@@ -489,6 +490,13 @@ export default {
     startDate: '开始时间',
     endDate: '结束时间',
     empty: '清空'
+  },
+  onlineUsers: {
+    operationUser: '操作用户',
+    queryAllOnline: '查询所有在线',
+    includingVisitorUsers: '包含游客用户',
+    search: '搜索',
+    refresh: '重置'
   },
   example: {
     warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'

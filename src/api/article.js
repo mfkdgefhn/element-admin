@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-21 17:40:37
+ * @LastEditTime: 2019-09-23 11:15:44
  */
 import request from '@/utils/request'
 
@@ -495,6 +495,14 @@ export function getAsyncRoutes(token) {
     url: url + '/sys/async-routes/getAsyncRoutes',
     method: 'get',
     params: { token }
+  })
+}
+
+export function getOnlineUsers(query) {
+  return request({
+    url: url + '/monitor/online/getOnlineUsers',
+    method: 'get',
+    params: query
   })
 }
 

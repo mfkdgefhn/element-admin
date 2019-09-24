@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-21 13:25:41
+ * @LastEditTime: 2019-09-23 10:47:08
  */
 export default {
   route: {
@@ -202,7 +202,8 @@ export default {
     discontinuation: 'アクティブ',
     enabling: '有効にする',
     remarks: 'コメント',
-    password: 'パスワード'
+    password: 'パスワード',
+    postName: '持ち場'
   },
   roletable: {
     id: '番号付け',
@@ -485,6 +486,13 @@ export default {
     startDate: '開始日',
     endDate: '終了日',
     empty: '空をクリア'
+  },
+  onlineUsers: {
+    operationUser: '操作ユーザ',
+    queryAllOnline: 'すべてのオンライン検索',
+    includingVisitorUsers: '旅行者を含む',
+    search: '検索',
+    refresh: '更新'
   },
   example: {
     warning: '新規作成と編集画面は keep-alive を使えないです。keep-alive の include はrouteのキャッシュは使えないです。そのため、component name を使ってキャッシュさせるようにします。このようなキャッシュ機能を作りたい場合，localStorageを使う手があります。もしくは keep-alive の includeを使って、全ページキャッシュする方法はあります。'

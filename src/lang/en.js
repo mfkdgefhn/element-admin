@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-21 13:26:00
+ * @LastEditTime: 2019-09-23 10:48:16
  */
 export default {
   route: {
@@ -202,7 +202,8 @@ export default {
     discontinuation: 'Discontinuation',
     enabling: 'Enabling',
     remarks: 'Remarks',
-    password: 'Password'
+    password: 'Password',
+    postName: 'post'
   },
   roletable: {
     roleId: 'RoleId',
@@ -485,6 +486,13 @@ export default {
     startDate: 'startDate',
     endDate: 'endDate',
     empty: 'empty'
+  },
+  onlineUsers: {
+    operationUser: 'operationUser',
+    queryAllOnline: 'queryAllOnline',
+    includingVisitorUsers: 'includingVisitorUsers',
+    search: 'search',
+    refresh: 'refresh'
   },
   example: {
     warning: 'Creating and editing pages cannot be cached by keep-alive because keep-alive include does not currently support caching based on routes, so it is currently cached based on component name. If you want to achieve a similar caching effect, you can use a browser caching scheme such as localStorage. Or do not use keep-alive include to cache all pages directly. See details'
