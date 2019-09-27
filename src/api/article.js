@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-23 11:15:44
+ * @LastEditTime: 2019-09-26 13:33:13
  */
 import request from '@/utils/request'
 
@@ -498,11 +498,20 @@ export function getAsyncRoutes(token) {
   })
 }
 
+// 获取在线用户
 export function getOnlineUsers(query) {
   return request({
     url: url + '/monitor/online/getOnlineUsers',
     method: 'get',
     params: query
+  })
+}
+
+// 获取系统信息
+export function getServerConfig() {
+  return request({
+    url: url + '/monitor/server/getServerConfig',
+    method: 'get'
   })
 }
 
