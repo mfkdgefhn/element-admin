@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-23 10:45:51
+ * @LastEditTime: 2019-10-04 16:37:53
  */
 export default {
   route: {
@@ -57,6 +57,8 @@ export default {
     keyboardChart: '键盘图表',
     lineChart: '折线图',
     mixChart: '混合图表',
+    CouponChart: '优惠券图表',
+    SmsChart: '短信通知图表',
     example: '综合实例',
     nested: '路由嵌套',
     menu1: '菜单1',

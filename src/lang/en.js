@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-23 10:48:16
+ * @LastEditTime: 2019-10-06 11:39:42
  */
 export default {
   route: {
@@ -57,6 +57,8 @@ export default {
     keyboardChart: 'Keyboard Chart',
     lineChart: 'Line Chart',
     mixChart: 'Mix Chart',
+    CouponChart: 'Coupon Chart',
+    SmsChart: 'Sms Chart',
     example: 'Example',
     nested: 'Nested Routes',
     menu1: 'Menu 1',

@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-09-23 13:39:53
  * @LastEditors: anan
- * @LastEditTime: 2019-09-26 18:01:17
+ * @LastEditTime: 2019-10-04 13:38:45
  -->
 <template>
   <div class="server">
@@ -17,13 +17,14 @@
               <span>CPU</span>
               <el-button style="float: right; padding: 0" type="text">
                 <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-                <i class="el-icon-remove-outline" />
+                <i class="el-icon-remove-outline" @click="close('cpu')" />
               </el-button>
             </div>
             <vxe-table
               stripe
               :data="cpuData"
               class="table-card"
+              :class="cpu"
               highlight-current-row
               highlight-hover-row
               size="mini"
@@ -45,11 +46,12 @@
               <span>内存</span>
               <el-button style="float: right; padding: 0" type="text">
                 <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-                <i class="el-icon-remove-outline" />
+                <i class="el-icon-remove-outline" @click="close('memory')" />
               </el-button>
             </div>
             <vxe-table
               stripe
+              :class="memory"
               :data="memData"
               highlight-current-row
               highlight-hover-row
@@ -73,13 +75,14 @@
               <span>堆/非堆</span>
               <el-button style="float: right; padding: 0" type="text">
                 <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-                <i class="el-icon-remove-outline" />
+                <i class="el-icon-remove-outline" @click="close('zai')" />
               </el-button>
             </div>
             <vxe-table
               stripe
               :data="tableData"
               class="table-card"
+              :class="zai"
               highlight-current-row
               highlight-hover-row
               size="mini"
@@ -106,20 +109,16 @@
               <i class="el-icon-remove-outline" @click="close('server')" />
             </el-button>
           </div>
-          <transition-group name="el-fade-in-linear">
-            <el-row :class="rowserver">
-              <el-col :span="4">服务器名称：</el-col>
-              <el-col :span="8">{{ property.serverName }}</el-col>
-              <el-col :span="4">操作系统:</el-col>
-              <el-col :span="8">{{ property.server }}</el-col>
-            </el-row>
-            <el-row :class="rowserver">
-              <el-col :span="4">服务器IP：</el-col>
-              <el-col :span="8">{{ property.serverIp }}</el-col>
-              <el-col :span="4">系统架构:</el-col>
-              <el-col :span="8">{{ property.architecture }}</el-col>
-            </el-row>
-          </transition-group>
+          <el-row :class="server">
+            <el-col :span="4">服务器名称：</el-col>
+            <el-col :span="8">{{ property.serverName }}</el-col>
+            <el-col :span="4">操作系统:</el-col>
+            <el-col :span="8">{{ property.server }}</el-col>
+            <el-col :span="4">服务器IP：</el-col>
+            <el-col :span="8">{{ property.serverIp }}</el-col>
+            <el-col :span="4">系统架构:</el-col>
+            <el-col :span="8">{{ property.architecture }}</el-col>
+          </el-row>
         </el-card>
       </el-col>
     </el-row>
@@ -133,26 +132,20 @@
             <span>Java虚拟机信息</span>
             <el-button style="float: right; padding: 3px 0" type="text">
               <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-              <i class="el-icon-remove-outline" />
+              <i class="el-icon-remove-outline" @click="close('jvm')" />
             </el-button>
           </div>
-          <el-row>
+          <el-row :class="jvm">
             <el-col :span="4">Java名称:</el-col>
             <el-col :span="8">{{ property.javaName }}</el-col>
             <el-col :span="4">Java版本:</el-col>
             <el-col :span="8">{{ property.javaVersion }}</el-col>
-          </el-row>
-          <el-row>
             <el-col :span="4">启动时间:</el-col>
             <el-col :span="8">{{ property.javaStartTime }}</el-col>
             <el-col :span="4">运行时长:</el-col>
             <el-col :span="8">{{ property.javaRunTime }}</el-col>
-          </el-row>
-          <el-row>
             <el-col :span="4">安装路径:</el-col>
             <el-col :span="20">{{ property.javaInstallPath }}</el-col>
-          </el-row>
-          <el-row>
             <el-col :span="4">启动参数:</el-col>
             <el-col :span="20">{{ property.javaStartParm }}</el-col>
           </el-row>
@@ -169,18 +162,14 @@
             <span>平台参数</span>
             <el-button style="float: right; padding: 3px 0" type="text">
               <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-              <i class="el-icon-remove-outline" />
+              <i class="el-icon-remove-outline" @click="close('plat')" />
             </el-button>
           </div>
-          <el-row>
+          <el-row :class="plat">
             <el-col :span="4">当前工作路径:</el-col>
             <el-col :span="20">1</el-col>
-          </el-row>
-          <el-row>
             <el-col :span="4">日志存放路径:</el-col>
             <el-col :span="20">1</el-col>
-          </el-row>
-          <el-row>
             <el-col :span="4">上传文件路径:</el-col>
             <el-col :span="20">1</el-col>
           </el-row>
@@ -197,11 +186,12 @@
             <span>磁盘状态</span>
             <el-button style="float: right; padding: 3px 0" type="text">
               <!-- <svg-icon style="font-size:20px;" icon-class="Rectangle" /> -->
-              <i class="el-icon-remove-outline" />
+              <i class="el-icon-remove-outline" @click="close('disk')" />
             </el-button>
           </div>
           <vxe-table
             stripe
+            :class="disk"
             :data="fileData"
             class="table-card"
             highlight-current-row
@@ -228,6 +218,8 @@
 import { getServerConfig } from '@/api/article'
 
 export default {
+  components: {
+  },
   data() {
     return {
       tableData: [],
@@ -235,7 +227,13 @@ export default {
       memData: [],
       property: {},
       fileData: [],
-      rowserver: ''
+      cpu: '',
+      memory: '',
+      zai: '',
+      server: '',
+      jvm: '',
+      plat: '',
+      disk: ''
     }
   },
   mounted() {
@@ -243,8 +241,31 @@ export default {
   },
   methods: {
     close(data) {
-      if (this.rowserver === '') { this.rowserver = 'rowserver' } else { this.rowserver = '' }
-      console.log(data)
+      switch (data) {
+        case 'cpu':
+          if (this.cpu === '') { this.cpu = 'display' } else { this.cpu = '' }
+          break
+        case 'memory':
+          if (this.memory === '') { this.memory = 'display' } else { this.memory = '' }
+          break
+        case 'zai':
+          if (this.zai === '') { this.zai = 'display' } else { this.zai = '' }
+          break
+        case 'server':
+          if (this.server === '') { this.server = 'display' } else { this.server = '' }
+          break
+        case 'jvm':
+          if (this.jvm === '') { this.jvm = 'display' } else { this.jvm = '' }
+          break
+        case 'plat':
+          if (this.plat === '') { this.plat = 'display' } else { this.plat = '' }
+          break
+        case 'disk':
+          if (this.disk === '') { this.disk = 'display' } else { this.disk = '' }
+          break
+        default:
+          break
+      }
     },
     inifVue() {
       console.log('开始加载系统数据')
@@ -275,19 +296,7 @@ export default {
 svg {
   color: #6db9ff;
 }
-.rowserver {
+.display {
   display: none;
-}
-.transition-box {
-  margin-bottom: 10px;
-  width: 200px;
-  height: 100px;
-  border-radius: 4px;
-  background-color: #409eff;
-  text-align: center;
-  color: #fff;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  margin-right: 20px;
 }
 </style>

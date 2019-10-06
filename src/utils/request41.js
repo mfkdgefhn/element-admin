@@ -3,19 +3,20 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-05 13:15:44
+ * @LastEditTime: 2019-10-05 13:59:40
  */
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+// import { getToken } from '@/utils/auth'
 
 // create an axios instance
 // 创建AXIOS实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  withCredentials: true, // send cookies when cross-domain requests   //跨域请求时发送cookie
-  timeout: 5000 // request timeout
+  baseURL: '/echartsApi' // url = base url + request url
+  // baseURL: '/api' // url = base url + request url
+  // withCredentials: true, // send cookies when cross-domain requests   //跨域请求时发送cookie
+  // timeout: 5000 // request timeout
 })
 
 // request interceptor
@@ -25,17 +26,17 @@ service.interceptors.request.use(
     // do something before request is sent
     // 在发送请求之前做一些事情
     // 第一次请求登陆的时候请求头获取不到，所以请求头为content-type
-    if (store.getters.token) {
-      if (config.url.indexOf('10.10.1.41') === -1) {
-        config.headers['anan-token'] = getToken()
-      }
-      // let each request carry token
-      // 让每个请求携带令牌
-      // ['X-Token'] is a custom headers key
-      // ['X-TOKEN']是自定义头密钥
-      // please modify it according to the actual situation
-      // 请根据实际情况进行修改
-    }
+    // if (store.getters.token) {
+    //   if (config.url.indexOf('10.10.1.41') === -1) {
+    //     config.headers['anan-token'] = getToken()
+    //   }
+    //   // let each request carry token
+    //   // 让每个请求携带令牌
+    //   // ['X-Token'] is a custom headers key
+    //   // ['X-TOKEN']是自定义头密钥
+    //   // please modify it according to the actual situation
+    //   // 请根据实际情况进行修改
+    // }
     return config
   },
   error => {
@@ -65,12 +66,11 @@ service.interceptors.response.use(
    * 您还可以通过HTTP状态代码判断状态
    */
   response => {
-    const res = response.data
-    // console.log(response)
+    const res = response
 
     // if the custom code is not 20000, it is judged as an error.
     // 如果自定义代码不是20000，则判断为错误。
-    if (res.code !== '20000') {
+    if (res.status !== 200) {
       Message({
         message: res.msg || 'Error',
         type: 'error',
@@ -91,7 +91,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.msg || 'Error'))
+      return Promise.reject(new Error(res.data || 'Error'))
     } else {
       return res
     }

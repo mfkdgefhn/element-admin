@@ -1,5 +1,12 @@
+<!--
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-09-19 17:57:19
+ * @LastEditors: anan
+ * @LastEditTime: 2019-10-04 16:27:02
+ -->
 <template>
-  <div :id="id" :class="className" :style="{height:height,width:width}" />
+  <div :id="id" ref="key_echarts" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
@@ -43,7 +50,8 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(document.getElementById(this.id))
+      // this.chart = echarts.init(document.getElementById(this.id))
+      this.chart = echarts.init(this.$refs.key_echarts)
 
       const xAxisData = []
       const data = []

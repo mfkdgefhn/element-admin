@@ -1,3 +1,10 @@
+/*
+ * @Description: 说明
+ * @Author: anan
+ * @Date: 2019-09-19 17:57:19
+ * @LastEditors: anan
+ * @LastEditTime: 2019-10-05 13:51:12
+ */
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
@@ -61,6 +68,20 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      },
+      '/echartsApi': {
+        target: 'http://10.10.1.41',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/echartsApi': '/'
+        }
+      },
+      '/api': {
+        target: 'http://jsonplaceholder.typicode.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': '/'
         }
       }
     },

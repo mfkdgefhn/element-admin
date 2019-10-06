@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-23 10:47:08
+ * @LastEditTime: 2019-10-06 11:39:17
  */
 export default {
   route: {
@@ -57,6 +57,8 @@ export default {
     keyboardChart: 'Keyboardチャート',
     lineChart: 'Lineチャート',
     mixChart: 'Mixチャート',
+    CouponChart: 'クーポンチャート',
+    SmsChart: 'メールの通知',
     example: 'Example',
     nested: 'Nested Routes',
     menu1: 'メニュー１',

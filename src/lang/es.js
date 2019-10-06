@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-23 10:47:54
+ * @LastEditTime: 2019-10-04 16:39:12
  */
 export default {
   route: {
@@ -57,6 +57,8 @@ export default {
     keyboardChart: 'Keyboard Chart',
     lineChart: 'Gráfico de líneas',
     mixChart: 'Mix Chart',
+    CouponChart: 'Lista de cupones',
+    SmsChart: 'Mensaje de texto',
     example: 'Ejemplo',
     nested: 'Rutas anidadass',
     menu1: 'Menu 1',

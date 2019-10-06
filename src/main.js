@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-09-21 14:31:21
+ * @LastEditTime: 2019-10-06 09:04:48
  */
 import Vue from 'vue'
 
@@ -50,6 +50,10 @@ import './permission' // permission control 权限控制
 import './utils/error-log' // error log 错误日志
 
 import * as filters from './filters' // global filters 全局筛选器
+
+import echarts from 'echarts' // 全局定义echarts
+
+Vue.prototype.$echarts = echarts
 
 /**
  * If you don't want to use mock-server
