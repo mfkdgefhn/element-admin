@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-05 13:15:44
+ * @LastEditTime: 2019-10-18 09:09:04
  */
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
@@ -15,7 +15,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests   //跨域请求时发送cookie
-  timeout: 5000 // request timeout
+  timeout: 50000 // request timeout
 })
 
 // request interceptor
@@ -99,7 +99,6 @@ service.interceptors.response.use(
   error => {
     console.log(error)
     console.log('err' + error) // for debug
-    debugger
     // var str = '登陆失败  '
     // if (error.message === 'Network Error') {
     //   str += '网络不通!'
