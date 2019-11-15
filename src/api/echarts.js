@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-10-05 09:19:29
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 13:10:20
+ * @LastEditTime: 2019-11-05 11:04:15
  */
 
 // import axios from 'axios'
@@ -30,7 +30,7 @@ export function getSms() {
     url: '/Q/p.do',
     method: 'get',
     params: {
-      o: 'dxtz',
+      o: 'dxtz-x',
       showSql: 'gmqdbcenter'
     }
   })

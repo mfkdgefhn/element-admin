@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-09-19 17:57:19
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 13:05:12
+ * @LastEditTime: 2019-11-04 11:23:58
  -->
 <template>
   <div :id="id" ref="mix_echarts" :class="className" :style="{height:height,width:width}" />
@@ -142,7 +142,8 @@ export default {
         legend: {
           top: '3%',
           textStyle: {
-            color: '#90979c'
+            color: '#90979c',
+            fontSize: '20'
           },
           data: this.legendData
         },

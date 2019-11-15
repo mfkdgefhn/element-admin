@@ -4,7 +4,7 @@
  anan
  * @Date: 2019-10-06 11:37:46
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 14:33:02
+ * @LastEditTime: 2019-11-05 11:37:28
  -->
 <template>
   <div :id="id" ref="sms_echarts" :class="className" :style="{height:height,width:width}" />
@@ -52,18 +52,13 @@ export default {
   methods: {
     initCharts() {
       getSms().then(response => {
-        console.log(response)
         const couponData = response.data.result.reverse()
-        console.log(couponData)
         // 渲染图例组件
         this.renderLegend(couponData)
-        console.log(this.legendData)
         // 渲染维度
         this.renderXAxis(couponData)
-        console.log(this.xAxisData)
         // 渲染列表
         this.renderSeries(couponData)
-        console.log(this.seriesData)
 
         this.chart = this.$echarts.init(this.$refs.sms_echarts)
         this.setOptions()
@@ -85,6 +80,7 @@ export default {
             fontSize: '16'
           }
         },
+        color: ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
         // 提示框组件
         tooltip: {
           trigger: 'axis', // 触发条件
@@ -105,37 +101,39 @@ export default {
           }
         },
         // dataZoom 组件 用于区域缩放
-        dataZoom: [{
-          show: true,
-          height: 30,
-          xAxisIndex: [
-            0
-          ],
-          bottom: 30,
-          start: 5,
-          end: 80,
-          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-          handleSize: '110%',
-          borderColor: '#90979c',
-          handleStyle: {
-            color: '#d3dee5'
-          },
-          textStyle: {
-            color: '#fff'
-          }
-        }, {
-          // 内置型数据区域缩放组件（dataZoomInside）
-          type: 'inside',
-          show: true,
-          height: 15,
-          start: 1, // 不知用处
-          end: 100
-        }],
+        dataZoom: [
+          {
+            show: true,
+            height: 30,
+            xAxisIndex: [
+              0
+            ],
+            bottom: 30,
+            start: 5,
+            end: 80,
+            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+            handleSize: '110%',
+            borderColor: '#90979c',
+            handleStyle: {
+              color: '#d3dee5'
+            },
+            textStyle: {
+              color: '#fff'
+            }
+          }, {
+            // 内置型数据区域缩放组件（dataZoomInside）
+            type: 'inside',
+            show: true,
+            height: 15,
+            start: 1, // 不知用处
+            end: 100
+          }],
         // 图例组件。
         legend: {
           top: '3%',
           textStyle: {
-            color: '#90979c'
+            color: '#90979c',
+            fontSize: '20'
           },
           data: this.legendData
         },
@@ -211,6 +209,11 @@ export default {
           position: 'top',
           formatter(p) {
             return p.value > 0 ? p.value : ''
+          }
+        }
+        ob.visualMap = {
+          inRange: {
+            color: ['#D7DA8B', '#E15457']
           }
         }
         ob.data = arr
