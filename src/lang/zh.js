@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-04 16:37:53
+ * @LastEditTime: 2020-09-05 14:21:03
  */
 export default {
   route: {
@@ -59,6 +59,9 @@ export default {
     mixChart: '混合图表',
     CouponChart: '优惠券图表',
     SmsChart: '短信通知图表',
+    NewVipCharts: '新增会员情况图表',
+    openCardRate: '会员开卡率图表',
+    proportionOfSales: '会员销售占比',
     example: '综合实例',
     nested: '路由嵌套',
     menu1: '菜单1',

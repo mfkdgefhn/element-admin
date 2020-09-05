@@ -1,18 +1,17 @@
 <!--
  * @Description: 说明
- * @Author:
- anan
- * @Date: 2019-10-06 11:37:46
+ * @Author: anan
+ * @Date: 2019-09-19 17:57:19
  * @LastEditors: anan
- * @LastEditTime: 2020-09-05 14:58:50
+ * @LastEditTime: 2020-09-05 13:49:22
  -->
 <template>
-  <div :id="id" ref="sms_echarts" :class="className" :style="{height:height,width:width}" />
+  <div :id="id" ref="mix_echarts" :class="className" :style="{height:height,width:width}" />
 </template>
 
 <script>
 import resize from './mixins/resize'
-import { getSms } from '@/api/echarts'
+import { getNewVip } from '@/api/echarts' // getCoupon,
 
 export default {
   mixins: [resize],
@@ -35,36 +34,51 @@ export default {
     },
     title: {
       type: String,
-      default: '短信发送情况'
+      default: '优惠券使用情况'
     }
   },
   data() {
     return {
       chart: null,
       legendData: [],
-      xAxisData: [],
-      seriesData: []
+      seriesData: [],
+      xAxisData: []
+    }
+  },
+  watch: {
+    seriesData(val, oldVal) {
+      // console.log(1111, val, oldVal)
+      // this.setOptions(val)
     }
   },
   mounted() {
     this.initCharts()
   },
+  beforeDestroy() {
+    if (!this.chart) {
+      return
+    }
+    this.chart.dispose()
+    this.chart = null
+  },
   methods: {
     initCharts() {
-      getSms().then(response => {
-        const couponData = response.data.result.reverse()
+      getNewVip().then(response => {
+        const newVipData = response.data
         // 渲染图例组件
-        this.renderLegend(couponData)
+        this.renderLegend(newVipData)
         // 渲染维度
-        this.renderXAxis(couponData)
+        this.renderXAxis(newVipData)
         // 渲染列表
-        this.renderSeries(couponData)
-
-        this.chart = this.$echarts.init(this.$refs.sms_echarts)
+        this.renderSeries(newVipData)
+        // 获取图表div
+        this.chart = this.$echarts.init(this.$refs.mix_echarts)
+        // 设置并渲染图表
         this.setOptions()
       })
     },
-    setOptions() {
+    // 设置并渲染图表
+    setOptions(series) {
       this.chart.setOption({
         // 标题
         title: {
@@ -80,7 +94,6 @@ export default {
             fontSize: '16'
           }
         },
-        color: ['#c23531', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
         // 提示框组件
         tooltip: {
           trigger: 'axis', // 触发条件
@@ -90,6 +103,7 @@ export default {
             }
           }
         },
+        // 绘图网格
         grid: {
           left: '5%', // grid 组件离容器左侧的距离。
           right: '5%', // grid 组件离容器右侧的距离。
@@ -101,36 +115,34 @@ export default {
           }
         },
         // dataZoom 组件 用于区域缩放
-        dataZoom: [
-          {
-            show: true,
-            height: 30,
-            xAxisIndex: [
-              0
-            ],
-            bottom: 30,
-            start: 5,
-            end: 80,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            borderColor: '#90979c',
-            handleStyle: {
-              color: '#d3dee5'
-            },
-            textStyle: {
-              color: '#fff'
-            }
-          }, {
-            // 内置型数据区域缩放组件（dataZoomInside）
-            type: 'inside',
-            show: true,
-            height: 15,
-            start: 1, // 不知用处
-            end: 100
-          }],
+        dataZoom: [{
+          show: true,
+          height: 30,
+          xAxisIndex: [
+            0
+          ],
+          bottom: 30,
+          start: 5,
+          end: 80,
+          handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+          handleSize: '110%',
+          borderColor: '#90979c',
+          handleStyle: {
+            color: '#d3dee5'
+          },
+          textStyle: {
+            color: '#fff'
+          }
+        }, {
+          // 内置型数据区域缩放组件（dataZoomInside）
+          type: 'inside',
+          show: true,
+          height: 15,
+          start: 1, // 不知用处
+          end: 100
+        }],
         // 图例组件。
         legend: {
-          itemWidth: 25,
           top: '3%',
           textStyle: {
             color: '#90979c',
@@ -140,6 +152,9 @@ export default {
         },
         // 直角坐标系 grid 中的 x 轴
         xAxis: {
+          axisLabel: {
+            fontSize: 16
+          },
           data: this.xAxisData
         },
         // 直角坐标系 grid 中的 y 轴
@@ -148,49 +163,28 @@ export default {
         series: this.seriesData
       })
     },
-    // 图例
+    // 渲染图例组件
     renderLegend(data) {
-      const arr = []
-      for (var i in data) {
-        for (const key in data[i]) {
-          if (key === 'type') {
-            arr.push(data[i][key])
-          }
-        }
-      }
-      this.legendData = this.distinct(arr)
-      // console.log(this.legendData)
+      this.legendData.push(data[0].months)
+      this.legendData.push(data[0].months1)
     },
-    // X轴
+    // 渲染维度
     renderXAxis(data) {
-      const arr = []
-      data.forEach(coupon => {
-        for (var i in coupon) {
-          if (i === 'month') {
-            arr.push(coupon[i])
-          }
-        }
+      data.forEach(vip => {
+        this.xAxisData.push(vip.name)
       })
-      this.xAxisData = this.distinct(arr)
-      // console.log(this.xAxisData)
     },
-    // 数据
+    // 渲染列表
     renderSeries(data) {
       this.seriesData.data = []
       for (let i = 0; i < this.legendData.length; i++) {
         const series = this.legendData[i]
         const arr = []
-
-        this.xAxisData.forEach(month => {
-          let have = 0
-          data.forEach(smsData => {
-            if (smsData.type === series && smsData.month === month) {
-              arr.push(smsData.qty)
-              have = 1
-            }
-          })
-          if (have === 0) {
-            arr.push('0')
+        data.forEach(vip => {
+          if (i === 0) {
+            arr.push(parseInt(vip.bl))
+          } else {
+            arr.push(parseInt(vip.bl1))
           }
         })
 
@@ -207,37 +201,13 @@ export default {
             fontSize: 16
           },
           // 标签的位置
-          position: 'top',
-          formatter(p) {
-            return p.value > 0 ? p.value : ''
-          }
-        }
-        ob.visualMap = {
-          inRange: {
-            color: ['#D7DA8B', '#E15457']
-          }
+          position: 'top'
         }
         ob.data = arr
         console.log(ob)
         this.seriesData.push(ob)
       }
-    },
-    // 数组去重
-    distinct(a) {
-      const arr = a
-      const result = []
-      const obj = {}
-      for (const i of arr) {
-        if (!obj[i]) {
-          result.push(i)
-          obj[i] = 1
-        }
-      }
-      return result
     }
   }
 }
 </script>
-
-<style>
-</style>

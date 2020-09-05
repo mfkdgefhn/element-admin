@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-04 16:39:12
+ * @LastEditTime: 2020-09-05 14:21:55
  */
 export default {
   route: {
@@ -59,6 +59,9 @@ export default {
     mixChart: 'Mix Chart',
     CouponChart: 'Lista de cupones',
     SmsChart: 'Mensaje de texto',
+    NewVipCharts: 'Gráfico de nuevos miembros',
+    openCardRate: 'Tasa de tarjetas de membresía',
+    proportionOfSales: 'Ventas de miembros',
     example: 'Ejemplo',
     nested: 'Rutas anidadass',
     menu1: 'Menu 1',

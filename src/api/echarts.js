@@ -3,13 +3,14 @@
  * @Author: anan
  * @Date: 2019-10-05 09:19:29
  * @LastEditors: anan
- * @LastEditTime: 2019-11-05 11:04:15
+ * @LastEditTime: 2020-09-05 14:23:52
  */
 
 // import axios from 'axios'
 import request from '@/utils/request41'
 
-var url = 'http://10.10.1.41/Q/p.do?o=qhxqk&showSql=gmqdbcenter'
+var url = 'http://10.10.1.41:443'
+// var url = 'http://10.10.1.41:443/Q/p.do?o=qhxqk&showSql=gmqdbcenter'
 // var url1 = 'http://jsonplaceholder.typicode.com/posts/1'
 
 // 获取优惠券
@@ -36,9 +37,34 @@ export function getSms() {
   })
 }
 
+// 获取优惠券
 export function getCouponText() {
   return request({
-    url: url,
+    url: url + '/Q/p.do?o=qhxqk',
+    method: 'get'
+  })
+}
+
+// 新增会员情况
+export function getNewVip() {
+  return request({
+    url: url + '/Q/r.do?o=xzhy',
+    method: 'get'
+  })
+}
+
+// 会员开卡率情况
+export function getOpenCardRate() {
+  return request({
+    url: url + '/Q/r.do?o=hykkl',
+    method: 'get'
+  })
+}
+
+// 会员开卡率情况
+export function getProportionOfSales() {
+  return request({
+    url: url + '/Q/r.do?o=tjhyxszb1',
     method: 'get'
   })
 }

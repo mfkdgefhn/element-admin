@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 09:04:48
+ * @LastEditTime: 2020-09-05 14:09:38
  */
 import Vue from 'vue'
 
@@ -40,6 +40,11 @@ import 'codemirror/theme/base16-dark.css'
 
 import '@/styles/index.scss' // global css 全局CSS
 
+// 导入时间插件momentjs
+import moment from 'moment'
+Vue.prototype.$moment = moment // 赋值使用
+moment.locale('zh-cn') // 需要汉化
+
 import App from './App'
 import store from './store'
 import router from './router'
@@ -74,7 +79,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(
-  Element, {
+  Element,
+  {
     size: Cookies.get('size') || 'medium', // set element-ui default size //设置元素UI默认大小
     i18n: (key, value) => i18n.t(key, value)
   }

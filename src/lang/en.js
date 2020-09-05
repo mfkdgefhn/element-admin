@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 11:39:42
+ * @LastEditTime: 2020-09-05 14:21:35
  */
 export default {
   route: {
@@ -59,6 +59,9 @@ export default {
     mixChart: 'Mix Chart',
     CouponChart: 'Coupon Chart',
     SmsChart: 'Sms Chart',
+    NewVipCharts: 'NewVipCharts',
+    openCardRate: 'openCardRate',
+    proportionOfSales: 'proportionOfSales',
     example: 'Example',
     nested: 'Nested Routes',
     menu1: 'Menu 1',

@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2019-10-06 11:39:17
+ * @LastEditTime: 2020-09-05 14:22:08
  */
 export default {
   route: {
@@ -59,6 +59,9 @@ export default {
     mixChart: 'Mixチャート',
     CouponChart: 'クーポンチャート',
     SmsChart: 'メールの通知',
+    NewVipCharts: '会員状況のグラフを追加します。',
+    openCardRate: '会員カードの開設率のグラフ',
+    proportionOfSales: '会員販売比率',
     example: 'Example',
     nested: 'Nested Routes',
     menu1: 'メニュー１',
