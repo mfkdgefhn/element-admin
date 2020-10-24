@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-10-05 09:19:29
  * @LastEditors: anan
- * @LastEditTime: 2020-09-05 14:23:52
+ * @LastEditTime: 2020-10-07 10:21:28
  */
 
 // import axios from 'axios'
@@ -65,6 +65,14 @@ export function getOpenCardRate() {
 export function getProportionOfSales() {
   return request({
     url: url + '/Q/r.do?o=tjhyxszb1',
+    method: 'get'
+  })
+}
+
+// 购物券核销情况
+export function getVouWriteOffs() {
+  return request({
+    url: url + '/Q/r.do?o=gwqhxqk',
     method: 'get'
   })
 }

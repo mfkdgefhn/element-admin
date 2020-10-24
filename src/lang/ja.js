@@ -3,7 +3,7 @@
  * @Author: anan
  * @Date: 2019-07-13 13:52:51
  * @LastEditors: anan
- * @LastEditTime: 2020-09-05 14:22:08
+ * @LastEditTime: 2020-10-07 10:24:24
  */
 export default {
   route: {
@@ -62,6 +62,7 @@ export default {
     NewVipCharts: '会員状況のグラフを追加します。',
     openCardRate: '会員カードの開設率のグラフ',
     proportionOfSales: '会員販売比率',
+    vouWriteOff: '買い物券の消し込み状況',
     example: 'Example',
     nested: 'Nested Routes',
     menu1: 'メニュー１',
@@ -137,11 +138,13 @@ export default {
   },
   components: {
     documentation: 'ドキュメント',
-    tinymceTips: 'tinymceは管理画面に重要な機能ですが、その同時に落とし穴がありあす。tinymceを使う道のりが大変でした。Tinymceを使う時に各自のプロジェクト状況で判断が必要です。ドキュメントはこちら',
+    tinymceTips:
+      'tinymceは管理画面に重要な機能ですが、その同時に落とし穴がありあす。tinymceを使う道のりが大変でした。Tinymceを使う時に各自のプロジェクト状況で判断が必要です。ドキュメントはこちら',
     dropzoneTips: 'Third partyのパッケージを使わず、独自の実装しています。詳細は @/components/Dropzone',
     stickyTips: 'ページの指定位置へスクロールした場合、表示されます。',
     backToTopTips1: 'トップへスクロールが表示されます。',
-    backToTopTips2: 'ボタンのスタイルはカスタマイズできます。例えば、show/hide、height、position。 またはElementのel-tooltipを使って、ツールチップを実装できます。',
+    backToTopTips2:
+      'ボタンのスタイルはカスタマイズできます。例えば、show/hide、height、position。 またはElementのel-tooltipを使って、ツールチップを実装できます。',
     imageUploadTips: 'mockjsは使えないため、カスタマイズしています。公式の最新バージョンを使ってください。'
   },
   table: {
@@ -500,11 +503,13 @@ export default {
     refresh: '更新'
   },
   example: {
-    warning: '新規作成と編集画面は keep-alive を使えないです。keep-alive の include はrouteのキャッシュは使えないです。そのため、component name を使ってキャッシュさせるようにします。このようなキャッシュ機能を作りたい場合，localStorageを使う手があります。もしくは keep-alive の includeを使って、全ページキャッシュする方法はあります。'
+    warning:
+      '新規作成と編集画面は keep-alive を使えないです。keep-alive の include はrouteのキャッシュは使えないです。そのため、component name を使ってキャッシュさせるようにします。このようなキャッシュ機能を作りたい場合，localStorageを使う手があります。もしくは keep-alive の includeを使って、全ページキャッシュする方法はあります。'
   },
   errorLog: {
     tips: '右上のbugアイコンをクリックしてください。',
-    description: '管理画面はspaを使う場合が多い、ユーザ体現向上はできますが、想定外エラーが発生する場合があります。Vueはそのエラーハンドリング機能を提供し、エラーレポートができます。',
+    description:
+      '管理画面はspaを使う場合が多い、ユーザ体現向上はできますが、想定外エラーが発生する場合があります。Vueはそのエラーハンドリング機能を提供し、エラーレポートができます。',
     documentation: 'ドキュメント'
   },
   excel: {
